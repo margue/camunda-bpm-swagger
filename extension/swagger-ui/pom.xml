@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>camunda-bpm-swagger-root</artifactId>
+		<groupId>org.camunda.bpm.extension.swagger.project</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>swagger-ui</artifactId>
+	<name>Swagger UI</name>
+	<packaging>war</packaging>
+
+
+  <properties>
+    <swagger.version>1.5.16</swagger.version>
+    <swagger-ui.version>3.1.4</swagger-ui.version>
+    <resteasy-jaxrs.version>2.3.5.Final</resteasy-jaxrs.version>
+    <version.jersey2>2.25.1</version.jersey2>
+  </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>swagger-ui</artifactId>
+			<version>${swagger-ui.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-war-plugin</artifactId>
+			<configuration>
+			  <failOnMissingWebXml>false</failOnMissingWebXml>
+			</configuration>
+		  </plugin>
+		</plugins>
+	</build>
+	
+</project>

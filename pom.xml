@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.camunda</groupId>
-    <artifactId>camunda-release-parent</artifactId>
-    <version>2.5</version>
-    <!-- DO NOT REMOVE EMPTY TAG https://issues.apache.org/jira/browse/MNG-4687 -->
-    <relativePath />
-  </parent>
+	<parent>
+		<groupId>org.camunda</groupId>
+		<artifactId>camunda-release-parent</artifactId>
+		<version>2.5</version>
+		<!-- DO NOT REMOVE EMPTY TAG https://issues.apache.org/jira/browse/MNG-4687 -->
+		<relativePath />
+	</parent>
 
 	<groupId>org.camunda.bpm.extension.swagger.project</groupId>
 	<artifactId>camunda-bpm-swagger-root</artifactId>
@@ -20,51 +20,45 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 		<java.version>1.8</java.version>
 		<version.java>${java.version}</version.java>
-    <camunda.version>7.7.0</camunda.version>
-    <camunda-spring-boot.version>2.2.0</camunda-spring-boot.version>
-    <swagger.version>2.6.1</swagger.version>
+		<camunda.version>7.7.0</camunda.version>
+		<swagger.version>1.5.16</swagger.version>
 	</properties>
 
-  <modules>
-    <module>extension/spring-boot</module>
-    <module>extension/generator</module>
-    <module>extension/core</module>
-    <module>extension/generator-annotation</module>
-  </modules>
+	<modules>
+		<!-- <module>extension/spring-boot</module> -->
+		<module>extension/generator</module>
+		<module>extension/core</module>
+		<module>extension/generator-annotation</module>
+		<module>extension/assembly</module>
+		<module>extension/swagger-ui</module>
+	</modules>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <!-- Import dependency management from camunda -->
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from camunda -->
+				<groupId>org.camunda.bpm</groupId>
+				<artifactId>camunda-bom</artifactId>
+				<version>${camunda.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
 
-      <dependency>
-        <!-- Import dependency management from Spring Boot -->
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
-      <dependency>
-        <groupId>org.camunda.bpm.extension.springboot</groupId>
-        <artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-        <version>${camunda-spring-boot.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-generator-annotation</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+      
+		</dependencies>
+	</dependencyManagement>
 
 
 </project>

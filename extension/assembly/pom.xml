@@ -1,0 +1,220 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>camunda-bpm-engine-rest-swagger</artifactId>
+	<name>camunda BPM Engine REST Swagger</name>
+	<packaging>war</packaging>
+
+	<parent>
+		<artifactId>camunda-bpm-swagger-root</artifactId>
+		<groupId>org.camunda.bpm.extension.swagger.project</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+  <properties>
+    <resteasy-jaxrs.version>2.3.5.Final</resteasy-jaxrs.version>
+    <version.jersey2>2.25.1</version.jersey2>
+  </properties>
+
+	<dependencies>
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-core</artifactId>
+    </dependency>
+	
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-rest-core</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+
+    <!-- dependencies only used for assemblies should be scope provided -->
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- dependencies only used for assemblies should be scope provided -->
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-rest-core</artifactId>
+      <version>${camunda.version}</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-rest-core</artifactId>
+      <version>${camunda.version}</version>
+      <classifier>tests</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-jaxrs</artifactId>
+      <version>${resteasy-jaxrs.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${version.jersey2}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestEntries>
+              <!-- module dependencies for deployment on AS 7  -->
+              <Dependencies>org.camunda.bpm.camunda-engine,org.camunda.bpm.dmn.camunda-engine-dmn</Dependencies>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <!-- 
+        <executions>
+          <execution>
+            <id>tomcat</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-war-tomcat.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <classifier>tomcat</classifier>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>was</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-war-was.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <classifier>was</classifier>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>was9</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-war-was9.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <classifier>was9</classifier>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>wls</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-war-wls.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <classifier>wls</classifier>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+ 
+          <execution>
+            <id>classes</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-classes.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-sources.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>tests</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>assembly-tests.xml</descriptor>
+              </descriptors>
+              <finalName>camunda-engine-rest-${camunda.version}</finalName>
+              <attach>true</attach>
+              <outputDirectory>target/</outputDirectory>
+              <workDirectory>target/assembly/work</workDirectory>
+            </configuration>
+          </execution>
+        </executions>
+ -->          
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>
