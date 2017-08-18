@@ -9,6 +9,13 @@ import java.util.function.Supplier;
 
 import static org.camunda.bpm.extension.swagger.generator.CamundaSwaggerAnnotationProcessor.CAMUNDA_REST_ROOT_PKG;
 
+/**
+ * Supplier for reflections from Camunda REST package.
+ * 
+ * @author Simon Zambrovski Holisticon AG
+ * @author Jan Galinski, Holisticon AG
+ *
+ */
 public class ReflectionsFactory implements Supplier<Reflections> {
 
   private final Reflections reflections;

@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CamundaRestServiceTest {
 
-  private final CamundaRestService taskService = new CamundaRestService(TaskRestService.class, TaskRestServiceImpl.class);
+  private final CamundaRestResource taskService = new CamundaRestResource(TaskRestService.class, TaskRestServiceImpl.class);
 
   @Test
   public void getPath() throws Exception {

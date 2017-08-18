@@ -5,21 +5,20 @@ import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JPackage;
 import org.camunda.bpm.engine.rest.TaskRestService;
 import org.camunda.bpm.engine.rest.impl.TaskRestServiceImpl;
-import org.camunda.bpm.extension.swagger.generator.model.CamundaRestService;
+import org.camunda.bpm.extension.swagger.generator.model.CamundaRestResource;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-
 public class CreateSwaggerServiceTest {
 
-  private final CreateSwaggerService service = new CreateSwaggerService(new ReflectionsFactory().get());
+  private final CreateSwaggerService service = new CreateSwaggerService();
 
   @Test
   public void name() throws Exception {
-    JCodeModel model = service.apply(new CamundaRestService(TaskRestService.class, TaskRestServiceImpl.class));
+    JCodeModel model = service.apply(new CamundaRestResource(TaskRestService.class, TaskRestServiceImpl.class));
 
     model.build(new AbstractCodeWriter(Charset.forName("UTF-8"), System.lineSeparator()) {
       @Override
@@ -32,7 +31,6 @@ public class CreateSwaggerServiceTest {
 
       }
     });
-
 
   }
 }

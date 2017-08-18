@@ -1,10 +1,8 @@
 package org.camunda.bpm.extension.swagger.generator.fn;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.reflections.Reflections;
 
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class FindCamundaRestServicesTest {
@@ -15,7 +13,6 @@ public class FindCamundaRestServicesTest {
   public void run() throws Exception {
     find.get().forEach(System.out::println);
   }
-
 
 
   @Test

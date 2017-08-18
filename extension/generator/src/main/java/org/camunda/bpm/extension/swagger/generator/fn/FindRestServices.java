@@ -1,12 +1,11 @@
 package org.camunda.bpm.extension.swagger.generator.fn;
 
 
-import org.reflections.Reflections;
-
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.reflections.Reflections;
 
 public class FindRestServices implements Supplier<Set<String>> {
 
@@ -21,7 +20,7 @@ public class FindRestServices implements Supplier<Set<String>> {
   @Override
   public Set<String> get() {
     return reflections.getAllTypes().stream()
-      .filter(fqn -> fqn.endsWith("CamundaRestService"))
+      .filter(fqn -> fqn.endsWith("CamundaRestResource"))
       .collect(Collectors.toSet());
   }
 }
