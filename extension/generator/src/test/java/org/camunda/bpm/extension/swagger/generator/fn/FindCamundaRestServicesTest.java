@@ -7,7 +7,7 @@ import org.reflections.Reflections;
 import java.util.Set;
 
 @Slf4j
-public class FindRestServicesTest {
+public class FindCamundaRestServicesTest {
 
   private final FindRestServices find = new FindRestServices(new ReflectionsFactory().get());
 

@@ -24,6 +24,7 @@
 		<version.java>${java.version}</version.java>
 		<camunda.version>7.7.0</camunda.version>
 		<swagger.version>1.5.16</swagger.version>
+    <version.jersey2>2.25.1</version.jersey2>
 	</properties>
 
 	<modules>
@@ -56,7 +57,7 @@
       <artifactId>camunda-bpm-swagger-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-      
+
 		</dependencies>
 	</dependencyManagement>
 

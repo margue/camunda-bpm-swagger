@@ -15,7 +15,6 @@
 
   <properties>
     <resteasy-jaxrs.version>2.3.5.Final</resteasy-jaxrs.version>
-    <version.jersey2>2.25.1</version.jersey2>
   </properties>
 
 	<dependencies>
@@ -23,7 +22,7 @@
       <groupId>org.camunda.bpm.extension.swagger</groupId>
       <artifactId>camunda-bpm-swagger-core</artifactId>
     </dependency>
-	
+
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-rest-core</artifactId>
@@ -88,7 +87,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <!-- 
+        <!--
         <executions>
           <execution>
             <id>tomcat</id>
@@ -160,7 +159,7 @@
               <workDirectory>target/assembly/work</workDirectory>
             </configuration>
           </execution>
- 
+
           <execution>
             <id>classes</id>
             <phase>package</phase>
@@ -211,7 +210,7 @@
             </configuration>
           </execution>
         </executions>
- -->          
+ -->
       </plugin>
 
     </plugins>

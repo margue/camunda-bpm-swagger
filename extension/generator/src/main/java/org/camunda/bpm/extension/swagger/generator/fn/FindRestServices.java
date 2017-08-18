@@ -21,7 +21,7 @@ public class FindRestServices implements Supplier<Set<String>> {
   @Override
   public Set<String> get() {
     return reflections.getAllTypes().stream()
-      .filter(fqn -> fqn.endsWith("RestService"))
+      .filter(fqn -> fqn.endsWith("CamundaRestService"))
       .collect(Collectors.toSet());
   }
 }
