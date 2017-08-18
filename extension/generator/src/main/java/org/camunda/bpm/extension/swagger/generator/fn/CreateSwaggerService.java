@@ -35,9 +35,8 @@ c._extends(camundaRestService.getServiceImplClass());
       String path = Optional.ofNullable(m.getAnnotation(Path.class)).map(a -> a.value()).orElse("/");
 
       method.annotate(Path.class).param("value", path);
+      //method.body()._return(j)
 
-      method.
-      method.param()
     }
 
 //To generate method
