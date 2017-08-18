@@ -11,23 +11,30 @@
     <relativePath />
   </parent>
 
-	<groupId>org.camunda.bpm.extension.swagger</groupId>
+	<groupId>org.camunda.bpm.extension.swagger.project</groupId>
 	<artifactId>camunda-bpm-swagger-root</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <spring-boot.version>1.5.4.RELEASE</spring-boot.version>
+    <spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 		<java.version>1.8</java.version>
 		<version.java>${java.version}</version.java>
     <camunda.version>7.7.0</camunda.version>
-    <camunda-spring-boot.version>2.1.2</camunda-spring-boot.version>
+    <camunda-spring-boot.version>2.2.0</camunda-spring-boot.version>
     <swagger.version>2.6.1</swagger.version>
 	</properties>
+
+  <modules>
+    <module>extension/spring-boot</module>
+    <module>extension/generator</module>
+    <module>extension/core</module>
+    <module>extension/generator-annotation</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
@@ -58,53 +65,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-    <dependency>
-      <groupId>org.camunda.bpm.extension.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-    </dependency>
-
-		<dependency>
-      <groupId>org.camunda.bpm.extension.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
-		</dependency>
-
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>${swagger.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>${swagger.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-jersey2-jaxrs</artifactId>
-      <version>1.5.16</version>
-    </dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 
 </project>
