@@ -1,6 +1,5 @@
 package org.camunda.bpm.extension.swagger.generator.model;
 
-import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
 
@@ -9,7 +8,7 @@ import java.lang.reflect.Field;
 @Value
 public class CamundaRestService {
 
-  static String splitCamelCase(String s) {
+  public static String splitCamelCase(String s) {
     return s.replaceAll(
       String.format("%s|%s|%s",
         "(?<=[A-Z])(?=[A-Z][a-z])",
@@ -20,16 +19,16 @@ public class CamundaRestService {
     );
   }
 
-  private Class<?> serviceClass;
+  private Class<?> serviceInterfaceClass;
 
   private Class<?> serviceImplClass;
 
   public String getSimpleName() {
-    return serviceClass.getSimpleName();
+    return serviceInterfaceClass.getSimpleName();
   }
 
   public Package getPackage() {
-    return serviceClass.getPackage();
+    return serviceInterfaceClass.getPackage();
   }
 
   public String getPackageName() {
@@ -38,7 +37,7 @@ public class CamundaRestService {
 
   @SneakyThrows
   public String getPath() {
-    Field field = serviceClass.getDeclaredField("PATH");
+    Field field = serviceInterfaceClass.getDeclaredField("PATH");
 
     return (String) field.get(null);
   }

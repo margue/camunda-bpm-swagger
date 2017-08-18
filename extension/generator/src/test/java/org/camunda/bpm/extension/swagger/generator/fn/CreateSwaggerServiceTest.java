@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 
 public class CreateSwaggerServiceTest {
 
-  private final CreateSwaggerService service = new CreateSwaggerService();
+  private final CreateSwaggerService service = new CreateSwaggerService(new ReflectionsFactory().get());
 
   @Test
   public void name() throws Exception {
