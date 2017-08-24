@@ -24,7 +24,6 @@
       <groupId>com.helger</groupId>
       <artifactId>jcodemodel</artifactId>
       <version>3.0.0</version>
-      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -93,6 +92,13 @@
       <artifactId>camunda-engine-rest-core</artifactId>
       <version>${camunda.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.testing.compile</groupId>
+      <artifactId>compile-testing</artifactId>
+      <version>0.9</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>

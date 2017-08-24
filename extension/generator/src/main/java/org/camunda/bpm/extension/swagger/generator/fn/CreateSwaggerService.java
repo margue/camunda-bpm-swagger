@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.camunda.bpm.extension.swagger.generator.model.CamundaRestResource;
+import org.camunda.bpm.extension.swagger.generator.model.CamundaRestService;
 
 import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JCodeModel;
@@ -41,14 +41,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.SneakyThrows;
 
-public class CreateSwaggerService implements Function<CamundaRestResource, JCodeModel> {
+public class CreateSwaggerService implements Function<CamundaRestService, JCodeModel> {
 
   @Override
   @SneakyThrows
-  public JCodeModel apply(CamundaRestResource camundaRestService) {
+  public JCodeModel apply(CamundaRestService camundaRestService) {
 
     JCodeModel cm = new JCodeModel();
-    
+
     cm._package(camundaRestService.getPackageName());
     JDefinedClass c = cm._class(camundaRestService.getSimpleName() + "Swagger");
 
@@ -64,26 +64,26 @@ public class CreateSwaggerService implements Function<CamundaRestResource, JCode
       Class<?> returnType = m.getReturnType();
       JMethod method = c.method(JMod.PUBLIC, returnType, m.getName());
 
-            
+
       // annotations
       method.annotate(Override.class);
       String path = Optional.ofNullable(m.getAnnotation(Path.class)).map(a -> a.value()).orElse("/");
       method.annotate(Path.class).param("value", path);
       javaxRsAnnotation(m).ifPresent(a -> method.annotate(a));
       consumesAndProduces(m).entrySet().forEach(e -> method.annotate(e.getKey()).param("value", e.getValue()));
-      
+
       JAnnotationUse apiOperation= method.annotate(ApiOperation.class)
-           .param("value", capitalize(CamundaRestResource.splitCamelCase(m.getName())))
+           .param("value", capitalize(CamundaRestService.splitCamelCase(m.getName())))
            // TODO: inject operation description here
-           .param("notes", "Operation " + capitalize(CamundaRestResource.splitCamelCase(m.getName())));
-      
+           .param("notes", "Operation " + capitalize(CamundaRestService.splitCamelCase(m.getName())));
+
       if (isResource(returnType)) {
         // dive into resource processing
         apiOperation.param("response", findReturnTypeOfResource(returnType));
-        
-        
-      } 
-      
+
+
+      }
+
 
       // params
       JInvocation invoke = JExpr._super().invoke(m.getName());
@@ -113,7 +113,7 @@ public class CreateSwaggerService implements Function<CamundaRestResource, JCode
     Optional<Method> defaultGet = Arrays.stream(resource.getMethods()).filter(m -> m.isAnnotationPresent(GET.class)).filter(m -> !m.isAnnotationPresent(Path.class)).findFirst();
     if (defaultGet.isPresent()) {
       return defaultGet.get().getReturnType();
-    } 
+    }
     return resource;
   }
 
@@ -145,7 +145,7 @@ public class CreateSwaggerService implements Function<CamundaRestResource, JCode
   static boolean isResource(Class<?> clazz) {
     return clazz.isInterface() && clazz.getName().endsWith("Resource");
   }
-  
+
   static Optional<Class<? extends Annotation>> javaxRsAnnotation(Method method) {
     for (Class<? extends Annotation> a : Arrays.asList(POST.class, GET.class, PUT.class, DELETE.class)) {
       if (method.getAnnotation(a) != null) {
@@ -175,5 +175,5 @@ public class CreateSwaggerService implements Function<CamundaRestResource, JCode
     return Pair.of(p.getType(), uncapitalize(p.getType().getSimpleName()));
   }
 
-  
+
 }

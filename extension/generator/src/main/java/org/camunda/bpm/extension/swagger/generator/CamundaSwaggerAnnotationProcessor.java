@@ -1,8 +1,5 @@
 package org.camunda.bpm.extension.swagger.generator;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -10,24 +7,14 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
-import org.camunda.bpm.engine.rest.TaskRestService;
-import org.camunda.bpm.engine.rest.impl.TaskRestServiceImpl;
+import com.helger.jcodemodel.JCodeModel;
 import org.camunda.bpm.extension.swagger.generator.fn.CodeWriter;
 import org.camunda.bpm.extension.swagger.generator.fn.CreateSwaggerService;
 import org.camunda.bpm.extension.swagger.generator.fn.FindRestServices;
-import org.camunda.bpm.extension.swagger.generator.model.CamundaRestResource;
+import org.camunda.bpm.extension.swagger.generator.model.CamundaRestService;
 import org.reflections.Reflections;
-
-import com.helger.jcodemodel.AbstractCodeWriter;
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JPackage;
 
 @SupportedAnnotationTypes(GenerateSwagger.NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -35,7 +22,8 @@ public class CamundaSwaggerAnnotationProcessor extends AbstractProcessor {
 
   public static final String CAMUNDA_REST_ROOT_PKG = "org.camunda.bpm.engine.rest";
 
-  private FindRestServices restServices;
+  private final FindRestServices restServices;
+  private final CreateSwaggerService createSwaggerService = new CreateSwaggerService();
 
   public CamundaSwaggerAnnotationProcessor() {
     Reflections reflections = new Reflections("org.camunda.bpm.engine.rest");
@@ -45,7 +33,21 @@ public class CamundaSwaggerAnnotationProcessor extends AbstractProcessor {
   @Override
   public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-    if (!roundEnv.getElementsAnnotatedWith(GenerateSwagger.class).isEmpty()) {
+    System.out.println("------ running");
+//    if (roundEnv.getElementsAnnotatedWith(GenerateSwagger.class).isEmpty()) {
+//      return false;
+//    }
+
+    CodeWriter codeWriter = new CodeWriter(processingEnv);
+
+    Set<CamundaRestService> camundaRestServices = restServices.get();
+
+    System.out.println("===== " + camundaRestServices);
+
+    restServices.get().stream()
+      .map(createSwaggerService)
+      .forEach(codeWriter);
+
 
       // TODO:
       // find all services
@@ -53,7 +55,7 @@ public class CamundaSwaggerAnnotationProcessor extends AbstractProcessor {
       // write files
 
       // CreateSwaggerService service = new CreateSwaggerService();
-      // JCodeModel model = service.apply(new CamundaRestResource(TaskRestService.class, TaskRestServiceImpl.class));
+      // JCodeModel model = service.apply(new CamundaRestService(TaskRestService.class, TaskRestServiceImpl.class));
       //
       // try {
       // model.build(new CodeWriter(processingEnv));
@@ -98,7 +100,7 @@ public class CamundaSwaggerAnnotationProcessor extends AbstractProcessor {
       // }
       // }
       // }
-    }
+
     return false;
   }
 

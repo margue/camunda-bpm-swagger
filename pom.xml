@@ -34,7 +34,8 @@
 		<module>extension/generator-annotation</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
-	</modules>
+    <module>extension/mojo</module>
+  </modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -52,6 +53,11 @@
       <artifactId>camunda-bpm-swagger-generator-annotation</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm.extension.swagger</groupId>
+        <artifactId>camunda-bpm-swagger-generator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     <dependency>
       <groupId>org.camunda.bpm.extension.swagger</groupId>
       <artifactId>camunda-bpm-swagger-core</artifactId>

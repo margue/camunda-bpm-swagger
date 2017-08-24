@@ -1,7 +1,0 @@
-server:
-  servlet-path: /
-
-# Jersey dispatcher servlet
-spring:
-  jersey:
-    application-path: /rest

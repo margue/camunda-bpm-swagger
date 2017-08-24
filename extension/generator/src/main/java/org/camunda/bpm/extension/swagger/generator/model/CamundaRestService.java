@@ -6,7 +6,7 @@ import lombok.Value;
 import java.lang.reflect.Field;
 
 @Value
-public class CamundaRestResource {
+public class CamundaRestService {
 
   private Class<?> serviceInterfaceClass;
   private Class<?> serviceImplClass;
@@ -31,7 +31,7 @@ public class CamundaRestResource {
     String[] n = splitCamelCase(getSimpleName()).split(" ");
     return n[0] + " " + n[2] ;
   }
-  
+
   @SneakyThrows
   public String getPath() {
     Field field = serviceInterfaceClass.getDeclaredField("PATH");
