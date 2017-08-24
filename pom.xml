@@ -24,16 +24,16 @@
 		<version.java>${java.version}</version.java>
 		<camunda.version>7.7.0</camunda.version>
 		<swagger.version>1.5.16</swagger.version>
-    <version.jersey2>2.25.1</version.jersey2>
+		<version.jersey2>2.25.1</version.jersey2>
 	</properties>
 
 	<modules>
 		<!-- <module>extension/spring-boot</module> -->
-    <module>extension/maven-plugin</module>
+		<module>extension/maven-plugin</module>
 		<module>extension/core</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
-  </modules>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -45,22 +45,11 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-
-    <dependency>
-      <groupId>org.camunda.bpm.extension.swagger</groupId>
-      <artifactId>camunda-bpm-swagger-generator-annotation</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-      <dependency>
-        <groupId>org.camunda.bpm.extension.swagger</groupId>
-        <artifactId>camunda-bpm-swagger-generator</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    <dependency>
-      <groupId>org.camunda.bpm.extension.swagger</groupId>
-      <artifactId>camunda-bpm-swagger-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+			<dependency>
+				<groupId>org.camunda.bpm.extension.swagger</groupId>
+				<artifactId>camunda-bpm-swagger-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>

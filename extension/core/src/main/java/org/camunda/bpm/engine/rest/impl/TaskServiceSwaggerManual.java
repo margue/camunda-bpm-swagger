@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @Path("/task")
-@Api(tags = "Task", value = "Task Service")
+// @Api(tags = "Task", value = "Task Service")
 public class TaskServiceSwaggerManual extends TaskRestServiceImpl {
 
   public TaskServiceSwaggerManual(String engineName, ObjectMapper objectMapper) {
