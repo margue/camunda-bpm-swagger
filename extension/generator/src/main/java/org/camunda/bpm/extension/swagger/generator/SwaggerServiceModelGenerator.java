@@ -1,4 +1,4 @@
-package org.camunda.bpm.extension.swagger.generator.fn;
+package org.camunda.bpm.extension.swagger.generator;
 
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static org.apache.commons.lang3.text.WordUtils.uncapitalize;
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -41,19 +40,34 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.SneakyThrows;
 
-public class CreateSwaggerService implements Function<CamundaRestService, JCodeModel> {
+public class SwaggerServiceModelGenerator {
 
-  @Override
+  private final CamundaRestService camundaRestService;
+  private final JCodeModel codeModel;
+
+  public SwaggerServiceModelGenerator(final CamundaRestService camundaRestService) {
+    this.camundaRestService = camundaRestService;
+    this.codeModel = new JCodeModel();
+    
+    process();
+  }
+
+  
+  
+
+  public JCodeModel getCodeModel() {
+    return codeModel;
+  }
+
+
   @SneakyThrows
-  public JCodeModel apply(CamundaRestService camundaRestService) {
+  public JCodeModel process() {
 
-    JCodeModel cm = new JCodeModel();
+    codeModel._package(camundaRestService.getPackageName());
+    JDefinedClass c = codeModel._class(camundaRestService.getSimpleName() + "Swagger");
 
-    cm._package(camundaRestService.getPackageName());
-    JDefinedClass c = cm._class(camundaRestService.getSimpleName() + "Swagger");
-
-    c.annotate(cm.ref(Path.class)).param("value", camundaRestService.getPath());
-    c.annotate(cm.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", camundaRestService.getTag());
+    c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
+    c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", camundaRestService.getTag());
     c._extends(camundaRestService.getServiceImplClass());
 
     for (Constructor<?> constructor : camundaRestService.getServiceImplClass().getConstructors()) {
@@ -64,7 +78,6 @@ public class CreateSwaggerService implements Function<CamundaRestService, JCodeM
       Class<?> returnType = m.getReturnType();
       JMethod method = c.method(JMod.PUBLIC, returnType, m.getName());
 
-
       // annotations
       method.annotate(Override.class);
       String path = Optional.ofNullable(m.getAnnotation(Path.class)).map(a -> a.value()).orElse("/");
@@ -72,18 +85,15 @@ public class CreateSwaggerService implements Function<CamundaRestService, JCodeM
       javaxRsAnnotation(m).ifPresent(a -> method.annotate(a));
       consumesAndProduces(m).entrySet().forEach(e -> method.annotate(e.getKey()).param("value", e.getValue()));
 
-      JAnnotationUse apiOperation= method.annotate(ApiOperation.class)
-           .param("value", capitalize(CamundaRestService.splitCamelCase(m.getName())))
-           // TODO: inject operation description here
-           .param("notes", "Operation " + capitalize(CamundaRestService.splitCamelCase(m.getName())));
+      JAnnotationUse apiOperation = method.annotate(ApiOperation.class).param("value", capitalize(CamundaRestService.splitCamelCase(m.getName())))
+          // TODO: inject operation description here
+          .param("notes", "Operation " + capitalize(CamundaRestService.splitCamelCase(m.getName())));
 
       if (isResource(returnType)) {
         // dive into resource processing
         apiOperation.param("response", findReturnTypeOfResource(returnType));
 
-
       }
-
 
       // params
       JInvocation invoke = JExpr._super().invoke(m.getName());
@@ -106,11 +116,12 @@ public class CreateSwaggerService implements Function<CamundaRestService, JCodeM
 
     }
 
-    return cm;
+    return codeModel;
   }
 
   static Class<?> findReturnTypeOfResource(Class<?> resource) {
-    Optional<Method> defaultGet = Arrays.stream(resource.getMethods()).filter(m -> m.isAnnotationPresent(GET.class)).filter(m -> !m.isAnnotationPresent(Path.class)).findFirst();
+    Optional<Method> defaultGet = Arrays.stream(resource.getMethods()).filter(m -> m.isAnnotationPresent(GET.class))
+        .filter(m -> !m.isAnnotationPresent(Path.class)).findFirst();
     if (defaultGet.isPresent()) {
       return defaultGet.get().getReturnType();
     }
@@ -174,6 +185,5 @@ public class CreateSwaggerService implements Function<CamundaRestService, JCodeM
   static Pair<Class<?>, String> parameter(Parameter p) {
     return Pair.of(p.getType(), uncapitalize(p.getType().getSimpleName()));
   }
-
 
 }

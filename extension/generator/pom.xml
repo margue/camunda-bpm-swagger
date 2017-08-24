@@ -13,12 +13,7 @@
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-generator</artifactId>
 
-
   <dependencies>
-    <dependency>
-      <groupId>org.camunda.bpm.extension.swagger</groupId>
-      <artifactId>camunda-bpm-swagger-generator-annotation</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>com.helger</groupId>
@@ -66,14 +61,7 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
-      <scope>test</scope>
-    </dependency>
-
+    
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -95,9 +83,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.testing.compile</groupId>
-      <artifactId>compile-testing</artifactId>
-      <version>0.9</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.25</version>
       <scope>test</scope>
     </dependency>
 

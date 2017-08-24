@@ -31,7 +31,6 @@
 		<!-- <module>extension/spring-boot</module> -->
 		<module>extension/generator</module>
 		<module>extension/core</module>
-		<module>extension/generator-annotation</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
     <module>extension/mojo</module>
