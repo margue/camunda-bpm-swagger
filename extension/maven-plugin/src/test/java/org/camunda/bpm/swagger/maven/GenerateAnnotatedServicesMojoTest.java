@@ -1,8 +1,10 @@
 package org.camunda.bpm.swagger.maven;
 
 import org.apache.maven.plugin.testing.MojoRule;
+import org.apache.maven.plugin.testing.WithoutMojo;
 import org.apache.maven.plugin.testing.resources.TestResources;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -22,7 +24,7 @@ public class GenerateAnnotatedServicesMojoTest {
   @Test
   public void testInvalidProject() throws Exception {
 
-    File projectCopy = this.resources.getBasedir("default");
+    File projectCopy = this.resources.getBasedir("project-to-test");
     File pom = new File(projectCopy, "pom.xml");
 
     assertThat(pom).isNotNull().exists();

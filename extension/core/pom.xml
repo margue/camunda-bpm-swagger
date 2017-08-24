@@ -25,14 +25,14 @@
     </dependency>
 
     <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-core</artifactId>
-        <version>${swagger.version}</version>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
+      <version>${swagger.version}</version>
     </dependency>
     <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${swagger.version}</version>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger.version}</version>
     </dependency>
     <dependency>
       <groupId>io.swagger</groupId>
@@ -52,6 +52,25 @@
 
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
+        <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>generate-annotated-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-annotated-sources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 
   <!--build>

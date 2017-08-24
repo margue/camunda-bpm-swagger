@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.camunda.bpm.extension.swagger.test</groupId>
-  <artifactId>camunda-bpm-swagger-maven-plugin-test</artifactId>
+  <artifactId>camunda-bpm-swagger-maven-plugin-project-to-test</artifactId>
   <version>1</version>
 
   <properties>
@@ -18,7 +18,12 @@
 
   <dependencies>
 
-
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>
@@ -28,7 +33,14 @@
         <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <extensions>true</extensions>
-        <configuration></configuration>
+        <configuration />
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-sources</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
