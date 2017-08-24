@@ -34,7 +34,7 @@ import static org.camunda.bpm.swagger.maven.GenerateAnnotatedServicesMojo.NAME;
   defaultPhase = GENERATE_SOURCES,
   requiresDependencyResolution = COMPILE_PLUS_RUNTIME
 )
-public class GenerateAnnotatedServicesMojo extends AbstractMojo{
+public class GenerateAnnotatedServicesMojo extends AbstractMojo {
 
   public static final String CAMUNDA_REST_ROOT_PKG = "org.camunda.bpm.engine.rest";
   public static final String NAME = "generate-annotated-sources";
@@ -42,14 +42,14 @@ public class GenerateAnnotatedServicesMojo extends AbstractMojo{
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
   private MavenProject project;
 
-  @Parameter(property = "outputDirectory", required = true, defaultValue = "${project.build.sourceDirectory}")
+  @Parameter(property = "outputDirectory", required = true)
   protected File outputDirectory;
 
   @Parameter(property = "codeGeneratorFactory", required = true, defaultValue = "org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory")
   protected String codeGeneratorFactoryClass;
 
 
-  protected  final CodeGeneratorFactory codeGeneratorFactory = new SwaggerCodeGeneratorFactory();
+  protected final CodeGeneratorFactory codeGeneratorFactory = new SwaggerCodeGeneratorFactory();
 
   @Override
   @SneakyThrows

@@ -306,10 +306,10 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     if (value == null || !value.contains("-")) {
       return value;
     }
-    StringTokenizer toekn = new StringTokenizer(value,"-");
-    StringBuilder str = new StringBuilder(toekn.nextToken());
-    while (toekn.hasMoreTokens()) {
-      String s = toekn.nextToken();
+    StringTokenizer token = new StringTokenizer(value,"-");
+    StringBuilder str = new StringBuilder(token.nextToken());
+    while (token.hasMoreTokens()) {
+      String s = token.nextToken();
       str.append(Character.toUpperCase(s.charAt(0))).append(s.substring(1));
     }
     return str.toString();
