@@ -33,6 +33,7 @@
 		<module>extension/core</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
+    <module>example/spring-boot</module>
   </modules>
 
 	<dependencyManagement>
