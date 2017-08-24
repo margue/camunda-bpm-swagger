@@ -9,9 +9,9 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.camunda.bpm.swagger.maven.GenerateAnnotatedServicesMojo.NAME;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
 
-public class GenerateAnnotatedServicesMojoTest {
+public class GenerateSwaggerServicesMojoTest {
 
   @Rule
   public MojoRule rule = new MojoRule();
@@ -32,7 +32,7 @@ public class GenerateAnnotatedServicesMojoTest {
 
     assertThat(pom).isNotNull().exists();
 
-    GenerateAnnotatedServicesMojo mojo = (GenerateAnnotatedServicesMojo) this.rule.lookupMojo(NAME, pom);
+    GenerateSwaggerServicesMojo mojo = (GenerateSwaggerServicesMojo) this.rule.lookupMojo(GOAL, pom);
     assertThat(mojo).isNotNull();
 
     mojo.execute();

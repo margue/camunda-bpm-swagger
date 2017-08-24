@@ -18,6 +18,7 @@
     <maven.version>3.5.0</maven.version>
     <maven-plugin.version>3.5</maven-plugin.version>
     <maven-plugin-testing.version>3.3.0</maven-plugin-testing.version>
+    <mojo-executor.version>2.3.0</mojo-executor.version>
   </properties>
 
   <dependencies>
@@ -50,19 +51,22 @@
       <artifactId>maven-compat</artifactId>
       <version>${maven.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.twdata.maven</groupId>
+      <artifactId>mojo-executor</artifactId>
+      <version>${mojo-executor.version}</version>
+    </dependency>
 
     <!-- CAMUNDA -->
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine</artifactId>
       <version>${camunda.version}</version>
-      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-rest-core</artifactId>
       <version>${camunda.version}</version>
-      <!--scope>provided</scope-->
     </dependency>
 
     <!-- REST -->
@@ -70,7 +74,6 @@
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0</version>
-      <!--scope>provided</scope-->
     </dependency>
     <dependency>
       <groupId>io.swagger</groupId>

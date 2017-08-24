@@ -5,12 +5,9 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
-import static org.camunda.bpm.swagger.maven.GenerateAnnotatedServicesMojo.CAMUNDA_REST_ROOT_PKG;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_REST_ROOT_PKG;
 
 /**
  * Supplier for reflections from Camunda REST package.

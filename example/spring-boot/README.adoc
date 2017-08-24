@@ -1,0 +1,4 @@
+This example works using the swagger-ui-dist in resources/static/ and copying the swagger.json
+from core/META-INF/resources and modifying its basePath.
+
+not automated, buit at least st to work with.

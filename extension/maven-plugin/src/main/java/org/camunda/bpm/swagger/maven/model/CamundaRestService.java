@@ -4,13 +4,13 @@ import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.camunda.bpm.swagger.maven.GenerateAnnotatedServicesMojo;
+import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
 
 import javax.annotation.Generated;
 import java.io.File;
 import java.lang.reflect.Field;
 
-import static org.camunda.bpm.swagger.maven.GenerateAnnotatedServicesMojo.CAMUNDA_REST_ROOT_PKG;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_REST_ROOT_PKG;
 
 
 public class CamundaRestService {
@@ -41,7 +41,7 @@ public class CamundaRestService {
     this.codeModel = new JCodeModel();
     this.codeModel._package(PACKAGE);
     definedClass = this.codeModel._class(getFullQualifiedName());
-    definedClass.annotate(Generated.class).param("value", GenerateAnnotatedServicesMojo.class.getCanonicalName());
+    definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
 
   }
 

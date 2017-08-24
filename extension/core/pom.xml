@@ -49,44 +49,22 @@
         <version>${project.version}</version>
         <executions>
           <execution>
-            <id>generate-annotated-sources</id>
+            <id>generate-swagger-services</id>
             <phase>generate-sources</phase>
             <goals>
-              <goal>generate-annotated-sources</goal>
+              <goal>generate-swagger-services</goal>
             </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-sources/annotations/</outputDirectory>
-            </configuration>
+          </execution>
+          <execution>
+            <id>generate-swagger-json</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>generate-swagger-json</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
 
-
-  <!--build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.camunda.bpm.extension.swagger</groupId>
-              <artifactId>camunda-bpm-swagger-generator</artifactId>
-              <version>0.0.1-SNAPSHOT</version>
-            </path>
-          </annotationProcessorPaths>
-
-          <annotationProcessors>
-            <annotationProcessor>org.camunda.bpm.extension.swagger.generator.CamundaSwaggerAnnotationProcessor</annotationProcessor>
-          </annotationProcessors>
-
-        </configuration>
-      </plugin>
-    </plugins>
-  </build-->
 </project>
