@@ -9,10 +9,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.resource.spi.IllegalStateException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,6 +29,9 @@ import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.extension.swagger.generator.model.CamundaRestService;
 
+import com.helger.jcodemodel.AbstractJClass;
+import com.helger.jcodemodel.AbstractJType;
+import com.helger.jcodemodel.IJExpression;
 import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
@@ -38,8 +44,13 @@ import com.helger.jcodemodel.JVar;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import jersey.repackaged.com.google.common.collect.Lists;
+import lombok.Data;
 import lombok.SneakyThrows;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SwaggerServiceModelGenerator {
 
   private final CamundaRestService camundaRestService;
@@ -48,17 +59,13 @@ public class SwaggerServiceModelGenerator {
   public SwaggerServiceModelGenerator(final CamundaRestService camundaRestService) {
     this.camundaRestService = camundaRestService;
     this.codeModel = new JCodeModel();
-    
+
     process();
   }
-
-  
-  
 
   public JCodeModel getCodeModel() {
     return codeModel;
   }
-
 
   @SneakyThrows
   public JCodeModel process() {
@@ -74,13 +81,27 @@ public class SwaggerServiceModelGenerator {
       generateConstructor(c, constructor);
     }
 
-    for (Method m : camundaRestService.getServiceInterfaceClass().getDeclaredMethods()) {
+    Method[] declaredMetods = camundaRestService.getServiceInterfaceClass().getDeclaredMethods();
+    generateMethods(c, declaredMetods, "");
+
+    return codeModel;
+  }
+
+  @Value
+  static class ParentInvocation {
+    private String methodName;
+    private Parameter[] parameters;
+  }
+
+  private void generateMethods(JDefinedClass clazz, Method[] declaredMetods, String parentPathPrefix, ParentInvocation... parentInvocations) {
+    for (Method m : declaredMetods) {
       Class<?> returnType = m.getReturnType();
-      JMethod method = c.method(JMod.PUBLIC, returnType, m.getName());
+      // extract method name to avoid name collisions
+      String methodName = methodName(parentInvocations, m.getName());
+      JMethod method = clazz.method(JMod.PUBLIC, returnType, methodName);
 
       // annotations
-      method.annotate(Override.class);
-      String path = Optional.ofNullable(m.getAnnotation(Path.class)).map(a -> a.value()).orElse("/");
+      String path = parentPathPrefix + Optional.ofNullable(m.getAnnotation(Path.class)).map(a -> a.value()).orElse("");
       method.annotate(Path.class).param("value", path);
       javaxRsAnnotation(m).ifPresent(a -> method.annotate(a));
       consumesAndProduces(m).entrySet().forEach(e -> method.annotate(e.getKey()).param("value", e.getValue()));
@@ -89,34 +110,149 @@ public class SwaggerServiceModelGenerator {
           // TODO: inject operation description here
           .param("notes", "Operation " + capitalize(CamundaRestService.splitCamelCase(m.getName())));
 
+      JInvocation invoke = null;
+      if (parentInvocations.length == 0) {
+        invoke = JExpr._super().invoke(m.getName());
+        // overriding
+        method.annotate(Override.class);
+
+        for (Parameter p : m.getParameters()) {
+          JVar jvar;
+          jvar = addMethodParameter(method, p);
+          // add to invocation
+          invoke.arg(jvar);
+        }
+      } else {
+        // invoke to get the parent
+        for (ParentInvocation parentInvocation : parentInvocations) {
+          if (invoke == null) {
+            // first invocation
+            invoke = JExpr.invoke(parentInvocation.getMethodName());
+          } else {
+            // chained
+            invoke = invoke.invoke(parentInvocation.getMethodName());
+          }
+
+          for (Parameter p : parentInvocation.getParameters()) {
+            JVar jvar;
+            jvar = addMethodParameter(method, p);
+            // add to invocation
+            invoke.arg(jvar);
+          }
+        }
+        if (invoke == null) {
+          throw new RuntimeException("Invocation was empty.");
+        }
+        // invoke self
+        invoke = invoke.invoke(m.getName());
+        for (Parameter p : m.getParameters()) {
+          if (parameterIsUnique(parentInvocations, p)) {
+
+            JVar jvar;
+            jvar = addMethodParameter(method, p);
+            // add to invocation
+            invoke.arg(jvar);
+          } else {
+            // parameter already present in the list
+            invoke.arg(JExpr.ref(paramName(p)));
+          }
+        }
+      }
+      // body
+      if (isVoid(returnType)) {
+        method.body().add(invoke);
+      } else {
+        method.body()._return(invoke);
+      }
+
       if (isResource(returnType)) {
         // dive into resource processing
         apiOperation.param("response", findReturnTypeOfResource(returnType));
 
+        ParentInvocation[] newParentInvocations = new ParentInvocation[parentInvocations.length + 1];
+        System.arraycopy(parentInvocations, 0, newParentInvocations, 0, parentInvocations.length);
+        newParentInvocations[parentInvocations.length] = new ParentInvocation(m.getName(), m.getParameters());
+        generateMethods(clazz, returnType.getDeclaredMethods(), path, newParentInvocations);
       }
-
-      // params
-      JInvocation invoke = JExpr._super().invoke(m.getName());
-      for (Parameter p : m.getParameters()) {
-        Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotationValue = parameterAnnotation(p);
-        JVar jvar;
-        if (parameterAnnotationValue.isPresent()) {
-          jvar = method.param(p.getType(), parameterAnnotationValue.get().getValue());
-          jvar.annotate(parameterAnnotationValue.get().getLeft()).param("value", parameterAnnotationValue.get().getRight());
-        } else {
-          Pair<Class<?>, String> pair = parameter(p);
-          jvar = method.param(pair.getLeft(), pair.getRight());
-        }
-        // TODO: inject parameter description here.
-        jvar.annotate(ApiParam.class).param("value", "Parameter " + jvar.name());
-        invoke.arg(jvar);
-      }
-      // body
-      method.body()._return(invoke);
 
     }
+  }
 
-    return codeModel;
+  static String paramName(Parameter param) {
+    Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotation = parameterAnnotation(param);
+    String paramName;
+    if (parameterAnnotation.isPresent()) {
+      paramName = parameterAnnotation.get().getValue();
+    } else {
+      paramName = uncapitalize(param.getType().getSimpleName());
+    }
+    return paramName;
+  }
+
+  static boolean parameterIsUnique(ParentInvocation[] parentInvocations, Parameter param) {
+
+    String paramName = paramName(param);
+    for (ParentInvocation pi : parentInvocations) {
+      for (Parameter p : pi.getParameters()) {
+        if (paramName(p).equals(paramName)) {
+          return false;
+        }
+      }
+    }
+    return true;
+
+  }
+
+  static String methodName(ParentInvocation[] parentInvocations, String name) {
+    StringBuilder builder = new StringBuilder();
+    for (ParentInvocation parentInvocation : parentInvocations) {
+      builder.append(toFirstUpper(parentInvocation.getMethodName()));
+    }
+    return toFirstLower(builder.append(toFirstUpper(name)).toString());
+  }
+
+  static String toFirstUpper(String text) {
+    if (text == null) {
+      return null;
+    }
+    return text.substring(0, 1).toUpperCase() + text.substring(1);
+  }
+
+  static String toFirstLower(String text) {
+    if (text == null) {
+      return null;
+    }
+    return text.substring(0, 1).toLowerCase() + text.substring(1);
+  }
+
+  static boolean isVoid(Class<?> returnType) {
+    return "void".equals(returnType.getName());
+  }
+
+  static JVar addMethodParameter(JMethod method, Parameter p) {
+    JVar jvar;
+    Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotationValue = parameterAnnotation(p);
+    if (parameterAnnotationValue.isPresent()) {
+      Pair<Class<? extends Annotation>, String> parameterAnnotation = parameterAnnotationValue.get();
+      jvar = method.param(p.getType(), parameterAnnotation.getValue());
+      jvar.annotate(parameterAnnotation.getLeft()).param("value", parameterAnnotation.getRight());
+    } else {
+      Pair<Class<?>, String> pair = parameter(p);
+      jvar = method.param(pair.getLeft(), pair.getRight());
+    }
+    // TODO: inject parameter description here.
+    jvar.annotate(ApiParam.class).param("value", "Parameter " + jvar.name());
+    return jvar;
+  }
+
+  private void generateConstructor(JDefinedClass clazz, Constructor<?> co) {
+    final JMethod constructor = clazz.constructor(co.getModifiers());
+    final JInvocation superInvocation = constructor.body().invoke("super");
+    for (Parameter p : co.getParameters()) {
+      final Pair<Class<?>, String> pair = parameter(p);
+      final JVar param = constructor.param(pair.getLeft(), pair.getRight());
+      superInvocation.arg(param);
+    }
   }
 
   static Class<?> findReturnTypeOfResource(Class<?> resource) {
@@ -128,16 +264,6 @@ public class SwaggerServiceModelGenerator {
     return resource;
   }
 
-  static void generateConstructor(JDefinedClass clazz, Constructor<?> co) {
-    final JMethod constructor = clazz.constructor(co.getModifiers());
-    final JInvocation superInvocation = constructor.body().invoke("super");
-    for (Parameter p : co.getParameters()) {
-      final Pair<Class<?>, String> pair = parameter(p);
-      final JVar param = constructor.param(pair.getLeft(), pair.getRight());
-      superInvocation.arg(param);
-    }
-  }
-
   static Map<Class<? extends Annotation>, String> consumesAndProduces(AnnotatedElement e) {
     Map<Class<? extends Annotation>, String> map = new HashMap<>();
 
@@ -145,7 +271,7 @@ public class SwaggerServiceModelGenerator {
       map.put(Consumes.class, ((String[]) a.value())[0]);
     });
 
-    // fixme: must support multiple
+    // FIXME: must support multiple
     Optional.ofNullable(e.getAnnotation(Produces.class)).ifPresent(a -> {
       map.put(Produces.class, ((String[]) a.value())[0]);
     });

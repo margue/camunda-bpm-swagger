@@ -44,9 +44,9 @@ import io.swagger.annotations.ApiResponses;
 
 @Path("/task")
 @Api(tags = "Task", value = "Task Service")
-public class TaskServiceSwagger extends TaskRestServiceImpl {
+public class TaskServiceSwaggerManual extends TaskRestServiceImpl {
 
-  public TaskServiceSwagger(String engineName, ObjectMapper objectMapper) {
+  public TaskServiceSwaggerManual(String engineName, ObjectMapper objectMapper) {
     super(engineName, objectMapper);
   }
 
@@ -74,6 +74,9 @@ public class TaskServiceSwagger extends TaskRestServiceImpl {
   public Object getForm(@ApiParam(value = "The id of the task to be retrieved.", example = "1") @PathParam("id") String id, Request request) {
     return getTask(id).getForm();
   }
+  
+  
+  
 
   /*
   public static class TaskResourceSwagger implements TaskResource {
