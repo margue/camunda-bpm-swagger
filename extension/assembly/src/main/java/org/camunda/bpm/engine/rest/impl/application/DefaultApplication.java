@@ -41,7 +41,7 @@ public class DefaultApplication extends Application {
     beanConfig.setSchemes(new String[] { "http" });
     beanConfig.setHost("localhost:8080");
     beanConfig.setBasePath("/engine-rest/engine/default");
-    beanConfig.setResourcePackage("org.camunda.bpm.engine.rest.impl");
+    beanConfig.setResourcePackage("org.camunda.bpm.engine.rest.swagger");
     beanConfig.setScan(true);
     beanConfig.setPrettyPrint(true);
   }

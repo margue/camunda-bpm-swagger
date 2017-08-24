@@ -15,16 +15,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.camunda.bpm.extension.swagger</groupId>
-      <artifactId>camunda-bpm-swagger-generator-annotation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.camunda.bpm.extension.swagger</groupId>
-      <artifactId>camunda-bpm-swagger-generator</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-core</artifactId>
       <version>${swagger.version}</version>
