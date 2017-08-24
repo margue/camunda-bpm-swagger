@@ -1,12 +1,10 @@
 package org.camunda.bpm.swagger.maven;
 
 import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.WithoutMojo;
 import org.apache.maven.plugin.testing.resources.TestResources;
-import org.assertj.core.api.Assertions;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 
@@ -21,8 +19,13 @@ public class GenerateAnnotatedServicesMojoTest {
   @Rule
   public TestResources resources = new TestResources();
 
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
+
   @Test
-  public void testInvalidProject() throws Exception {
+  public void generateSources() throws Exception {
+
+    folder.create();
 
     File projectCopy = this.resources.getBasedir("project-to-test");
     File pom = new File(projectCopy, "pom.xml");

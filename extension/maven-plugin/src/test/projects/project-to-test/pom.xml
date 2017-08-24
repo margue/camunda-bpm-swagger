@@ -33,7 +33,9 @@
         <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <extensions>true</extensions>
-        <configuration />
+        <configuration>
+          <outputDirectory>/tmp/c</outputDirectory>
+        </configuration>
         <executions>
           <execution>
             <goals>

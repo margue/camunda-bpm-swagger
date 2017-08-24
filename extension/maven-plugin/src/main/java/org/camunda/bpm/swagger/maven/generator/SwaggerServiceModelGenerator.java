@@ -1,21 +1,24 @@
-package org.camunda.bpm.extension.swagger.generator;
+package org.camunda.bpm.swagger.maven.generator;
 
-import static org.apache.commons.lang3.text.WordUtils.capitalize;
-import static org.apache.commons.lang3.text.WordUtils.uncapitalize;
+import com.helger.jcodemodel.JAnnotationUse;
+import com.helger.jcodemodel.JCodeModel;
+import com.helger.jcodemodel.JDefinedClass;
+import com.helger.jcodemodel.JExpr;
+import com.helger.jcodemodel.JInvocation;
+import com.helger.jcodemodel.JMethod;
+import com.helger.jcodemodel.JMod;
+import com.helger.jcodemodel.JVar;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.SneakyThrows;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.camunda.bpm.swagger.maven.model.CamundaRestService;
+import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.resource.spi.IllegalStateException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -25,53 +28,35 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.StringTokenizer;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.camunda.bpm.extension.swagger.generator.model.CamundaRestService;
-
-import com.helger.jcodemodel.AbstractJClass;
-import com.helger.jcodemodel.AbstractJType;
-import com.helger.jcodemodel.IJExpression;
-import com.helger.jcodemodel.JAnnotationUse;
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JDefinedClass;
-import com.helger.jcodemodel.JExpr;
-import com.helger.jcodemodel.JInvocation;
-import com.helger.jcodemodel.JMethod;
-import com.helger.jcodemodel.JMod;
-import com.helger.jcodemodel.JVar;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import jersey.repackaged.com.google.common.collect.Lists;
-import lombok.Data;
-import lombok.SneakyThrows;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
+import static org.apache.commons.lang3.text.WordUtils.capitalize;
+import static org.apache.commons.lang3.text.WordUtils.uncapitalize;
 
 @Slf4j
-public class SwaggerServiceModelGenerator {
+public class SwaggerServiceModelGenerator implements CodeGenerator {
 
   private final CamundaRestService camundaRestService;
   private final JCodeModel codeModel;
 
   public SwaggerServiceModelGenerator(final CamundaRestService camundaRestService) {
     this.camundaRestService = camundaRestService;
-    this.codeModel = new JCodeModel();
-
-    process();
+    this.codeModel = camundaRestService.getCodeModel();
   }
 
-  public JCodeModel getCodeModel() {
-    return codeModel;
-  }
-
+  @Override
   @SneakyThrows
-  public JCodeModel process() {
-
-    codeModel._package(camundaRestService.getPackageName());
-    JDefinedClass c = codeModel._class(camundaRestService.getSimpleName() + "Swagger");
+  public CamundaRestService generate() {
+    JDefinedClass c = camundaRestService.getDefinedClass();
 
     c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
     c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", camundaRestService.getTag());
@@ -81,10 +66,28 @@ public class SwaggerServiceModelGenerator {
       generateConstructor(c, constructor);
     }
 
-    Method[] declaredMetods = camundaRestService.getServiceInterfaceClass().getDeclaredMethods();
-    generateMethods(c, declaredMetods, "");
+    Method[] interfaceDeclaredMetods = camundaRestService.getServiceInterfaceClass().getDeclaredMethods();
+    Method[] implDeclaredMetods = camundaRestService.getServiceImplClass().getDeclaredMethods();
 
-    return codeModel;
+
+    Map<Method, Class<?>> returnTypes = new HashMap<>();
+    for (Method m : interfaceDeclaredMetods) {
+      returnTypes.put(m,m.getReturnType());
+
+      // FIXME: schick machen!
+      for (Method s : implDeclaredMetods) {
+        if (s.getName().equals(m.getName()) && s.getParameterCount() == m.getParameterCount() && s.getReturnType() != m.getReturnType()) {
+          returnTypes.put(m, s.getReturnType());
+          log.info("replace return type {} {} {}", m, m.getReturnType(), s.getReturnType());
+        }
+      }
+    }
+
+
+
+    generateMethods(c, returnTypes, "");
+
+    return camundaRestService;
   }
 
   @Value
@@ -93,9 +96,9 @@ public class SwaggerServiceModelGenerator {
     private Parameter[] parameters;
   }
 
-  private void generateMethods(JDefinedClass clazz, Method[] declaredMetods, String parentPathPrefix, ParentInvocation... parentInvocations) {
-    for (Method m : declaredMetods) {
-      Class<?> returnType = m.getReturnType();
+  private void generateMethods(JDefinedClass clazz, Map<Method, Class<?>> methods, String parentPathPrefix, ParentInvocation... parentInvocations) {
+    for (Method m : methods.keySet()) {
+      Class<?> returnType = methods.get(m);
       // extract method name to avoid name collisions
       String methodName = methodName(parentInvocations, m.getName());
       JMethod method = clazz.method(JMod.PUBLIC, returnType, methodName);
@@ -172,7 +175,13 @@ public class SwaggerServiceModelGenerator {
         ParentInvocation[] newParentInvocations = new ParentInvocation[parentInvocations.length + 1];
         System.arraycopy(parentInvocations, 0, newParentInvocations, 0, parentInvocations.length);
         newParentInvocations[parentInvocations.length] = new ParentInvocation(m.getName(), m.getParameters());
-        generateMethods(clazz, returnType.getDeclaredMethods(), path, newParentInvocations);
+
+        Map<Method,Class<?>> rt = new HashMap<>();
+        for (Method method1 : returnType.getDeclaredMethods()) {
+          rt.put(method1, method1.getReturnType());
+        }
+
+        generateMethods(clazz, rt, path, newParentInvocations);
       }
 
     }
@@ -293,16 +302,31 @@ public class SwaggerServiceModelGenerator {
     return Optional.empty();
   }
 
+  static String camelize(String value) {
+    if (value == null || !value.contains("-")) {
+      return value;
+    }
+    StringTokenizer toekn = new StringTokenizer(value,"-");
+    StringBuilder str = new StringBuilder(toekn.nextToken());
+    while (toekn.hasMoreTokens()) {
+      String s = toekn.nextToken();
+      str.append(Character.toUpperCase(s.charAt(0))).append(s.substring(1));
+    }
+    return str.toString();
+  }
+
   static Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotation(AnnotatedElement element) {
+
+
 
     PathParam pathParam = element.getAnnotation(PathParam.class);
     if (pathParam != null) {
-      return Optional.of(Pair.of(PathParam.class, pathParam.value()));
+      return Optional.of(Pair.of(PathParam.class, camelize(pathParam.value())));
     }
 
     QueryParam queryParam = element.getAnnotation(QueryParam.class);
     if (queryParam != null) {
-      return Optional.of(Pair.of(QueryParam.class, queryParam.value()));
+      return Optional.of(Pair.of(QueryParam.class, camelize(queryParam.value())));
     }
 
     return Optional.empty();
