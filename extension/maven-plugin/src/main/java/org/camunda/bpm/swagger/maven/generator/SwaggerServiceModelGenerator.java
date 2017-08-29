@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 
+import com.helger.jcodemodel.AbstractJClass;
 import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
@@ -67,20 +69,11 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
       generateConstructor(c, constructor);
     }
 
-    final Method[] interfaceDeclaredMetods = camundaRestService.getServiceInterfaceClass().getDeclaredMethods();
-    final Method[] implDeclaredMetods = camundaRestService.getServiceImplClass().getDeclaredMethods();
-
-    final Map<Method, Class<?>> returnTypes = new HashMap<>();
-    for (final Method m : interfaceDeclaredMetods) {
-      returnTypes.put(m, m.getReturnType());
-
-      // FIXME: schick machen!
-      for (final Method s : implDeclaredMetods) {
-        if (s.getName().equals(m.getName()) && s.getParameterCount() == m.getParameterCount() && s.getReturnType() != m.getReturnType()) {
-          returnTypes.put(m, s.getReturnType());
-          log.info("replace return type {} {} {}", m, m.getReturnType(), s.getReturnType());
-        }
-      }
+    final Map<Method, ReturnTypeInfo> returnTypes = new HashMap<>();
+    for (final Method m : camundaRestService.getServiceInterfaceClass().getDeclaredMethods()) {
+      final ReturnTypeInfo info = new ReturnTypeInfo(m);
+      info.applyImplementationMethods(camundaRestService.getServiceImplClass().getDeclaredMethods());
+      returnTypes.put(m, info);
     }
 
     generateMethods(c, returnTypes, "");
@@ -88,13 +81,21 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     return camundaRestService;
   }
 
-  private void generateMethods(final JDefinedClass clazz, final Map<Method, Class<?>> methods, final String parentPathPrefix,
+  private void generateMethods(final JDefinedClass clazz, final Map<Method, ReturnTypeInfo> methods, final String parentPathPrefix,
       final ParentInvocation... parentInvocations) {
     for (final Method m : methods.keySet()) {
-      final Class<?> returnType = methods.get(m);
+      final ReturnTypeInfo info = methods.get(m);
       // extract method name to avoid name collisions
       final String methodName = methodName(parentInvocations, m.getName());
-      final JMethod method = clazz.method(JMod.PUBLIC, returnType, methodName);
+      final JMethod method;
+      final Class<?> returnType = info.getRawType();
+      if (info.isParametrized()) {
+        final AbstractJClass rawType = this.codeModel.ref(info.getRawType());
+        final AbstractJClass parametrizedType = rawType.narrow(info.getParameterTypes());
+        method = clazz.method(JMod.PUBLIC, parametrizedType, methodName);
+      } else {
+        method = clazz.method(JMod.PUBLIC, returnType, methodName);
+      }
 
       final String path = path(parentPathPrefix, m);
 
@@ -137,7 +138,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
           }
         }
         if (invoke == null) {
-          throw new RuntimeException("Invocation was empty.");
+          throw new IllegalArgumentException("Invocation was empty.");
         }
         // invoke self
         invoke = invoke.invoke(m.getName());
@@ -169,19 +170,17 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
         System.arraycopy(parentInvocations, 0, newParentInvocations, 0, parentInvocations.length);
         newParentInvocations[parentInvocations.length] = new ParentInvocation(m.getName(), m.getParameters());
 
-        final Map<Method, Class<?>> rt = new HashMap<>();
-        for (final Method method1 : returnType.getDeclaredMethods()) {
-          rt.put(method1, method1.getReturnType());
-        }
 
-        generateMethods(clazz, rt, path, newParentInvocations);
+        final Map<Method, ReturnTypeInfo> resourceReturnTypeInfos = Arrays.stream(returnType.getDeclaredMethods())
+            .collect(Collectors.toMap(returnMethod -> returnMethod, returnMethod -> new ReturnTypeInfo(returnMethod)));
+
+        generateMethods(clazz, resourceReturnTypeInfos, path, newParentInvocations);
       }
-
     }
   }
 
   static String path(final String parentPathPrefix, final Method method) {
-    final StringBuilder pathBuilder = parentPathPrefix == null ? new StringBuilder(""): new StringBuilder(parentPathPrefix);
+    final StringBuilder pathBuilder = parentPathPrefix == null ? new StringBuilder("") : new StringBuilder(parentPathPrefix);
     if (pathBuilder.length() > 0 && pathBuilder.lastIndexOf("/") == pathBuilder.length() - 1) {
       // ends with a "/", remove it
       pathBuilder.deleteCharAt(pathBuilder.length() - 1);
@@ -272,9 +271,20 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     }
   }
 
+  /**
+   * Finds a method annotated with GET annotation, which misses the Path annotation or has a Path annotation without any path specified and uses its return
+   * type.
+   * 
+   * @param resource
+   *          resource class.
+   * @return type of the resource.
+   */
   static Class<?> findReturnTypeOfResource(final Class<?> resource) {
-    final Optional<Method> defaultGet = Arrays.stream(resource.getMethods()).filter(m -> m.isAnnotationPresent(GET.class))
-        .filter(m -> !m.isAnnotationPresent(Path.class)).findFirst();
+    final Optional<Method> defaultGet = Arrays.stream(resource.getMethods())
+        .filter(m -> m.isAnnotationPresent(GET.class)) // all GET methods
+        .filter(m -> !m.isAnnotationPresent(Path.class) // without Path annotation 
+            || m.isAnnotationPresent(Path.class) && m.getAnnotation(Path.class).value().equals("")) // with empty path annotation
+        .findFirst(); // take first.
     if (defaultGet.isPresent()) {
       return defaultGet.get().getReturnType();
     }
