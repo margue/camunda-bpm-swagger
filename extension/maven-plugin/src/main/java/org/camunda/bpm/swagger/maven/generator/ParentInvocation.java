@@ -4,7 +4,8 @@ import java.lang.reflect.Parameter;
 
 import lombok.Value;
 
-@Value class ParentInvocation {
+@Value 
+public class ParentInvocation {
   private String methodName;
   private Parameter[] parameters;
 }

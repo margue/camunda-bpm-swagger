@@ -1,16 +1,20 @@
 package org.camunda.bpm.swagger.maven.model;
 
-import com.helger.jcodemodel.JCodeModel;
-import com.helger.jcodemodel.JDefinedClass;
-import lombok.Getter;
-import lombok.SneakyThrows;
-import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_REST_ROOT_PKG;
 
-import javax.annotation.Generated;
 import java.io.File;
 import java.lang.reflect.Field;
 
-import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_REST_ROOT_PKG;
+import javax.annotation.Generated;
+
+import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
+import org.camunda.bpm.swagger.maven.generator.StringHelper;
+
+import com.helger.jcodemodel.JCodeModel;
+import com.helger.jcodemodel.JDefinedClass;
+
+import lombok.Getter;
+import lombok.SneakyThrows;
 
 
 public class CamundaRestService {
@@ -63,35 +67,24 @@ public class CamundaRestService {
   }
 
   public String getTag() {
-    return splitCamelCase(getSimpleName()).split(" ")[0];
+    return StringHelper.splitCamelCase(getSimpleName()).split(" ")[0];
   }
 
   public String getName() {
-    String[] n = splitCamelCase(getSimpleName()).split(" ");
+    final String[] n = StringHelper.splitCamelCase(getSimpleName()).split(" ");
     return n[0] + " " + n[2] ;
   }
 
   @SneakyThrows
   public String getPath() {
-    Field field = serviceInterfaceClass.getDeclaredField("PATH");
+    final Field field = serviceInterfaceClass.getDeclaredField("PATH");
     return field != null ? (String) field.get(null) : "";
-  }
-
-  public static String splitCamelCase(String s) {
-    return s.replaceAll(
-      String.format("%s|%s|%s",
-        "(?<=[A-Z])(?=[A-Z][a-z])",
-        "(?<=[^A-Z])(?=[A-Z])",
-        "(?<=[A-Za-z])(?=[^A-Za-z])"
-      ),
-      " "
-    );
   }
 
   @SneakyThrows
   public void write(final File destination) {
     if (destination == null || !destination.canWrite() || !destination.exists() || !destination.isDirectory()) {
-      throw new IllegalStateException("cannot write to " + destination);
+      throw new IllegalStateException("Cannot write to " + destination);
     }
     getCodeModel().build(destination);
   }
