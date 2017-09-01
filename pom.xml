@@ -35,7 +35,6 @@
 
 
 		<module>extension/maven-plugin</module>
-    <module>extension/md-docs-parser</module>
 		<module>extension/core</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>

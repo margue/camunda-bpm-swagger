@@ -12,13 +12,13 @@ import java.util.Map;
 public class DocumentationYamlTest {
   @Test
   public void name() throws Exception {
-    Map<String, Map<String, List<RestOperation>>> map = new DocumentationYaml().get();
+    Map<String, Map<String, RestOperation>> map = new DocumentationYaml().get();
 
 
     map.keySet().forEach(System.out::println);
 
 
-    System.out.println(map.get("/task/{id}/complete").get("POST").get(0).getResponseCodes());
+    System.out.println(map.get("/task/{id}/complete").get("POST").getResponseCodes());
 
   }
 }
