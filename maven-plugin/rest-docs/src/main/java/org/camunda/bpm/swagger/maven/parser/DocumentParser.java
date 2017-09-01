@@ -5,6 +5,7 @@ import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.collection.iteration.ReversiblePeekingIterable;
 import com.vladsch.flexmark.util.options.MutableDataSet;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +22,8 @@ public class DocumentParser {
         parser = Parser.builder(options).build();
     }
 
-    public Map<String, Node> parse(String fileContents) throws IOException {
+    @SneakyThrows
+    public Map<String, Node> parse(String fileContents) {
         Node document = parser.parse(fileContents);
         ReversiblePeekingIterable<Node> children = document.getChildren();
         Stack<String> headingStack = new Stack<>();

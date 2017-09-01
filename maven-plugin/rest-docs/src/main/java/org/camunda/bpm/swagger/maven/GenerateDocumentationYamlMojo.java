@@ -19,7 +19,6 @@ import org.camunda.bpm.swagger.maven.model.RestOperations;
 import org.camunda.bpm.swagger.maven.parser.DocumentParser;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -58,33 +59,23 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
   )
   private File yamlFile;
 
-  private final YAMLFactory yamlFactory = new YAMLFactory();
 
   @Override
-  @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
     getLog().info("working on :" + markdownDir);
 
-    if (!yamlFile.exists()) {
-      yamlFile.getParentFile().mkdirs();
-      yamlFile.createNewFile();
-    }
+    final YamlWriter writer = new YamlWriter(yamlFile);
 
-    final PrintWriter writer = new PrintWriter(yamlFile, "UTF-8");
     final DocumentParser parser = new DocumentParser();
     final DocumentInterpreter interpreter = new DocumentInterpreter(getLog());
 
     Function<String, RestOperation> createRestOperation = filename -> {
       Path path = Paths.get(filename);
-      try {
-        String fileContents = new String(Files.readAllBytes(path));
-        Map<String, Node> parsedTree = parser.parse(fileContents);
-        if (parsedTree != null)
-          return interpreter.interpret(parsedTree);
-      } catch (IOException e) {
-      }
-      return null;
+      String fileContents = readFileContents(path);
+      Map<String, Node> parsedTree = parser.parse(fileContents);
+      return Optional.ofNullable(parsedTree).map(interpreter::interpret).orElse(null);
     };
+
 
     Supplier<List<RestOperation>> documentations = () -> {
       WildcardFileFilter fileFilter = new WildcardFileFilter("*.md");
@@ -96,17 +87,41 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
         .filter(Objects::nonNull)
         .filter(res -> res.getPath() != null && res.getMethod() != null)
         .collect(Collectors.toList());
-
     };
 
-    RestOperations restOperations = new RestOperations();
-    restOperations.getRestOperations().addAll(documentations.get());
-
-    YAMLGenerator generator = yamlFactory.createGenerator(writer);
-    generator.setCodec(new ObjectMapper());
-    generator.writeObject(restOperations);
+    writer.accept(documentations.get());
 
   }
 
+  static class YamlWriter implements Consumer<List<RestOperation>> {
+
+    private final YAMLGenerator generator;
+
+    @SneakyThrows
+    public YamlWriter(File target) {
+      if (!target.exists()) {
+        target.getParentFile().mkdirs();
+        target.createNewFile();
+      }
+      ;
+      generator = new YAMLFactory().createGenerator(new PrintWriter(target, "UTF-8"));
+      generator.setCodec(new ObjectMapper());
+    }
+
+    @Override
+    @SneakyThrows
+    public void accept(List<RestOperation> restOperations) {
+      RestOperations wrapper = new RestOperations();
+      wrapper.getRestOperations().addAll(restOperations);
+
+      generator.writeObject(wrapper);
+    }
+
+  }
+
+  @SneakyThrows
+  private String readFileContents(Path path) {
+    return new String(Files.readAllBytes(path));
+  }
 
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.maven.generator.step.ConsumesAndProduces;
 import org.camunda.bpm.swagger.maven.generator.step.Invocation;
 import org.camunda.bpm.swagger.maven.generator.step.JaxRsAnnotation;
@@ -76,6 +77,8 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
       final MethodStep methodStep = new MethodStep(clazz);
       final JMethod method = methodStep.create(methods.get(m), parentInvocations);
 
+      String path = PathAnnotation.path(parentPathPrefix, m);
+
       // path annotation
       final PathAnnotation pathAnnotationStep = new PathAnnotation(method);
       pathAnnotationStep.annotate(parentPathPrefix, m);
@@ -126,7 +129,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
   /**
    * Finds a method annotated with GET annotation, which misses the Path annotation or has a Path annotation without any path specified and uses its return
    * type.
-   * 
+   *
    * @param resource
    *          resource class.
    * @return type of the resource.

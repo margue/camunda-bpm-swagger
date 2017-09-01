@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.maven.fn.ReflectionsFactory;
 import org.camunda.bpm.swagger.maven.fn.ScanRestServices;
 import org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory;
@@ -31,6 +32,8 @@ import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
 )
 public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
+  public static DocumentationYaml DOCUMENTATION;
+
   public static final String CAMUNDA_REST_ROOT_PKG = "org.camunda.bpm.engine.rest";
   public static final String GOAL = "generate-swagger-services";
 
@@ -48,6 +51,8 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
   @Override
   @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
+    DOCUMENTATION = new DocumentationYaml();
+
     if (!outputDirectory.exists()) {
       Files.createDirectories(outputDirectory.toPath());
     }
