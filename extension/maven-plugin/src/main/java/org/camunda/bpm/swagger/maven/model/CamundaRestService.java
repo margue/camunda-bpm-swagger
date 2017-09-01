@@ -2,7 +2,6 @@ package org.camunda.bpm.swagger.maven.model;
 
 import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_REST_ROOT_PKG;
 
-import java.io.File;
 import java.lang.reflect.Field;
 
 import javax.annotation.Generated;
@@ -13,11 +12,12 @@ import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-
-public class CamundaRestService {
+@EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)
+public class CamundaRestService extends Model {
 
   public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".swagger";
 
@@ -34,7 +34,10 @@ public class CamundaRestService {
   private final JDefinedClass definedClass;
 
   @SneakyThrows
-  public CamundaRestService(final Class<?> serviceInterfaceClass, final Class<?> serviceImplClass) {
+  public CamundaRestService(final ModelRepository repository, final Class<?> serviceInterfaceClass, final Class<?> serviceImplClass) {
+
+    super(repository);
+
     if (!serviceInterfaceClass.isAssignableFrom(serviceImplClass)) {
       throw new IllegalStateException(String.format("%s does not implement %s", serviceImplClass, serviceInterfaceClass));
     }
@@ -46,13 +49,12 @@ public class CamundaRestService {
     this.codeModel._package(PACKAGE);
     definedClass = this.codeModel._class(getFullQualifiedName());
     definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
-
   }
 
+  @Override
   public String getFullQualifiedName() {
     return String.format("%s.%sSwagger", PACKAGE, getSimpleName());
   }
-
 
   public String getSimpleName() {
     return serviceInterfaceClass.getSimpleName();
@@ -72,21 +74,13 @@ public class CamundaRestService {
 
   public String getName() {
     final String[] n = StringHelper.splitCamelCase(getSimpleName()).split(" ");
-    return n[0] + " " + n[2] ;
+    return n[0] + " " + n[2];
   }
 
   @SneakyThrows
   public String getPath() {
     final Field field = serviceInterfaceClass.getDeclaredField("PATH");
     return field != null ? (String) field.get(null) : "";
-  }
-
-  @SneakyThrows
-  public void write(final File destination) {
-    if (destination == null || !destination.canWrite() || !destination.exists() || !destination.isDirectory()) {
-      throw new IllegalStateException("Cannot write to " + destination);
-    }
-    getCodeModel().build(destination);
   }
 
 }

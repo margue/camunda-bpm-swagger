@@ -15,7 +15,9 @@ import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
+import org.springframework.beans.BeanUtils;
 
+import com.helger.jcodemodel.JBlock;
 import com.helger.jcodemodel.JExpr;
 import com.helger.jcodemodel.JInvocation;
 import com.helger.jcodemodel.JMethod;
@@ -29,6 +31,16 @@ public class Invocation extends AbstractMethodStep {
     super(method);
   }
 
+  public void dtoConstructor(final Class<?> baseClass, final String varName) {
+    final JBlock body = getMethod().body();
+    body.invoke("super");
+    // BeanUtils.copyProperties(this, dto);
+    final JInvocation copyProperties = getMethod().owner().ref(BeanUtils.class) //
+        .staticInvoke("copyProperties").arg(JExpr.ref(varName)).arg(JExpr.ref("this"));
+
+    body.add(copyProperties);
+  }
+
   public JInvocation constructor(final Constructor<?> constructor) {
     final JInvocation superInvocation = getMethod().body().invoke("super");
     for (final Parameter p : constructor.getParameters()) {
@@ -38,7 +50,6 @@ public class Invocation extends AbstractMethodStep {
     }
     return superInvocation;
   }
-
 
   public JInvocation method(final Method m, final ParentInvocation... parentInvocations) {
     JInvocation invoke = null;
@@ -124,7 +135,7 @@ public class Invocation extends AbstractMethodStep {
   }
 
   static Pair<Class<?>, String> parameter(final Parameter p) {
-    return Pair.of(p.getType(), uncapitalize(p.getType().getSimpleName()));
+    return Pair.of(p.getType(), uncapitalize(p.getType().isPrimitive() ? p.getType().getSimpleName() + "Arg" : p.getType().getSimpleName()));
   }
 
   public static String paramName(final Parameter param) {
@@ -133,7 +144,11 @@ public class Invocation extends AbstractMethodStep {
     if (parameterAnnotation.isPresent()) {
       paramName = parameterAnnotation.get().getValue();
     } else {
-      paramName = uncapitalize(param.getType().getSimpleName());
+      if (param.getType().isPrimitive()) {
+        paramName = uncapitalize(param.getType().getSimpleName()) + "Arg";
+      } else {
+        paramName = uncapitalize(param.getType().getSimpleName());
+      }
     }
     return paramName;
   }

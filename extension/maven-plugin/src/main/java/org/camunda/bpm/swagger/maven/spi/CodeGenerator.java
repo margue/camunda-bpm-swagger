@@ -1,9 +1,7 @@
 package org.camunda.bpm.swagger.maven.spi;
 
-import org.camunda.bpm.swagger.maven.model.CamundaRestService;
+import com.helger.jcodemodel.JCodeModel;
 
-public interface CodeGenerator  {
-
-  CamundaRestService generate();
-
+public interface CodeGenerator {
+  JCodeModel generate();
 }

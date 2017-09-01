@@ -1,14 +1,16 @@
 package org.camunda.bpm.swagger.maven.generator;
 
+import org.camunda.bpm.swagger.maven.model.CamundaDto;
 import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
-import org.camunda.bpm.swagger.maven.spi.CodeGeneratorFactory;
 
-@SuppressWarnings("unused")
-public class SwaggerCodeGeneratorFactory implements CodeGeneratorFactory {
+public class SwaggerCodeGeneratorFactory {
 
-  @Override
   public CodeGenerator createCodeGenerator(final CamundaRestService camundaRestService) {
     return new SwaggerServiceModelGenerator(camundaRestService);
+  }
+
+  public CodeGenerator createDtoCodeGenerator(final CamundaDto camundaDto) {
+    return new SwaggerDtoModelGenerator(camundaDto);
   }
 }

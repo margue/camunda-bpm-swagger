@@ -71,13 +71,14 @@ public class ReturnTypeInfo {
    * @param implementationMethods
    *          array of all candidate methods.
    */
-  public void applyImplementationMethods(final Method[] implementationMethods) {
+  public ReturnTypeInfo applyImplementationMethods(final Method[] implementationMethods) {
     final MethodMatcher matcher = new MethodMatcher(this.method);
     Arrays.stream(implementationMethods).filter(matcher).findFirst().ifPresent(matchedMethod -> {
       extractReturnType(matchedMethod);
       log.warn("The implementing type returned a subclass of defined return type. This is not an error and the generator replaced return type in '{}' to '{}'",
           this.method, this.rawType);
     });
+    return this;
   }
 
   /**
