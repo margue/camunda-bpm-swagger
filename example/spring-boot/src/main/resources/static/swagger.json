@@ -3376,7 +3376,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/DeploymentWithDefinitionsDto"
+              "$ref" : "#/definitions/DeploymentDto"
             }
           }
         }
@@ -5433,10 +5433,10 @@
     },
     "/incident" : {
       "get" : {
-        "tags" : [ "Historic" ],
-        "summary" : "Get Historic Incidents",
-        "description" : "Operation Get Historic Incidents",
-        "operationId" : "getHistoricIncidents",
+        "tags" : [ "Incident" ],
+        "summary" : "Get Incidents",
+        "description" : "Operation Get Incidents",
+        "operationId" : "getIncidents",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "firstResult",
@@ -5468,10 +5468,10 @@
     },
     "/incident/count" : {
       "get" : {
-        "tags" : [ "Historic" ],
-        "summary" : "Get Historic Incidents Count",
-        "description" : "Operation Get Historic Incidents Count",
-        "operationId" : "getHistoricIncidentsCount",
+        "tags" : [ "Incident" ],
+        "summary" : "Get Incidents Count",
+        "description" : "Operation Get Incidents Count",
+        "operationId" : "getIncidentsCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -8807,7 +8807,7 @@
         }
       }
     },
-    "/task/reportcandidate-group-count" : {
+    "/task/report/candidate-group-count" : {
       "get" : {
         "tags" : [ "Task" ],
         "summary" : "Get Task Count By Candidate Group Report",
@@ -10500,10 +10500,10 @@
     },
     "/variable-instance" : {
       "get" : {
-        "tags" : [ "Variable" ],
-        "summary" : "Get Variable Instances",
-        "description" : "Operation Get Variable Instances",
-        "operationId" : "getVariableInstances",
+        "tags" : [ "Historic" ],
+        "summary" : "Get Historic Variable Instances",
+        "description" : "Operation Get Historic Variable Instances",
+        "operationId" : "getHistoricVariableInstances",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "firstResult",
@@ -10540,19 +10540,19 @@
         }
       },
       "post" : {
-        "tags" : [ "Variable" ],
-        "summary" : "Query Variable Instances",
-        "description" : "Operation Query Variable Instances",
-        "operationId" : "queryVariableInstances",
+        "tags" : [ "Historic" ],
+        "summary" : "Query Historic Variable Instances",
+        "description" : "Operation Query Historic Variable Instances",
+        "operationId" : "queryHistoricVariableInstances",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableInstanceQueryDto",
+          "description" : "Parameter historicVariableInstanceQueryDto",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/VariableInstanceQueryDto"
+            "$ref" : "#/definitions/HistoricVariableInstanceQueryDto"
           }
         }, {
           "name" : "firstResult",
@@ -10591,10 +10591,10 @@
     },
     "/variable-instance/count" : {
       "get" : {
-        "tags" : [ "Variable" ],
-        "summary" : "Get Variable Instances Count",
-        "description" : "Operation Get Variable Instances Count",
-        "operationId" : "getVariableInstancesCount",
+        "tags" : [ "Historic" ],
+        "summary" : "Get Historic Variable Instances Count",
+        "description" : "Operation Get Historic Variable Instances Count",
+        "operationId" : "getHistoricVariableInstancesCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -10606,19 +10606,19 @@
         }
       },
       "post" : {
-        "tags" : [ "Variable" ],
-        "summary" : "Query Variable Instances Count",
-        "description" : "Operation Query Variable Instances Count",
-        "operationId" : "queryVariableInstancesCount",
+        "tags" : [ "Historic" ],
+        "summary" : "Query Historic Variable Instances Count",
+        "description" : "Operation Query Historic Variable Instances Count",
+        "operationId" : "queryHistoricVariableInstancesCount",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableInstanceQueryDto",
+          "description" : "Parameter historicVariableInstanceQueryDto",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/VariableInstanceQueryDto"
+            "$ref" : "#/definitions/HistoricVariableInstanceQueryDto"
           }
         } ],
         "responses" : {
@@ -10633,10 +10633,10 @@
     },
     "/variable-instance/{id}" : {
       "get" : {
-        "tags" : [ "Variable" ],
+        "tags" : [ "Historic" ],
         "summary" : "Get Resource",
         "description" : "Operation Get Resource",
-        "operationId" : "getVariableInstanceGetResource",
+        "operationId" : "variableInstanceResourceGetResource",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "id",
@@ -10655,7 +10655,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/VariableInstanceDto"
+              "$ref" : "#/definitions/HistoricVariableInstanceDto"
             }
           }
         }
@@ -10663,10 +10663,10 @@
     },
     "/variable-instance/{id}/data" : {
       "get" : {
-        "tags" : [ "Variable" ],
+        "tags" : [ "Historic" ],
         "summary" : "Get Resource Binary",
         "description" : "Operation Get Resource Binary",
-        "operationId" : "getVariableInstanceGetResourceBinary",
+        "operationId" : "variableInstanceResourceGetResourceBinary",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "id",
@@ -13952,6 +13952,18 @@
           "type" : "string",
           "format" : "uri"
         },
+        "matchedResources" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
+          }
+        },
+        "matchedURIs" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
         "queryParameters" : {
           "type" : "object",
           "additionalProperties" : {
@@ -13960,6 +13972,9 @@
               "type" : "string"
             }
           }
+        },
+        "baseUriBuilder" : {
+          "$ref" : "#/definitions/UriBuilder"
         },
         "pathSegments" : {
           "type" : "array",
@@ -13989,21 +14004,6 @@
               "type" : "string"
             }
           }
-        },
-        "matchedURIs" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string"
-          }
-        },
-        "matchedResources" : {
-          "type" : "array",
-          "items" : {
-            "type" : "object"
-          }
-        },
-        "baseUriBuilder" : {
-          "$ref" : "#/definitions/UriBuilder"
         }
       }
     },

@@ -2,20 +2,13 @@ package de.holisticon.bpm.documentation.CamundaRestDocsParser.parser;
 
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.convert.html.FlexmarkHtmlParser;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.internal.HtmlBlockParser;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.collection.iteration.ReversiblePeekingIterable;
-import com.vladsch.flexmark.util.options.DataHolder;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
