@@ -36,6 +36,7 @@
 		<module>extension/swagger-ui</module>
     <module>example/spring-boot</module>
     <module>extension/rest-docs</module>
+    <module>extension/maven-plugin-root</module>
   </modules>
 
 	<dependencyManagement>
