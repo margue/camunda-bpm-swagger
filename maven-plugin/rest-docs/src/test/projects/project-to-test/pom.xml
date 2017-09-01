@@ -3,27 +3,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>camunda-bpm-swagger-root</artifactId>
-    <groupId>org.camunda.bpm.extension.swagger.project</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
 
-  <groupId>org.camunda.bpm.extension.swagger</groupId>
-  <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
+  <groupId>org.camunda.bpm.extension.swagger.maven.test</groupId>
+  <artifactId>camunda-bpm-swagger-plugin-rest-docs-project-to-test</artifactId>
+  <version>1</version>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.17</version>
-    </dependency>
-
 
     <dependency>
       <groupId>junit</groupId>
@@ -31,7 +24,6 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -39,7 +31,8 @@
       <plugin>
         <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
         <artifactId>camunda-bpm-swagger-plugin-rest-docs</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
+        <extensions>true</extensions>
         <executions>
           <execution>
             <phase>generate-resources</phase>
@@ -47,10 +40,8 @@
               <goal>generate-documentation-yaml</goal>
             </goals>
           </execution>
-
         </executions>
       </plugin>
     </plugins>
   </build>
-
 </project>

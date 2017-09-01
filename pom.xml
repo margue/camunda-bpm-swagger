@@ -29,14 +29,18 @@
 
 	<modules>
 		<!-- <module>extension/spring-boot</module> -->
+    <module>maven-plugin</module>
+
+    <module>extension/rest-docs</module>
+
+
 		<module>extension/maven-plugin</module>
     <module>extension/md-docs-parser</module>
 		<module>extension/core</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
+
     <module>example/spring-boot</module>
-    <module>extension/rest-docs</module>
-    <module>extension/maven-plugin-root</module>
   </modules>
 
 	<dependencyManagement>
@@ -54,6 +58,12 @@
 				<artifactId>camunda-bpm-swagger-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.16.16</version>
+        <scope>provided</scope>
+      </dependency>
 
 		</dependencies>
 	</dependencyManagement>
