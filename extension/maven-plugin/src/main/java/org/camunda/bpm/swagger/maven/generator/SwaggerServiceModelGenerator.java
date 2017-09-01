@@ -74,7 +74,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
 
       // create method
       final MethodStep methodStep = new MethodStep(clazz);
-      final JMethod method = methodStep.create(methods.get(m));
+      final JMethod method = methodStep.create(methods.get(m), parentInvocations);
 
       // path annotation
       final PathAnnotation pathAnnotationStep = new PathAnnotation(method);
@@ -115,6 +115,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
 
         generateMethods(clazz, resourceReturnTypeInfos, pathAnnotationStep.getPath(), newParentInvocations);
       }
+
     }
   }
 
