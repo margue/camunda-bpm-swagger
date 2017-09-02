@@ -2,7 +2,7 @@ package org.camunda.bpm.swagger.maven.generator;
 
 public class TypeHelper {
 
-  static boolean isVoid(final Class<?> returnType) {
+  public static boolean isVoid(final Class<?> returnType) {
     return "void".equals(returnType.getName());
   }
 

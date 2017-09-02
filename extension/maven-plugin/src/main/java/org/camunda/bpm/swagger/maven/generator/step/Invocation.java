@@ -55,9 +55,6 @@ public class Invocation extends AbstractMethodStep {
     JInvocation invoke = null;
     if (parentInvocations.length == 0) {
       invoke = JExpr._super().invoke(m.getName());
-      // overriding
-      getMethod().annotate(Override.class);
-
       for (final Parameter p : m.getParameters()) {
         JVar jvar;
         jvar = addMethodParameter(getMethod(), p);

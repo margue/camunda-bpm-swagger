@@ -18,7 +18,7 @@ import lombok.SneakyThrows;
 @EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)
 public class CamundaDto extends Model {
 
-  public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".dto.swagger";
+  public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".swagger.dto";
 
   @Getter
   private final JCodeModel codeModel;
