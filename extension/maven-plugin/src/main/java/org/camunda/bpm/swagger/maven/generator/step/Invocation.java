@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -132,7 +133,10 @@ public class Invocation extends AbstractMethodStep {
   }
 
   static Pair<Class<?>, String> parameter(final Parameter p) {
-    return Pair.of(p.getType(), uncapitalize(p.getType().isPrimitive() ? p.getType().getSimpleName() + "Arg" : p.getType().getSimpleName()));
+    final String type = (p.getType().isPrimitive() ? p.getType().getSimpleName() + "Arg" : p.getType().getSimpleName())
+        + ThreadLocalRandom.current().nextInt(0, 5); // add number modify
+
+    return Pair.of(p.getType(), uncapitalize(type));
   }
 
   public static String paramName(final Parameter param) {

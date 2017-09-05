@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ModelRepository {
 
-  private final Set<Model> models = new HashSet<>();
+  private final Set<AbstractModel> models = new HashSet<>();
 
-  public Model addModel(final Model model) {
+  public AbstractModel addModel(final AbstractModel model) {
     if (models.contains(model)) {
       log.warn("Model {} already exists in repository.", model.getFullQualifiedName());
     }

@@ -6,6 +6,12 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+import org.camunda.bpm.swagger.maven.model.CamundaDto;
+import org.camunda.bpm.swagger.maven.model.ModelRepository;
+
+import com.helger.jcodemodel.AbstractJClass;
+import com.helger.jcodemodel.JCodeModel;
+
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +27,9 @@ public class ReturnTypeInfo {
 
   private final Method method;
   private Class<?> rawType;
-  private Class<?>[] parameterTypes;
+  private AbstractJClass[] parameterTypes;
+  private ModelRepository modelRepository;
+  private final JCodeModel codeModel;
 
   /**
    * Constructs the return type info for given method.
@@ -29,8 +37,10 @@ public class ReturnTypeInfo {
    * @param method
    *          method to determine the return type for.
    */
-  public ReturnTypeInfo(final Method method) {
+  public ReturnTypeInfo(final ModelRepository modelRepository, final JCodeModel codeModel, final Method method) {
+    this.codeModel = codeModel;
     this.method = method;
+    this.modelRepository = modelRepository;
     extractReturnType(this.method);
   }
 
@@ -42,14 +52,22 @@ public class ReturnTypeInfo {
       final ParameterizedType type = (ParameterizedType) returnType;
       result = (Class<?>) type.getRawType();
 
-      Class<?>[] parameterClasses = new Class<?>[type.getActualTypeArguments().length];
+      AbstractJClass[] parameterClasses = new AbstractJClass[type.getActualTypeArguments().length];
       for (int i = 0; i < type.getActualTypeArguments().length; i++) {
         final Type typeArg = type.getActualTypeArguments()[i];
         if (typeArg instanceof Class<?>) {
-          // plain class -> List<X>
-          parameterClasses[i] = (Class<?>) typeArg;
+          // plain class X -> List<X>
+          final Class<?> candidateParameterClass = (Class<?>) typeArg;
+          if (TypeHelper.isDto(candidateParameterClass)) {
+            final CamundaDto camundaDto = new CamundaDto(modelRepository, candidateParameterClass);
+            camundaDto.generate();
+            parameterClasses[i] = camundaDto.getDefinedClass();
+          } else {
+            parameterClasses[i] = codeModel.ref(candidateParameterClass);
+          }
+
         } else if (typeArg instanceof ParameterizedType) {
-          // parameterized type -> List<Map<X,Y>
+          // parameterized type Map<?,?> -> List<Map<X,Y>>
           log.error(
               "The return type was a class parameterized by a parametrized class. The generator doesn't support it yet. Falling back to the basic type for {}",
               method);
@@ -58,6 +76,7 @@ public class ReturnTypeInfo {
         }
       }
       this.parameterTypes = parameterClasses;
+
     } else {
       result = method.getReturnType();
     }

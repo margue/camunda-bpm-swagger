@@ -49,7 +49,8 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     // construct return type information
     final Map<Method, ReturnTypeInfo> returnTypes = Arrays.stream(camundaRestService.getServiceInterfaceClass().getDeclaredMethods()) // iterate over interface
         // methods
-        .map(m -> new ReturnTypeInfo(m).applyImplementationMethods(camundaRestService.getServiceImplClass().getDeclaredMethods())) // apply impl methods
+        .map(m -> new ReturnTypeInfo(camundaRestService.getModelRepository(), codeModel, m)
+            .applyImplementationMethods(camundaRestService.getServiceImplClass().getDeclaredMethods())) // apply impl methods
         .collect(Collectors.toMap(r -> r.getMethod(), r -> r)); // build the map
 
     generateMethods(c, returnTypes, NO_PREFIX);
@@ -69,7 +70,10 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
       // dive into resource processing
       if (TypeHelper.isResource(methodStep.getReturnType())) {
         generateMethods(clazz, // the class
-            ResourceMethodGenerationHelper.resourceReturnTypeInfos(methodStep.getReturnType()), // info about return types
+            ResourceMethodGenerationHelper.resourceReturnTypeInfos(camundaRestService.getModelRepository(), codeModel, methodStep.getReturnType()), // info
+            // about
+            // return
+            // types
             methodStep.getPath(), // path prefix to generate REST paths
             ResourceMethodGenerationHelper.createParentInvocations(parentInvocations, m) // invocation hierarchy
             );

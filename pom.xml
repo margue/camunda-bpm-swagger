@@ -28,12 +28,9 @@
 	</properties>
 
 	<modules>
-		<!-- <module>extension/spring-boot</module> -->
     <module>maven-plugin</module>
-
+    
     <module>extension/rest-docs</module>
-
-
 		<module>extension/maven-plugin</module>
 		<module>extension/core</module>
 		<module>extension/assembly</module>

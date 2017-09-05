@@ -7,12 +7,12 @@ import com.helger.jcodemodel.JCodeModel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-public abstract class Model {
+public abstract class AbstractModel {
 
   @Getter
   private final ModelRepository modelRepository;
 
-  public Model(final ModelRepository modelRepository) {
+  public AbstractModel(final ModelRepository modelRepository) {
     this.modelRepository = modelRepository;
     modelRepository.addModel(this);
   }

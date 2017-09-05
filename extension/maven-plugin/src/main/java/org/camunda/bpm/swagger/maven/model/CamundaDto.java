@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 @EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)
-public class CamundaDto extends Model {
+public class CamundaDto extends AbstractModel {
 
   public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".swagger.dto";
 
@@ -31,13 +31,13 @@ public class CamundaDto extends Model {
 
   @SneakyThrows
   public CamundaDto(final ModelRepository modelRepository, final Class<?> baseClass) {
-    super(modelRepository);
 
+    super(modelRepository);
     this.baseClass = baseClass;
     this.codeModel = new JCodeModel();
     this.codeModel._package(PACKAGE);
-    definedClass = this.codeModel._class(getFullQualifiedName());
-    definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
+    this.definedClass = this.codeModel._class(getFullQualifiedName());
+    this.definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
   }
 
   @Override

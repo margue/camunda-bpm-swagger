@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 @EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)
-public class CamundaRestService extends Model {
+public class CamundaRestService extends AbstractModel {
 
   public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".swagger";
 
@@ -47,8 +47,8 @@ public class CamundaRestService extends Model {
 
     this.codeModel = new JCodeModel();
     this.codeModel._package(PACKAGE);
-    definedClass = this.codeModel._class(getFullQualifiedName());
-    definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
+    this.definedClass = this.codeModel._class(getFullQualifiedName());
+    this.definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
   }
 
   @Override

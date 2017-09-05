@@ -23,7 +23,7 @@ public class ScanRestServices implements Supplier<Set<CamundaRestService>> {
     return reflections.getSubTypesOf(Object.class).stream().filter(Class::isInterface).filter(i -> i.getSimpleName().endsWith("RestService")).map(i -> {
       final Class<?> impl = reflections.getSubTypesOf(i).stream().reduce((a, b) -> {
         throw new IllegalStateException("Multiple elements: " + a + ", " + b);
-      }).orElseThrow(() -> new IllegalStateException("no implementation found"));
+      }).orElseThrow(() -> new IllegalStateException("No implementation found"));
       return new CamundaRestService(modelRespotory, i, impl);
     }).collect(Collectors.toSet());
   }

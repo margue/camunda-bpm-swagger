@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
+import org.camunda.bpm.swagger.maven.model.ModelRepository;
+
+import com.helger.jcodemodel.JCodeModel;
 
 public class ResourceMethodGenerationHelper {
 
@@ -33,9 +36,9 @@ public class ResourceMethodGenerationHelper {
    *          type to look for methods.
    * @return map from method to return type info.
    */
-  public static Map<Method, ReturnTypeInfo> resourceReturnTypeInfos(final Class<?> resource) {
+  public static Map<Method, ReturnTypeInfo> resourceReturnTypeInfos(final ModelRepository modelRepository, final JCodeModel codeModel, final Class<?> resource) {
     final Map<Method, ReturnTypeInfo> resourceReturnTypeInfos = Arrays.stream(resource.getDeclaredMethods())
-        .collect(Collectors.toMap(returnMethod -> returnMethod, returnMethod -> new ReturnTypeInfo(returnMethod)));
+        .collect(Collectors.toMap(returnMethod -> returnMethod, returnMethod -> new ReturnTypeInfo(modelRepository, codeModel, returnMethod)));
     return resourceReturnTypeInfos;
   }
 
