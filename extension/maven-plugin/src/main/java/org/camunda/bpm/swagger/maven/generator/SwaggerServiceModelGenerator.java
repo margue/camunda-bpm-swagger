@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
+import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.step.Invocation;
 import org.camunda.bpm.swagger.maven.generator.step.MethodStep;
 import org.camunda.bpm.swagger.maven.generator.step.ResourceMethodGenerationHelper;
@@ -39,6 +40,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     // class information
     c._extends(camundaRestService.getServiceImplClass());
     c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
+    // TODO add docs here
     c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", camundaRestService.getTag());
 
     // generate constructor
@@ -61,11 +63,11 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
   private void generateMethods(final JDefinedClass clazz, final Map<Method, ReturnTypeInfo> methods, final String parentPathPrefix,
       final ParentInvocation... parentInvocations) {
 
+    final Map<String, RestOperation> operationDocs = camundaRestService.getModelRepository().getDocumentation().get().get(camundaRestService.getPath());
     for (final Method m : methods.keySet()) {
-
       // create method
       final MethodStep methodStep = new MethodStep(camundaRestService.getModelRepository(), clazz);
-      methodStep.create(methods.get(m), parentPathPrefix, parentInvocations);
+      methodStep.create(methods.get(m), parentPathPrefix, operationDocs, parentInvocations);
 
       // dive into resource processing
       if (TypeHelper.isResource(methodStep.getReturnType())) {

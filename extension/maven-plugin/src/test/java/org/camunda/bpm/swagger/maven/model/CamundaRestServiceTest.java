@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class CamundaRestServiceTest {
 
-  private final ModelRepository repo = new ModelRepository();
+  private final ModelRepository repo = new ModelRepository(null);
 
   private final CamundaRestService service = new CamundaRestService(repo, TaskRestService.class, TaskRestServiceImpl.class);
 

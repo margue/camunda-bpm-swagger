@@ -2,6 +2,8 @@ package org.camunda.bpm.swagger.maven.model;
 
 import java.io.File;
 
+import org.camunda.bpm.swagger.maven.generator.StringHelper;
+
 import com.helger.jcodemodel.JCodeModel;
 
 import lombok.Getter;
@@ -21,6 +23,11 @@ public abstract class AbstractModel {
 
   public abstract String getFullQualifiedName();
 
+  public abstract String getSimpleName();
+
+  public abstract Package getPackage();
+
+
   @SneakyThrows
   public void write(final File destination) {
     if (destination == null || !destination.canWrite() || !destination.exists() || !destination.isDirectory()) {
@@ -28,4 +35,14 @@ public abstract class AbstractModel {
     }
     getCodeModel().build(destination);
   }
+
+  public String getName() {
+    final String[] n = StringHelper.splitCamelCase(getSimpleName()).split(" ");
+    return n[0] + " " + n[2];
+  }
+
+  public String getPackageName() {
+    return getPackage().getName();
+  }
+
 }

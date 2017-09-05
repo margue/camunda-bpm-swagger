@@ -29,7 +29,7 @@ import lombok.SneakyThrows;
 @Mojo(name = GOAL, defaultPhase = GENERATE_SOURCES, requiresDependencyResolution = COMPILE_PLUS_RUNTIME, threadSafe = false)
 public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
-  public static DocumentationYaml DOCUMENTATION;
+  public DocumentationYaml documentation;
 
   public static final String CAMUNDA_REST_ROOT_PKG = "org.camunda.bpm.engine.rest";
   public static final String GOAL = "generate-swagger-services";
@@ -50,9 +50,9 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
   @Override
   @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
-    DOCUMENTATION = new DocumentationYaml();
 
-    modelRepository = new ModelRepository();
+    documentation = new DocumentationYaml();
+    modelRepository = new ModelRepository(documentation);
 
     if (!outputDirectory.exists()) {
       Files.createDirectories(outputDirectory.toPath());
@@ -65,8 +65,8 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
     final Set<CamundaRestService> camundaRestServices = scanRestServices.get();
 
     getLog().info("==================");
-    getLog().info("processing Services: " + camundaRestServices);
 
+    camundaRestServices.stream().forEach(s -> getLog().debug("Processing service: " + s));
     camundaRestServices.stream().map(codeGeneratorFactory::createCodeGenerator).forEach(CodeGenerator::generate);
 
     // write all models

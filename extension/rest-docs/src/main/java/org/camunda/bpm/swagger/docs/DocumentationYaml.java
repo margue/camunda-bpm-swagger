@@ -1,6 +1,7 @@
 package org.camunda.bpm.swagger.docs;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,20 +27,18 @@ public class DocumentationYaml implements Supplier<Map<String, Map<String, RestO
       final Yaml yaml = new Yaml(new Constructor(RestOperations.class));
       final RestOperations items = (RestOperations) yaml.load(in);
 
-
       this.operations = items.getRestOperations().stream()
-          .collect(
-              Collectors.groupingBy(RestOperation::getPath,
-                  Collectors.groupingBy(RestOperation::getMethod, Collectors.reducing(null, (a,b) -> b)))
-              );
-
+          .collect(Collectors.groupingBy(RestOperation::getPath, Collectors.groupingBy(RestOperation::getPath, Collectors.reducing(null, (a, b) -> b))));
 
     }
   }
 
   @Override
   public Map<String, Map<String, RestOperation>> get() {
-
+    if (this.operations == null) {
+      return Collections.emptyMap();
+    }
     return operations;
+
   }
 }

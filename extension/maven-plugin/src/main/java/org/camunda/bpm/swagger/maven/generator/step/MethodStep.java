@@ -1,9 +1,9 @@
 package org.camunda.bpm.swagger.maven.generator.step;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
@@ -40,26 +40,28 @@ public class MethodStep {
   private AbstractJType methodReturnType;
   private String path;
 
-  public JMethod create(final ReturnTypeInfo info, final String parentPathPrefix, final ParentInvocation... parentInvocations) {
+  public JMethod create(final ReturnTypeInfo info, final String parentPathPrefix, final Map<String, RestOperation> operationDocs,
+      final ParentInvocation... parentInvocations) {
 
     this.returnType = info.getRawType();
 
-    // extract method name to avoid name collisions
+    // determine method name and return type
     final String methodName;
-
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
-      if (info.getRawType().isAssignableFrom(List.class)) {
+
+      if (TypeHelper.isList(info.getRawType())) {
         this.returnTypeStyle = ReturnTypeStyle.DTO_LIST;
-      } else if (info.getRawType().isAssignableFrom(Map.class) // map
+      } else if (TypeHelper.isMap(info.getRawType()) // map
           && info.getParameterTypes().length == 2 // parameterized
-          && "String".equals(info.getParameterTypes()[0].name())) { // with string as key
+          && TypeHelper.isString(info.getParameterTypes()[0])) { // with string as key
         this.returnTypeStyle = ReturnTypeStyle.DTO_MAP_STRING;
       } else {
         // doesn't support return parameterized type
         log.warn("Unsupported return collection type with {} type parameters:", info.getParameterTypes().length, info.getRawType().getName());
         this.returnTypeStyle = ReturnTypeStyle.PLAIN;
       }
+
       methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
       final DtoStep returnType = new DtoStep(modelRepository, info.getRawType());
@@ -84,7 +86,6 @@ public class MethodStep {
         if (parentInvocations == null) {
           method.annotate(Override.class);
         }
-
         method.body()._return(invoke);
         break;
       case DTO:
@@ -119,7 +120,7 @@ public class MethodStep {
         .lambdaExpr(JExpr
             ._new( // -> new
                 info.getParameterTypes()[1]) // DtoSwagger
-            .arg(valueEntry.invoke("getValue"))); // -> (e.getValue)
+            .arg(valueEntry.invoke("getValue"))); // (e.getValue)
 
         method.body()._return( // return
             invoke.invoke("entrySet") // entrySet()
@@ -149,7 +150,13 @@ public class MethodStep {
     final ConsumesAndProduces consumesAndProduces = new ConsumesAndProduces(method);
     consumesAndProduces.annotate(info.getMethod());
 
-    final ApiOperation apiOperation = new ApiOperation(method);
+    RestOperation restOperation = null;
+    if (operationDocs != null) {
+      restOperation = operationDocs.get(this.path);
+    } else {
+      log.info("No docs found for {}", method.name());
+    }
+    final ApiOperation apiOperation = new ApiOperation(method, restOperation);
     apiOperation.annotate(this, info.getMethod());
 
     return method;

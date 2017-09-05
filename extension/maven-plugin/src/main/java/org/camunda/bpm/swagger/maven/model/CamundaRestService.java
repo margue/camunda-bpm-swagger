@@ -56,25 +56,18 @@ public class CamundaRestService extends AbstractModel {
     return String.format("%s.%sSwagger", PACKAGE, getSimpleName());
   }
 
+  @Override
   public String getSimpleName() {
     return serviceInterfaceClass.getSimpleName();
   }
 
+  @Override
   public Package getPackage() {
     return serviceInterfaceClass.getPackage();
   }
 
-  public String getPackageName() {
-    return getPackage().getName();
-  }
-
   public String getTag() {
     return StringHelper.splitCamelCase(getSimpleName()).split(" ")[0];
-  }
-
-  public String getName() {
-    final String[] n = StringHelper.splitCamelCase(getSimpleName()).split(" ");
-    return n[0] + " " + n[2];
   }
 
   @SneakyThrows

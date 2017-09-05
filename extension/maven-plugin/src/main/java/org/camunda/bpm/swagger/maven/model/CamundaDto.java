@@ -5,7 +5,6 @@ import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_
 import javax.annotation.Generated;
 
 import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
-import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory;
 
 import com.helger.jcodemodel.JCodeModel;
@@ -45,21 +44,14 @@ public class CamundaDto extends AbstractModel {
     return String.format("%s.%sSwagger", PACKAGE, getSimpleName());
   }
 
+  @Override
   public String getSimpleName() {
     return baseClass.getSimpleName();
   }
 
+  @Override
   public Package getPackage() {
     return baseClass.getPackage();
-  }
-
-  public String getPackageName() {
-    return getPackage().getName();
-  }
-
-  public String getName() {
-    final String[] n = StringHelper.splitCamelCase(getSimpleName()).split(" ");
-    return n[0] + " " + n[2];
   }
 
   public void generate() {
