@@ -153,11 +153,8 @@ public class Invocation extends AbstractMethodStep {
     return Optional.empty();
   }
 
-  static Pair<Class<?>, String> parameter(final Parameter p) {
-    final String type = (p.getType().isPrimitive() ? p.getType().getSimpleName() + "Arg" : p.getType().getSimpleName())
-        + ThreadLocalRandom.current().nextInt(0, 5); // add number modify
-
-    return Pair.of(p.getType(), uncapitalize(type));
+  static Pair<Class<?>, String> parameter(final Parameter param) {
+    return Pair.of(param.getType(), paramName(param));
   }
 
   public static String paramName(final Parameter param) {
@@ -167,12 +164,14 @@ public class Invocation extends AbstractMethodStep {
       paramName = parameterAnnotation.get().getValue();
     } else {
       if (param.getType().isPrimitive()) {
-        paramName = uncapitalize(param.getType().getSimpleName()) + "Arg";
+        paramName = param.getType().getSimpleName() + "Arg";
       } else {
-        paramName = uncapitalize(param.getType().getSimpleName());
+        paramName = param.getType().getSimpleName();
       }
+      // FIXME: we need this only on methods with several parameters of the same type and no hints on names
+      paramName += ThreadLocalRandom.current().nextInt(0, 5); // add number modify
     }
-    return paramName;
+    return uncapitalize(paramName);
   }
 
   public static boolean parameterIsUnique(final ParentInvocation[] parentInvocations, final Parameter param) {
