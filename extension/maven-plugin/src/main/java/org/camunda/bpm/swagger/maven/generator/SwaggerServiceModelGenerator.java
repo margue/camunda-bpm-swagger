@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.Path;
 
-import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.maven.generator.step.Invocation;
 import org.camunda.bpm.swagger.maven.generator.step.MethodStep;
 import org.camunda.bpm.swagger.maven.generator.step.ResourceMethodGenerationHelper;
@@ -20,7 +20,9 @@ import com.helger.jcodemodel.JDefinedClass;
 
 import io.swagger.annotations.Api;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SwaggerServiceModelGenerator implements CodeGenerator {
 
   private static final String NO_PREFIX = "";
@@ -30,6 +32,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
   public SwaggerServiceModelGenerator(final CamundaRestService camundaRestService) {
     this.camundaRestService = camundaRestService;
     this.codeModel = camundaRestService.getCodeModel();
+    log.debug("Processing REST service: {}", camundaRestService.getFullQualifiedName());
   }
 
   @Override
@@ -63,11 +66,10 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
   private void generateMethods(final JDefinedClass clazz, final Map<Method, ReturnTypeInfo> methods, final String parentPathPrefix,
       final ParentInvocation... parentInvocations) {
 
-    final Map<String, RestOperation> operationDocs = camundaRestService.getModelRepository().getDocumentation().get().get(camundaRestService.getPath());
     for (final Method m : methods.keySet()) {
       // create method
       final MethodStep methodStep = new MethodStep(camundaRestService.getModelRepository(), clazz);
-      methodStep.create(methods.get(m), parentPathPrefix, operationDocs, parentInvocations);
+      methodStep.create(methods.get(m), Pair.of(camundaRestService.getPath(), parentPathPrefix), camundaRestService.getModelRepository().getDocumentation().get(), parentInvocations);
 
       // dive into resource processing
       if (TypeHelper.isResource(methodStep.getReturnType())) {

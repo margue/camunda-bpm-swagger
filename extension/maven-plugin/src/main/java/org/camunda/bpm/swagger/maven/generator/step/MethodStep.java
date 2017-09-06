@@ -3,6 +3,7 @@ package org.camunda.bpm.swagger.maven.generator.step;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
@@ -40,7 +41,7 @@ public class MethodStep {
   private AbstractJType methodReturnType;
   private String path;
 
-  public JMethod create(final ReturnTypeInfo info, final String parentPathPrefix, final Map<String, RestOperation> operationDocs,
+  public JMethod create(final ReturnTypeInfo info, final Pair<String, String> pathPrefix, final Map<Pair<String, String>, RestOperation> docs,
       final ParentInvocation... parentInvocations) {
 
     this.returnType = info.getRawType();
@@ -72,8 +73,23 @@ public class MethodStep {
 
     method = clazz.method(JMod.PUBLIC, methodReturnType, methodName);
 
+    // path annotation
+    final PathAnnotation pathAnnotationStep = new PathAnnotation(method);
+    pathAnnotationStep.annotate(pathPrefix.getRight(), info.getMethod());
+    this.path = pathAnnotationStep.getPath();
+
+    // JAX RS
+    final JaxRsAnnotation jaxrsAnnotation = new JaxRsAnnotation(method);
+    jaxrsAnnotation.annotate(info.getMethod());
+
+    // consume and produce
+    final ConsumesAndProduces consumesAndProduces = new ConsumesAndProduces(method);
+    consumesAndProduces.annotate(info.getMethod());
+
+    final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
+
     // create invocation
-    final JInvocation invoke = new Invocation(method).method(info.getMethod(), parentInvocations);
+    final JInvocation invoke = new Invocation(method).method(info.getMethod(), doc, parentInvocations);
 
     // body
     if (TypeHelper.isVoid(getReturnType())) {
@@ -137,26 +153,7 @@ public class MethodStep {
       }
     }
 
-    // path annotation
-    final PathAnnotation pathAnnotationStep = new PathAnnotation(method);
-    pathAnnotationStep.annotate(parentPathPrefix, info.getMethod());
-    this.path = pathAnnotationStep.getPath();
-
-    // JAX RS
-    final JaxRsAnnotation jaxrsAnnotation = new JaxRsAnnotation(method);
-    jaxrsAnnotation.annotate(info.getMethod());
-
-    // consume and produce
-    final ConsumesAndProduces consumesAndProduces = new ConsumesAndProduces(method);
-    consumesAndProduces.annotate(info.getMethod());
-
-    RestOperation restOperation = null;
-    if (operationDocs != null) {
-      restOperation = operationDocs.get(this.path);
-    } else {
-      log.info("No docs found for {}", method.name());
-    }
-    final ApiOperation apiOperation = new ApiOperation(method, restOperation);
+    final ApiOperation apiOperation = new ApiOperation(method, doc);
     apiOperation.annotate(this, info.getMethod());
 
     return method;

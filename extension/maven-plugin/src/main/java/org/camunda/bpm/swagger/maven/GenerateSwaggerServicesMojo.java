@@ -66,7 +66,6 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
     getLog().info("==================");
 
-    camundaRestServices.stream().forEach(s -> getLog().debug("Processing service: " + s));
     camundaRestServices.stream().map(codeGeneratorFactory::createCodeGenerator).forEach(CodeGenerator::generate);
 
     // write all models

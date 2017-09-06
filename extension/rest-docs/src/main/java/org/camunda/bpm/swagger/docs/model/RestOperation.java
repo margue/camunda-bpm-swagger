@@ -11,12 +11,23 @@ import lombok.ToString;
 @Getter
 @Setter
 public class RestOperation {
-
+  /**
+   * HTTP Method. One of GET, POST, PUT, DELETE, OPTIONS
+   */
   private String method;
-    private String path;
-    private String description;
-    private String resultDescription;
-    private Map<String, ParameterDescription> pathParameters = new HashMap<>();
-    private Map<String, ParameterDescription> queryParameters = new HashMap<>();
-    private Map<String, ParameterDescription> responseCodes = new HashMap<>();
+  /**
+   * Full path to the REST including placeholder in '{}'
+   */
+  private String path;
+  /**
+   * Description of the operation.
+   */
+  private String description;
+  /**
+   * Description of the result.
+   */
+  private String resultDescription;
+  private Map<String, ParameterDescription> pathParameters = new HashMap<>();
+  private Map<String, ParameterDescription> queryParameters = new HashMap<>();
+  private Map<String, ParameterDescription> responseCodes = new HashMap<>();
 }

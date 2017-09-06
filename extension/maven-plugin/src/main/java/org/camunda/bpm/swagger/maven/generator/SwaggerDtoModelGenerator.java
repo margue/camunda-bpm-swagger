@@ -30,7 +30,7 @@ public class SwaggerDtoModelGenerator implements CodeGenerator {
   public SwaggerDtoModelGenerator(final CamundaDto camundaDto) {
     this.camundaDto = camundaDto;
     this.codeModel = camundaDto.getCodeModel();
-    log.info("processing DTO: {}", camundaDto.getFullQualifiedName());
+    log.debug("Processing DTO: {}", camundaDto.getFullQualifiedName());
   }
 
   @Override
