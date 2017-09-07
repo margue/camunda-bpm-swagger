@@ -7,6 +7,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -47,7 +48,7 @@ public class Invocation extends AbstractMethodStep {
   public JInvocation constructor(final Constructor<?> constructor) {
     final JInvocation superInvocation = getMethod().body().invoke("super");
     for (final Parameter p : constructor.getParameters()) {
-      final Pair<Class<?>, String> pair = parameter(p);
+      final Pair<Class<?>, String> pair = parameter(p, constructor.getParameters());
       final JVar param = getMethod().param(pair.getLeft(), pair.getRight());
       superInvocation.arg(param);
     }
@@ -60,7 +61,7 @@ public class Invocation extends AbstractMethodStep {
       invoke = JExpr._super().invoke(m.getName());
       for (final Parameter p : m.getParameters()) {
         JVar jvar;
-        jvar = addMethodParameter(getMethod(), doc, p);
+        jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
         // add to invocation
         invoke.arg(jvar);
       }
@@ -77,7 +78,7 @@ public class Invocation extends AbstractMethodStep {
 
         for (final Parameter p : parentInvocation.getParameters()) {
           JVar jvar;
-          jvar = addMethodParameter(getMethod(), doc, p);
+          jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
           // add to invocation
           invoke.arg(jvar);
         }
@@ -88,22 +89,22 @@ public class Invocation extends AbstractMethodStep {
       // invoke self
       invoke = invoke.invoke(m.getName());
       for (final Parameter p : m.getParameters()) {
-        if (parameterIsUnique(parentInvocations, p)) {
+        if (parameterIsUnique(parentInvocations, p, m.getParameters())) {
 
           JVar jvar;
-          jvar = addMethodParameter(getMethod(), doc, p);
+          jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
           // add to invocation
           invoke.arg(jvar);
         } else {
           // parameter already present in the list
-          invoke.arg(JExpr.ref(paramName(p)));
+          invoke.arg(JExpr.ref(paramName(p, m.getParameters())));
         }
       }
     }
     return invoke;
   }
 
-  public static JVar addMethodParameter(final JMethod method, final RestOperation doc, final Parameter p) {
+  public static JVar addMethodParameter(final JMethod method, final RestOperation doc, final Parameter p, final Parameter[] all) {
     JVar jvar;
     final Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotationValue = parameterAnnotation(p);
     String apiDocsParamName = null;
@@ -130,7 +131,7 @@ public class Invocation extends AbstractMethodStep {
       }
 
     } else {
-      final Pair<Class<?>, String> pair = parameter(p);
+      final Pair<Class<?>, String> pair = parameter(p, all);
       jvar = method.param(pair.getLeft(), pair.getRight());
     }
 
@@ -138,7 +139,14 @@ public class Invocation extends AbstractMethodStep {
     return jvar;
   }
 
-  static Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotation(final AnnotatedElement element) {
+  /**
+   * Finds a parameter annotation.
+   * 
+   * @param element
+   *          annotated element.
+   * @return a pair with annotation type on the left and value on the right.
+   */
+  public static Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotation(final AnnotatedElement element) {
 
     final PathParam pathParam = element.getAnnotation(PathParam.class);
     if (pathParam != null) {
@@ -153,39 +161,71 @@ public class Invocation extends AbstractMethodStep {
     return Optional.empty();
   }
 
-  static Pair<Class<?>, String> parameter(final Parameter param) {
-    return Pair.of(param.getType(), paramName(param));
+  /**
+   * Creates a parameter pair.
+   * 
+   * @param param
+   *          parameter to describe.
+   * @param all
+   *          all parameters for checking
+   * @return a pair with type on the left and name on the right.
+   */
+  public static Pair<Class<?>, String> parameter(final Parameter param, final Parameter[] all) {
+    return Pair.of(param.getType(), paramName(param, all));
   }
 
-  public static String paramName(final Parameter param) {
+  /**
+   * Determines parameter name.
+   * 
+   * @param param
+   *          parameter to extract name for.
+   * @param all
+   *          parameters for checking.
+   * @return name of the parameter.
+   */
+  public static String paramName(final Parameter param, final Parameter[] all) {
     final Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotation = parameterAnnotation(param);
     String paramName;
     if (parameterAnnotation.isPresent()) {
       paramName = parameterAnnotation.get().getValue();
     } else {
+
       if (param.getType().isPrimitive()) {
         paramName = param.getType().getSimpleName() + "Arg";
       } else {
         paramName = param.getType().getSimpleName();
       }
+      // TODO: is this good enough?
       // FIXME: we need this only on methods with several parameters of the same type and no hints on names
-      paramName += ThreadLocalRandom.current().nextInt(0, 5); // add number modify
+      final boolean sameTypeParametersPresent = Arrays.stream(all)
+          .anyMatch(p -> (!parameterAnnotation(param).isPresent() && p.getType().equals(param.getType())));
+      if (sameTypeParametersPresent) {
+        paramName += ThreadLocalRandom.current().nextInt(0, 9999); // add number modify
+      }
     }
     return uncapitalize(paramName);
   }
 
-  public static boolean parameterIsUnique(final ParentInvocation[] parentInvocations, final Parameter param) {
+  /**
+   * Checks if the parameter is unique along with parent invocations. Currently needed for TaskService#delete only.
+   * 
+   * @param parentInvocations
+   *          invocation stack.
+   * @param param
+   *          parameter to check.
+   * @return true if unique.
+   */
+  public static boolean parameterIsUnique(final ParentInvocation[] parentInvocations, final Parameter param, final Parameter[] all) {
 
-    final String paramName = paramName(param);
+    final String paramName = paramName(param, all);
     for (final ParentInvocation pi : parentInvocations) {
       for (final Parameter p : pi.getParameters()) {
-        if (paramName(p).equals(paramName)) {
+        if (paramName(p, all).equals(paramName)) {
           return false;
         }
       }
     }
     return true;
-
   }
 
 }
