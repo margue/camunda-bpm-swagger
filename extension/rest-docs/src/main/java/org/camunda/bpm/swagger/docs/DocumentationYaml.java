@@ -2,10 +2,9 @@ package org.camunda.bpm.swagger.docs;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
@@ -30,7 +29,14 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
     try (final InputStream in = DocumentationYaml.class.getResourceAsStream(yamlFile)) {
       final Yaml yaml = new Yaml(new Constructor(RestOperations.class));
       final RestOperations items = (RestOperations) yaml.load(in);
-      this.operations = items.getRestOperations().stream().collect(Collectors.toMap(p -> Pair.of(p.getPath(), p.getMethod()), Function.identity()));
+
+      // FIXME: MAGIC -> this delivers duplicate key.
+      // this.operations = items.getRestOperations().stream().collect(Collectors.toMap(p -> Pair.of(p.getPath(), p.getMethod()), Function.identity()));
+
+      this.operations = new HashMap<>();
+      for (final RestOperation r : items.getRestOperations()) {
+        this.operations.put(Pair.of(r.getPath(), r.getMethod()), r);
+      }
     }
   }
 
