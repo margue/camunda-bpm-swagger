@@ -1,7 +1,6 @@
 package org.camunda.bpm.swagger.maven.generator.step;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,7 +9,6 @@ import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
-import org.camunda.bpm.swagger.maven.model.CamundaDto;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
 import com.helger.jcodemodel.AbstractJType;
@@ -49,7 +47,6 @@ public class MethodStep {
     this.returnType = info.getRawType();
 
     // determine method name and return type
-    Optional<DtoStep> dtoStep = Optional.empty();
     final String methodName;
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
@@ -68,9 +65,9 @@ public class MethodStep {
 
       methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
-      dtoStep = Optional.of(new DtoStep(modelRepository, info.getRawType()));
-      this.returnTypeStyle = dtoStep.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
-      this.methodReturnType = dtoStep.get().getType(this.clazz.owner());
+      final DtoStep returnType = new DtoStep(modelRepository, info.getRawType());
+      this.returnTypeStyle = returnType.isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
+      this.methodReturnType = returnType.getType(this.clazz.owner());
       methodName = methodName(parentInvocations, info.getMethod().getName(), null);
     }
 
@@ -91,12 +88,8 @@ public class MethodStep {
 
     final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
 
-    dtoStep.flatMap(DtoStep::getCamundaDto).ifPresent(dto -> {
-      dto.setRestOperation(doc);
-    });
-
     // create invocation
-    final JInvocation invoke = new Invocation(method).method(info.getMethod(), doc, parentInvocations);
+    final JInvocation invoke = new Invocation(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
 
     // body
     if (TypeHelper.isVoid(getReturnType())) {
@@ -109,6 +102,7 @@ public class MethodStep {
         if (parentInvocations == null) {
           method.annotate(Override.class);
         }
+
         method.body()._return(invoke);
         break;
       case DTO:
@@ -160,7 +154,7 @@ public class MethodStep {
       }
     }
 
-    final ApiOperation apiOperation = new ApiOperation(method, doc);
+    final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
     apiOperation.annotate(this, info.getMethod());
 
     return method;
@@ -178,5 +172,4 @@ public class MethodStep {
     }
     return StringHelper.toFirstLower(builder.toString());
   }
-
 }

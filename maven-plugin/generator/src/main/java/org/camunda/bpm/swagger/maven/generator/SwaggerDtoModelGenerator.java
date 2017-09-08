@@ -1,11 +1,11 @@
 package org.camunda.bpm.swagger.maven.generator;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.step.Invocation;
 import org.camunda.bpm.swagger.maven.model.CamundaDto;
@@ -56,13 +56,12 @@ public class SwaggerDtoModelGenerator implements CodeGenerator {
 
     // generate getters
     final List<Method> getters = Arrays.stream(camundaDto.getBaseClass().getDeclaredMethods()).filter(m -> m.getName().startsWith("get"))
-        .collect(Collectors.toList());
+        .filter(m -> Modifier.isPublic(m.getModifiers())).collect(Collectors.toList());
     for (final Method m : getters) {
       final JMethod method = c.method(JMod.PUBLIC, m.getReturnType(), m.getName());
       method.annotate(Override.class);
 
-      String fieldname = StringHelper.getFieldnameFromGetter(m.getName());
-
+      final String fieldname = StringHelper.getFieldnameFromGetter(m.getName());
 
       // TODO Hook with the dictionary
       final JAnnotationUse getterAnnotation = method.annotate(ApiModelProperty.class);

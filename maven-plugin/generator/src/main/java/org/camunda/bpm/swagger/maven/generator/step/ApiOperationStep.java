@@ -12,29 +12,30 @@ import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
 
-import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JMethod;
 
-public class ApiOperation extends AbstractMethodStep {
+import io.swagger.annotations.ApiOperation;
+
+public class ApiOperationStep extends AbstractMethodStep {
 
   private final RestOperation restOperation;
 
-  public ApiOperation(final JMethod method, final RestOperation restOperation) {
+  public ApiOperationStep(final JMethod method, final RestOperation restOperation) {
     super(method);
     this.restOperation = restOperation;
   }
 
   public void annotate(final MethodStep methodStep, final Method m) {
-    final String description = restOperation != null ? restOperation.getDescription() : WordUtils.capitalize(StringHelper.splitCamelCase(m.getName()));
-    final JAnnotationUse apiOperation = getMethod().annotate(io.swagger.annotations.ApiOperation.class) //
-        .param("value", description);
-    // notes are not used
-    // .param("notes", "Operation " + capitalize(StringHelper.splitCamelCase(m.getName())));
 
-    if (TypeHelper.isResource(methodStep.getReturnType())) {
-      // dive into resource processing
-      apiOperation.param("response", findReturnTypeOfResource(methodStep.getReturnType()));
+    // resources are not annotated at all, because the resource itself will contain a method
+    // that will get into the public API. It is a method with GET annotation and empty path.
+    if (!TypeHelper.isResource(methodStep.getReturnType())) {
+      final String description = restOperation != null ? restOperation.getDescription() : WordUtils.capitalize(StringHelper.splitCamelCase(m.getName()));
 
+      getMethod().annotate(ApiOperation.class) //
+      .param("value", description);
+      // notes are not used
+      // .param("notes", "Operation " + capitalize(StringHelper.splitCamelCase(m.getName())));
     }
   }
 

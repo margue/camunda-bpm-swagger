@@ -13,22 +13,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ParameterRepository {
 
-  private static Map<Class<?>, Pair<Class<?>, String>> predefinedParameters = new HashMap<>();
+  private static Map<String, Pair<Class<?>, String>> predefinedParameters = new HashMap<>();
 
   static {
-    predefinedParameters.put(UriInfo.class, Pair.of(UriInfo.class, "uriInfo"));
-    predefinedParameters.put(ObjectMapper.class, Pair.of(ObjectMapper.class, "objectMapper"));
+    predefinedParameters.put(UriInfo.class.getName(), Pair.of(UriInfo.class, "uriInfo"));
+    predefinedParameters.put(ObjectMapper.class.getName(), Pair.of(ObjectMapper.class, "objectMapper"));
   }
 
   public static Optional<Pair<Class<?>, String>> lookup(final Parameter param) {
-    final Pair<Class<?>, String> pair = predefinedParameters.get(param.getType());
+    final Pair<Class<?>, String> pair = predefinedParameters.get(param.getType().getName());
     if (pair != null) {
       return Optional.of(pair);
     }
     return Optional.empty();
   }
 
-  public static boolean isPresent(final Class<?> predefinedParameter) {
-    return predefinedParameters.containsKey(predefinedParameter);
+  public static boolean isPresent(final String fullclassName) {
+    return predefinedParameters.containsKey(fullclassName);
   }
 }

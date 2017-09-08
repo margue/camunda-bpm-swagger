@@ -4,7 +4,6 @@ import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_
 
 import javax.annotation.Generated;
 
-import lombok.Setter;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
 import org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory;
@@ -14,6 +13,7 @@ import com.helger.jcodemodel.JDefinedClass;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 @EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)

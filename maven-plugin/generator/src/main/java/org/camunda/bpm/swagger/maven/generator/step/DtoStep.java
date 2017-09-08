@@ -1,6 +1,7 @@
 package org.camunda.bpm.swagger.maven.generator.step;
 
-import lombok.Getter;
+import java.util.Optional;
+
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
 import org.camunda.bpm.swagger.maven.model.CamundaDto;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
@@ -9,13 +10,14 @@ import com.helger.jcodemodel.AbstractJClass;
 import com.helger.jcodemodel.AbstractJType;
 import com.helger.jcodemodel.JCodeModel;
 
-import java.util.Optional;
+import lombok.Getter;
 
 public class DtoStep {
 
   @Getter
   private Optional<CamundaDto> camundaDto = Optional.empty();
 
+  @Getter
   private final Class<?> baseClazz;
   private final ModelRepository modelRepository;
 
@@ -45,3 +47,4 @@ public class DtoStep {
     return dto.getDefinedClass();
   }
 }
+

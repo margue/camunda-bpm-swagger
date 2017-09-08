@@ -19,8 +19,11 @@ import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.ParameterRepository;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
+import org.camunda.bpm.swagger.maven.model.ModelRepository;
 import org.springframework.beans.BeanUtils;
 
+import com.helger.jcodemodel.AbstractJType;
+import com.helger.jcodemodel.JAnnotationUse;
 import com.helger.jcodemodel.JBlock;
 import com.helger.jcodemodel.JExpr;
 import com.helger.jcodemodel.JInvocation;
@@ -55,13 +58,13 @@ public class Invocation extends AbstractMethodStep {
     return superInvocation;
   }
 
-  public JInvocation method(final Method m, final RestOperation doc, final ParentInvocation... parentInvocations) {
+  public JInvocation method(final ModelRepository modelRepository, final Method m, final RestOperation doc, final ParentInvocation... parentInvocations) {
     JInvocation invoke = null;
     if (parentInvocations.length == 0) {
       invoke = JExpr._super().invoke(m.getName());
       for (final Parameter p : m.getParameters()) {
         JVar jvar;
-        jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
+        jvar = addMethodParameter(modelRepository, getMethod(), doc, p, m.getParameters());
         // add to invocation
         invoke.arg(jvar);
       }
@@ -78,7 +81,7 @@ public class Invocation extends AbstractMethodStep {
 
         for (final Parameter p : parentInvocation.getParameters()) {
           JVar jvar;
-          jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
+          jvar = addMethodParameter(modelRepository, getMethod(), doc, p, m.getParameters());
           // add to invocation
           invoke.arg(jvar);
         }
@@ -92,7 +95,7 @@ public class Invocation extends AbstractMethodStep {
         if (parameterIsUnique(parentInvocations, p, m.getParameters())) {
 
           JVar jvar;
-          jvar = addMethodParameter(getMethod(), doc, p, m.getParameters());
+          jvar = addMethodParameter(modelRepository, getMethod(), doc, p, m.getParameters());
           // add to invocation
           invoke.arg(jvar);
         } else {
@@ -104,16 +107,20 @@ public class Invocation extends AbstractMethodStep {
     return invoke;
   }
 
-  public static JVar addMethodParameter(final JMethod method, final RestOperation doc, final Parameter p, final Parameter[] all) {
+  public static JVar addMethodParameter(final ModelRepository modelRepository, final JMethod method, final RestOperation doc, final Parameter p,
+      final Parameter[] all) {
     JVar jvar;
     final Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotationValue = parameterAnnotation(p);
     String apiDocsParamName = null;
-    final Class<?> paramType;
+
+    final Pair<Class<?>, String> pair = parameter(p, all);
+
+    final DtoStep dtoStep = new DtoStep(modelRepository, pair.getLeft());
+    final AbstractJType type = dtoStep.getType(method.owner());
 
     if (parameterAnnotationValue.isPresent()) {
       final Pair<Class<? extends Annotation>, String> parameterAnnotation = parameterAnnotationValue.get();
-      paramType = parameterAnnotation.getLeft();
-      jvar = method.param(p.getType(), parameterAnnotation.getRight());
+      jvar = method.param(type, parameterAnnotation.getRight());
       jvar.annotate(parameterAnnotation.getLeft()).param("value", parameterAnnotation.getRight());
 
       if (doc != null) {
@@ -133,12 +140,16 @@ public class Invocation extends AbstractMethodStep {
       }
 
     } else {
-      final Pair<Class<?>, String> pair = parameter(p, all);
-      paramType = pair.getLeft();
-      jvar = method.param(pair.getLeft(), pair.getRight());
+      jvar = method.param(type, pair.getRight());
     }
-    if (!ParameterRepository.isPresent(paramType)) {
-      jvar.annotate(ApiParam.class).param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
+
+    // annotate
+    if (!ParameterRepository.isPresent(type.fullName())) {
+      final JAnnotationUse apiParam = jvar.annotate(ApiParam.class).param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
+
+      if (dtoStep.isDto()) {
+        apiParam.param("type", type.fullName());
+      }
     }
     return jvar;
   }
