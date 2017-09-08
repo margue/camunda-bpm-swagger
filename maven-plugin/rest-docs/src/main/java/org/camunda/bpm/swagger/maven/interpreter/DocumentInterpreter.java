@@ -74,28 +74,72 @@ public class DocumentInterpreter {
   }
 
   private Map<String, ParameterDescription> htmlNodeToMap(HtmlBlock htmlBlock) {
-    String htmlBlockBody = htmlBlock
+    String htmlBlockBody = prepareHTML(htmlBlock);
+    org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
+    Elements trs = document.select("tr");
+    Integer nameIdx = null;
+    Integer descriptionIdx = null;
+    Integer typeIdx = null;
+    Integer requiredIdx = null;
+    Elements ths = trs.get(0).select("th");
+    if(ths.size() == 0) {
+      // Workaround for missing table header
+      nameIdx = 0;
+      switch(trs.get(0).select("td").size()) {
+        case 2:
+          descriptionIdx = 1;
+          break;
+        case 3:
+          typeIdx = 1;
+          descriptionIdx = 2;
+          break;
+      }
+    }
+    for (int i = 0; i < ths.size(); i++) {
+      Element element = ths.get(i);
+      switch(element.text()) {
+        case "Name":
+        case "Code":
+          nameIdx = i;
+          break;
+        case "Description":
+          descriptionIdx = i;
+          break;
+        case "Media type":
+        case "Type":
+        case "Value":
+          typeIdx = i;
+          break;
+        case "Required?":
+          requiredIdx = i;
+          break;
+        default:
+          log.debug("Fieldname unknown: " + element.text());
+          break;
+      }
+    }
+    HashMap<String, ParameterDescription> result = new HashMap<>();
+    for (Element tr : trs) {
+      Elements tds = tr.select("td");
+      if(tds.size() == 0)
+        break;
+      ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
+      Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
+      Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
+      Optional.ofNullable(typeIdx).map(tds::get).map(Element::text).ifPresent(builder::type);
+      Optional.ofNullable(requiredIdx).map(tds::get).map(Element::text).map(o -> o.equals("Yes")).ifPresent(builder::required);
+        ParameterDescription parameterDescription = builder.build();
+        result.put(parameterDescription.getId(), parameterDescription);
+
+    }
+    return result;
+  }
+
+  private String prepareHTML(HtmlBlock htmlBlock) {
+    return htmlBlock
       .getChars().toString()
       .replaceAll("\\{\\{[^}]+\\}\\}", "")
       .replaceAll("\\<\\/tr\\>[\n\t]+\\<tr\\>", "");
-    org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
-    Elements trs = document.select("tr");
-    HashMap<String, ParameterDescription> result = new HashMap<>();
-    trs.stream().forEach((Element tr) -> {
-      Elements td = tr.select("td");
-      if (td.size() >= 2) {
-        ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
-        builder.id(td.get(0).text());
-        if (td.size() > 2) {
-          builder.description(td.get(1).text());
-          builder.description(td.get(2).text());
-        } else {
-          builder.description(td.get(1).text());
-        }
-        result.put(td.get(0).text(), builder.build());
-      }
-    });
-    return result;
   }
 
   private Optional<String> resolveDescription(Map<String, Node> parsedObject) {

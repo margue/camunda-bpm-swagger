@@ -11,4 +11,5 @@ public class ParameterDescription {
   private String id;
   private String type;
   private String description;
+  private Boolean required;
 }
