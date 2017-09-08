@@ -17,6 +17,7 @@ import javax.ws.rs.QueryParam;
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.camunda.bpm.swagger.maven.generator.ParameterRepository;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.springframework.beans.BeanUtils;
@@ -108,10 +109,12 @@ public class Invocation extends AbstractMethodStep {
     JVar jvar;
     final Optional<Pair<Class<? extends Annotation>, String>> parameterAnnotationValue = parameterAnnotation(p);
     String apiDocsParamName = null;
+    final Class<?> paramType;
 
     if (parameterAnnotationValue.isPresent()) {
       final Pair<Class<? extends Annotation>, String> parameterAnnotation = parameterAnnotationValue.get();
-      jvar = method.param(p.getType(), parameterAnnotation.getValue());
+      paramType = parameterAnnotation.getLeft();
+      jvar = method.param(p.getType(), parameterAnnotation.getRight());
       jvar.annotate(parameterAnnotation.getLeft()).param("value", parameterAnnotation.getRight());
 
       if (doc != null) {
@@ -132,10 +135,12 @@ public class Invocation extends AbstractMethodStep {
 
     } else {
       final Pair<Class<?>, String> pair = parameter(p, all);
+      paramType = pair.getLeft();
       jvar = method.param(pair.getLeft(), pair.getRight());
     }
-
-    jvar.annotate(ApiParam.class).param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
+    if (!ParameterRepository.isPresent(paramType)) {
+      jvar.annotate(ApiParam.class).param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
+    }
     return jvar;
   }
 
@@ -171,7 +176,8 @@ public class Invocation extends AbstractMethodStep {
    * @return a pair with type on the left and name on the right.
    */
   public static Pair<Class<?>, String> parameter(final Parameter param, final Parameter[] all) {
-    return Pair.of(param.getType(), paramName(param, all));
+    final Optional<Pair<Class<?>, String>> lookup = ParameterRepository.lookup(param);
+    return lookup.orElse(Pair.of(param.getType(), paramName(param, all)));
   }
 
   /**
