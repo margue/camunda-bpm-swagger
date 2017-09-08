@@ -68,14 +68,6 @@
         "operationId" : "getHistoricActivityInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6810",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -112,7 +104,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicActivityInstanceQueryDto328",
+          "description" : "Parameter historicActivityInstanceQueryDto6272",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricActivityInstanceQueryDto"
@@ -156,7 +148,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -171,7 +163,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicActivityInstanceQueryDto7693",
+          "description" : "Parameter historicActivityInstanceQueryDto6113",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricActivityInstanceQueryDto"
@@ -219,14 +211,6 @@
         "operationId" : "queryAuthorizationsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1868",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -306,7 +290,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/AuthorizationCheckResultDto"
+              "$ref" : "#/definitions/AuthorizationCheckResultDtoSwagger"
             }
           }
         }
@@ -340,7 +324,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter authorizationCreateDto3821",
+          "description" : "Parameter authorizationCreateDto7027",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/AuthorizationCreateDto"
@@ -350,7 +334,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/AuthorizationDtoSwagger"
+              "$ref" : "#/definitions/AuthorizationDto"
             }
           }
         }
@@ -369,14 +353,6 @@
           "description" : "The id of the authorization to be retrieved.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2223",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -403,7 +379,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter authorizationDto4759",
+          "description" : "Parameter authorizationDto6193",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/AuthorizationDto"
@@ -446,14 +422,6 @@
           "description" : "Parameter id",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6277",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -467,20 +435,12 @@
     },
     "/batch" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Batch" ],
         "summary" : "Queries for batches that fulfill given parameters. Parameters may be\nthe properties of batches, such as the id or type.  The\nsize of the result set can be retrieved by using the Get Batch Count\nrelref \"reference/rest/batch/get-query-count.md\" >}}) method.",
         "description" : "",
-        "operationId" : "getHistoricBatchesList",
+        "operationId" : "getBatchesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2463",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -510,16 +470,16 @@
     },
     "/batch/count" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Batch" ],
         "summary" : "Requests the number of batches that fulfill the query criteria.\nTakes the same filtering parameters as the Get Batches\n\"reference/rest/batch/get-query.md\" >}}) method.",
         "description" : "",
-        "operationId" : "getHistoricBatchesCount",
+        "operationId" : "getBatchesCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDtoSwagger"
+              "$ref" : "#/definitions/CountResultDto"
             }
           }
         }
@@ -533,14 +493,6 @@
         "operationId" : "getStatisticsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1343",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -587,10 +539,10 @@
     },
     "/batch/{id}" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Batch" ],
         "summary" : "Retrieves a batch by id, according to the `Batch` interface in the engine.",
         "description" : "",
-        "operationId" : "getHistoricBatchGetHistoricBatch",
+        "operationId" : "getBatchGetBatch",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "id",
@@ -603,22 +555,28 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/HistoricBatchDtoSwagger"
+              "$ref" : "#/definitions/BatchDtoSwagger"
             }
           }
         }
       },
       "delete" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Batch" ],
         "summary" : "Deletes a batch by id, including all related jobs and job definitions. Optionally also\ndeletes the batch history.",
         "description" : "",
-        "operationId" : "getHistoricBatchDeleteHistoricBatch",
+        "operationId" : "getBatchDeleteBatch",
         "parameters" : [ {
           "name" : "id",
           "in" : "path",
           "description" : "The id of the batch to be deleted.",
           "required" : true,
           "type" : "string"
+        }, {
+          "name" : "cascade",
+          "in" : "query",
+          "description" : "true, if the historic batch and historic job logs for this batch should also be deleted.",
+          "required" : false,
+          "type" : "boolean"
         } ],
         "responses" : {
           "default" : {
@@ -643,7 +601,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter suspensionStateDto6341",
+          "description" : "Parameter suspensionStateDto4997",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/SuspensionStateDto"
@@ -664,14 +622,6 @@
         "operationId" : "getHistoricCaseActivityInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8427",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -710,7 +660,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -748,14 +698,6 @@
         "operationId" : "getCaseDefinitionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1482",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -794,7 +736,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDtoSwagger"
+              "$ref" : "#/definitions/CountResultDto"
             }
           }
         }
@@ -841,15 +783,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo5700",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter createCaseInstanceDto7244",
+          "description" : "Parameter createCaseInstanceDto4699",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CreateCaseInstanceDto"
@@ -903,7 +837,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto608",
+          "description" : "Parameter historyTimeToLiveDto1189",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -969,15 +903,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo1310",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter createCaseInstanceDto7700",
+          "description" : "Parameter createCaseInstanceDto65",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CreateCaseInstanceDto"
@@ -1043,7 +969,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto4810",
+          "description" : "Parameter historyTimeToLiveDto4254",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -1151,15 +1077,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo6620",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter createCaseInstanceDto5796",
+          "description" : "Parameter createCaseInstanceDto3725",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CreateCaseInstanceDto"
@@ -1213,7 +1131,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto3871",
+          "description" : "Parameter historyTimeToLiveDto2940",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -1285,14 +1203,6 @@
         "operationId" : "getCaseExecutionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo3879",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -1329,7 +1239,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionQueryDto7713",
+          "description" : "Parameter caseExecutionQueryDto4454",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionQueryDto"
@@ -1388,7 +1298,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionQueryDto3432",
+          "description" : "Parameter caseExecutionQueryDto5110",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionQueryDto"
@@ -1445,7 +1355,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto9384",
+          "description" : "Parameter caseExecutionTriggerDto5520",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -1475,7 +1385,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto8000",
+          "description" : "Parameter caseExecutionTriggerDto6951",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -1535,7 +1445,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto518",
+          "description" : "Parameter patchVariablesDto6569",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -1605,7 +1515,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto3200",
+          "description" : "Parameter variableValueDto2796",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -1691,7 +1601,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData4827",
+          "description" : "Parameter multipartFormData2635",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -1721,7 +1631,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto4599",
+          "description" : "Parameter caseExecutionTriggerDto5836",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -1751,7 +1661,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto5372",
+          "description" : "Parameter caseExecutionTriggerDto9806",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -1781,7 +1691,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto3686",
+          "description" : "Parameter caseExecutionTriggerDto8722",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -1841,7 +1751,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto9530",
+          "description" : "Parameter patchVariablesDto6562",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -1911,7 +1821,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto520",
+          "description" : "Parameter variableValueDto2610",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -1997,7 +1907,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData4271",
+          "description" : "Parameter multipartFormData549",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -2012,20 +1922,12 @@
     },
     "/case-instance" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Case" ],
         "summary" : "Queries for case instances that fulfill given parameters.\nParameters may be static as well as dynamic runtime properties of case instances.\nThe size of the result set can be retrieved by using the Get Case Instance Count",
         "description" : "",
-        "operationId" : "getHistoricCaseInstancesList",
+        "operationId" : "getCaseInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo7501",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -2053,19 +1955,19 @@
         }
       },
       "post" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Case" ],
         "summary" : "Queries for case instances that fulfill given parameters through a JSON object.\nThis method is slightly more powerful than the Get Case Instances\nto filter by multiple case variables of types `String`, `Number` or `Boolean`.",
         "description" : "",
-        "operationId" : "queryHistoricCaseInstancesList",
+        "operationId" : "queryCaseInstancesList",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicCaseInstanceQueryDto6138",
+          "description" : "Parameter caseInstanceQueryDto2551",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/HistoricCaseInstanceQueryDto"
+            "$ref" : "#/definitions/CaseInstanceQueryDto"
           }
         }, {
           "name" : "firstResult",
@@ -2097,10 +1999,10 @@
     },
     "/case-instance/count" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Case" ],
         "summary" : "Queries for the number of case instances that fulfill given parameters.\nTakes the same parameters as the Get Case Instances",
         "description" : "",
-        "operationId" : "getHistoricCaseInstancesCount",
+        "operationId" : "getCaseInstancesCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -2112,19 +2014,19 @@
         }
       },
       "post" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Case" ],
         "summary" : "Queries for the number of case instances that fulfill the given parameters.\nThis method takes the same message body as the Get Case Instance (POST)\nand therefore it is slightly more powerful than the Get Case Instance Count",
         "description" : "",
-        "operationId" : "queryHistoricCaseInstancesCount",
+        "operationId" : "queryCaseInstancesCount",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicCaseInstanceQueryDto8821",
+          "description" : "Parameter caseInstanceQueryDto4795",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/HistoricCaseInstanceQueryDto"
+            "$ref" : "#/definitions/CaseInstanceQueryDto"
           }
         } ],
         "responses" : {
@@ -2139,10 +2041,10 @@
     },
     "/case-instance/{id}" : {
       "get" : {
-        "tags" : [ "Historic" ],
+        "tags" : [ "Case" ],
         "summary" : "Retrieves a case instance by id, according to the `CaseInstance` interface in the engine.",
         "description" : "",
-        "operationId" : "getHistoricCaseInstanceGetHistoricCaseInstance",
+        "operationId" : "getCaseInstanceGetCaseInstance",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "id",
@@ -2155,7 +2057,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/HistoricCaseInstanceDtoSwagger"
+              "$ref" : "#/definitions/CaseInstanceDtoSwagger"
             }
           }
         }
@@ -2178,7 +2080,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto8473",
+          "description" : "Parameter caseExecutionTriggerDto206",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -2208,7 +2110,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto3422",
+          "description" : "Parameter caseExecutionTriggerDto7308",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -2238,7 +2140,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter caseExecutionTriggerDto7744",
+          "description" : "Parameter caseExecutionTriggerDto5270",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CaseExecutionTriggerDto"
@@ -2298,7 +2200,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto2731",
+          "description" : "Parameter patchVariablesDto2171",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -2368,7 +2270,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto8966",
+          "description" : "Parameter variableValueDto7881",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -2454,7 +2356,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData7076",
+          "description" : "Parameter multipartFormData8759",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -2475,14 +2377,6 @@
         "operationId" : "getDecisionDefinitionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2177",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -2589,15 +2483,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo3731",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter evaluateDecisionDto5899",
+          "description" : "Parameter evaluateDecisionDto7666",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/EvaluateDecisionDto"
@@ -2633,7 +2519,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto6862",
+          "description" : "Parameter historyTimeToLiveDto1807",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -2726,15 +2612,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo4708",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter evaluateDecisionDto4421",
+          "description" : "Parameter evaluateDecisionDto1231",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/EvaluateDecisionDto"
@@ -2776,7 +2654,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto9480",
+          "description" : "Parameter historyTimeToLiveDto7870",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -2905,15 +2783,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo6210",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter evaluateDecisionDto2271",
+          "description" : "Parameter evaluateDecisionDto5566",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/EvaluateDecisionDto"
@@ -2949,7 +2819,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto3889",
+          "description" : "Parameter historyTimeToLiveDto1274",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -2994,14 +2864,6 @@
         "operationId" : "getHistoricDecisionInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo953",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -3040,7 +2902,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -3102,14 +2964,6 @@
         "operationId" : "getDecisionRequirementsDefinitionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1305",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -3148,7 +3002,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDtoSwagger"
+              "$ref" : "#/definitions/CountResultDto"
             }
           }
         }
@@ -3420,14 +3274,6 @@
         "operationId" : "getDeploymentsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8045",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -3483,7 +3329,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData7863",
+          "description" : "Parameter multipartFormData6954",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -3534,14 +3380,6 @@
           "description" : "The id of the deployment to be deleted.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo981",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "default" : {
@@ -3566,15 +3404,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo3942",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter redeploymentDto4769",
+          "description" : "Parameter redeploymentDto399",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RedeploymentDto"
@@ -3682,14 +3512,6 @@
         "operationId" : "getHistoricDetailsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6074",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -3734,7 +3556,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -3799,14 +3621,6 @@
         "operationId" : "getExecutionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1644",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -3843,7 +3657,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter executionQueryDto1917",
+          "description" : "Parameter executionQueryDto1322",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExecutionQueryDto"
@@ -3887,7 +3701,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDtoSwagger"
+              "$ref" : "#/definitions/CountResultDto"
             }
           }
         }
@@ -3902,7 +3716,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter executionQueryDto8378",
+          "description" : "Parameter executionQueryDto3228",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExecutionQueryDto"
@@ -3912,7 +3726,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -3989,7 +3803,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto2896",
+          "description" : "Parameter patchVariablesDto5243",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -4059,7 +3873,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto8382",
+          "description" : "Parameter variableValueDto7306",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -4145,7 +3959,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData4443",
+          "description" : "Parameter multipartFormData2253",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -4211,7 +4025,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter executionTriggerDto8097",
+          "description" : "Parameter executionTriggerDto5510",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExecutionTriggerDto"
@@ -4241,7 +4055,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter executionTriggerDto7622",
+          "description" : "Parameter executionTriggerDto6373",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExecutionTriggerDto"
@@ -4262,14 +4076,6 @@
         "operationId" : "getExternalTasksList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2261",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -4306,7 +4112,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter externalTaskQueryDto2643",
+          "description" : "Parameter externalTaskQueryDto4297",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExternalTaskQueryDto"
@@ -4347,14 +4153,6 @@
         "operationId" : "getHistoricExternalTaskLogsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8578",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -4391,7 +4189,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicExternalTaskLogQueryDto6365",
+          "description" : "Parameter historicExternalTaskLogQueryDto4136",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricExternalTaskLogQueryDto"
@@ -4450,7 +4248,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicExternalTaskLogQueryDto3080",
+          "description" : "Parameter historicExternalTaskLogQueryDto1736",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricExternalTaskLogQueryDto"
@@ -4540,7 +4338,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter externalTaskQueryDto3248",
+          "description" : "Parameter externalTaskQueryDto4997",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExternalTaskQueryDto"
@@ -4550,7 +4348,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -4567,7 +4365,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter fetchExternalTasksDto7898",
+          "description" : "Parameter fetchExternalTasksDto5454",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/FetchExternalTasksDto"
@@ -4597,7 +4395,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter setRetriesForExternalTasksDto4160",
+          "description" : "Parameter setRetriesForExternalTasksDto897",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/SetRetriesForExternalTasksDto"
@@ -4607,7 +4405,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/BatchDto"
+              "$ref" : "#/definitions/BatchDtoSwagger"
             }
           }
         }
@@ -4653,7 +4451,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter externalTaskBpmnError6186",
+          "description" : "Parameter externalTaskBpmnError1885",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExternalTaskBpmnError"
@@ -4682,7 +4480,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter completeExternalTaskDto4367",
+          "description" : "Parameter completeExternalTaskDto29",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CompleteExternalTaskDto"
@@ -4735,7 +4533,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter externalTaskFailureDto9534",
+          "description" : "Parameter externalTaskFailureDto5090",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ExternalTaskFailureDto"
@@ -4764,7 +4562,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter priorityDto3599",
+          "description" : "Parameter priorityDto6645",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PriorityDto"
@@ -4793,7 +4591,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter retriesDto833",
+          "description" : "Parameter retriesDto4691",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RetriesDto"
@@ -4834,14 +4632,6 @@
         "operationId" : "getFiltersList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo3791",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "itemCount",
           "in" : "query",
           "description" : "If set to true, each filter result will contain an itemCount property with the number of items matched by the filter itself.",
@@ -4918,7 +4708,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter filterDto3451",
+          "description" : "Parameter filterDto5337",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/FilterDto"
@@ -4979,7 +4769,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter filterDto5457",
+          "description" : "Parameter filterDto7661",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/FilterDto"
@@ -5022,14 +4812,6 @@
           "description" : "Parameter id",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2880",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -5080,7 +4862,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter string3867",
+          "description" : "Parameter string442",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -5112,7 +4894,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request1066",
+          "description" : "Parameter request4395",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -5157,7 +4939,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request9630",
+          "description" : "Parameter request2454",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -5165,7 +4947,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter string5958",
+          "description" : "Parameter string8701",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -5211,7 +4993,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request8430",
+          "description" : "Parameter request5120",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -5242,7 +5024,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request2770",
+          "description" : "Parameter request4417",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -5250,7 +5032,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter string130",
+          "description" : "Parameter string1310",
           "required" : false,
           "schema" : {
             "type" : "string"
@@ -5274,14 +5056,6 @@
         "operationId" : "queryGroupsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2434",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -5335,7 +5109,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -5352,7 +5126,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter groupDto2727",
+          "description" : "Parameter groupDto4936",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/GroupDto"
@@ -5378,14 +5152,6 @@
           "description" : "The id of the group to be retrieved.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo5779",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -5412,7 +5178,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter groupDto5904",
+          "description" : "Parameter groupDto3760",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/GroupDto"
@@ -5455,14 +5221,6 @@
           "description" : "Parameter id",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo7311",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -5487,14 +5245,6 @@
           "description" : "The id of the group.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo3292",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -5577,7 +5327,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/JobDto"
+              "$ref" : "#/definitions/JobDtoSwagger"
             }
           }
         }
@@ -5591,14 +5341,6 @@
         "operationId" : "getHistoricIdentityLinksList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1060",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -5678,7 +5420,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter basicUserCredentialsDto9369",
+          "description" : "Parameter basicUserCredentialsDto7084",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/BasicUserCredentialsDto"
@@ -5696,20 +5438,12 @@
     },
     "/incident" : {
       "get" : {
-        "tags" : [ "Incident" ],
+        "tags" : [ "Historic" ],
         "summary" : "Queries for incidents that fulfill given parameters.\nThe size of the result set can be retrieved by using the Get Incident Count",
         "description" : "",
-        "operationId" : "getIncidentsList",
+        "operationId" : "getHistoricIncidentsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo7967",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -5739,16 +5473,16 @@
     },
     "/incident/count" : {
       "get" : {
-        "tags" : [ "Incident" ],
+        "tags" : [ "Historic" ],
         "summary" : "Queries for the number of incidents that fulfill given parameters.\nTakes the same parameters as the Get Incidents",
         "description" : "",
-        "operationId" : "getIncidentsCount",
+        "operationId" : "getHistoricIncidentsCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -5762,14 +5496,6 @@
         "operationId" : "getJobsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6915",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -5806,7 +5532,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobQueryDto3246",
+          "description" : "Parameter jobQueryDto9433",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobQueryDto"
@@ -5847,14 +5573,6 @@
         "operationId" : "getJobDefinitionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo4584",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -5891,7 +5609,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDefinitionQueryDto2959",
+          "description" : "Parameter jobDefinitionQueryDto1699",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDefinitionQueryDto"
@@ -5935,7 +5653,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -5950,7 +5668,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDefinitionQueryDto8246",
+          "description" : "Parameter jobDefinitionQueryDto7725",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDefinitionQueryDto"
@@ -5960,7 +5678,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -5977,7 +5695,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDefinitionSuspensionStateDto1457",
+          "description" : "Parameter jobDefinitionSuspensionStateDto360",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDefinitionSuspensionStateDto"
@@ -6031,7 +5749,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDefinitionPriorityDto3420",
+          "description" : "Parameter jobDefinitionPriorityDto5909",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDefinitionPriorityDto"
@@ -6061,7 +5779,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter retriesDto9234",
+          "description" : "Parameter retriesDto2261",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RetriesDto"
@@ -6091,7 +5809,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDefinitionSuspensionStateDto5265",
+          "description" : "Parameter jobDefinitionSuspensionStateDto2769",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDefinitionSuspensionStateDto"
@@ -6112,14 +5830,6 @@
         "operationId" : "getHistoricJobLogsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8859",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -6156,7 +5866,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicJobLogQueryDto4080",
+          "description" : "Parameter historicJobLogQueryDto5708",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricJobLogQueryDto"
@@ -6215,7 +5925,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicJobLogQueryDto5387",
+          "description" : "Parameter historicJobLogQueryDto7490",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricJobLogQueryDto"
@@ -6290,7 +6000,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDtoSwagger"
+              "$ref" : "#/definitions/CountResultDto"
             }
           }
         }
@@ -6305,7 +6015,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobQueryDto7456",
+          "description" : "Parameter jobQueryDto1514",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobQueryDto"
@@ -6332,7 +6042,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter setJobRetriesDto7619",
+          "description" : "Parameter setJobRetriesDto7799",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/SetJobRetriesDto"
@@ -6359,7 +6069,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobSuspensionStateDto1046",
+          "description" : "Parameter jobSuspensionStateDto382",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobSuspensionStateDto"
@@ -6432,7 +6142,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobDuedateDto4797",
+          "description" : "Parameter jobDuedateDto2923",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobDuedateDto"
@@ -6483,7 +6193,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter priorityDto8353",
+          "description" : "Parameter priorityDto3700",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PriorityDto"
@@ -6513,7 +6223,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter retriesDto2721",
+          "description" : "Parameter retriesDto8415",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RetriesDto"
@@ -6567,7 +6277,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter jobSuspensionStateDto8484",
+          "description" : "Parameter jobSuspensionStateDto7302",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/JobSuspensionStateDto"
@@ -6591,7 +6301,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter correlationMessageDto9226",
+          "description" : "Parameter correlationMessageDto4359",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CorrelationMessageDto"
@@ -6611,15 +6321,6 @@
         "description" : "",
         "operationId" : "intervalList",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6332",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -6646,14 +6347,6 @@
           "description" : "Parameter name",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8611",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -6675,7 +6368,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter migrationExecutionDto1168",
+          "description" : "Parameter migrationExecutionDto8035",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MigrationExecutionDto"
@@ -6699,7 +6392,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter migrationExecutionDto4005",
+          "description" : "Parameter migrationExecutionDto5480",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MigrationExecutionDto"
@@ -6726,7 +6419,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter migrationPlanGenerationDto1025",
+          "description" : "Parameter migrationPlanGenerationDto1852",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MigrationPlanGenerationDto"
@@ -6753,7 +6446,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter migrationPlanDto1834",
+          "description" : "Parameter migrationPlanDto4291",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MigrationPlanDto"
@@ -6780,7 +6473,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter modificationDto1554",
+          "description" : "Parameter modificationDto7955",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ModificationDto"
@@ -6804,7 +6497,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter modificationDto1317",
+          "description" : "Parameter modificationDto1891",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ModificationDto"
@@ -6828,14 +6521,6 @@
         "operationId" : "getProcessDefinitionsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo2324",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -6874,7 +6559,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -7012,7 +6697,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto1059",
+          "description" : "Parameter historyTimeToLiveDto7302",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -7063,7 +6748,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto8678",
+          "description" : "Parameter restartProcessInstanceDto5447",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -7093,7 +6778,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto2159",
+          "description" : "Parameter restartProcessInstanceDto4105",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -7126,15 +6811,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo3485",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto9678",
+          "description" : "Parameter startProcessInstanceDto7417",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -7236,15 +6913,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo960",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto7782",
+          "description" : "Parameter startProcessInstanceDto7662",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -7277,7 +6946,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processDefinitionSuspensionStateDto1430",
+          "description" : "Parameter processDefinitionSuspensionStateDto4274",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessDefinitionSuspensionStateDto"
@@ -7452,7 +7121,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto4977",
+          "description" : "Parameter historyTimeToLiveDto7966",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -7515,7 +7184,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto58",
+          "description" : "Parameter restartProcessInstanceDto1648",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -7551,7 +7220,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto4679",
+          "description" : "Parameter restartProcessInstanceDto1471",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -7590,15 +7259,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo3332",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto87",
+          "description" : "Parameter startProcessInstanceDto9754",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -7718,15 +7379,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo6070",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto6658",
+          "description" : "Parameter startProcessInstanceDto7262",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -7765,7 +7418,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processDefinitionSuspensionStateDto964",
+          "description" : "Parameter processDefinitionSuspensionStateDto1317",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessDefinitionSuspensionStateDto"
@@ -7882,7 +7535,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processDefinitionSuspensionStateDto1958",
+          "description" : "Parameter processDefinitionSuspensionStateDto5824",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessDefinitionSuspensionStateDto"
@@ -8026,7 +7679,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historyTimeToLiveDto9661",
+          "description" : "Parameter historyTimeToLiveDto1087",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoryTimeToLiveDto"
@@ -8077,7 +7730,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto6664",
+          "description" : "Parameter restartProcessInstanceDto7700",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -8107,7 +7760,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter restartProcessInstanceDto8300",
+          "description" : "Parameter restartProcessInstanceDto7208",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/RestartProcessInstanceDto"
@@ -8140,15 +7793,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo7713",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto763",
+          "description" : "Parameter startProcessInstanceDto3033",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -8262,15 +7907,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo1966",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter startProcessInstanceDto2639",
+          "description" : "Parameter startProcessInstanceDto4188",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/StartProcessInstanceDto"
@@ -8303,7 +7940,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processDefinitionSuspensionStateDto6078",
+          "description" : "Parameter processDefinitionSuspensionStateDto6900",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessDefinitionSuspensionStateDto"
@@ -8348,14 +7985,6 @@
         "operationId" : "getHistoricProcessInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo1812",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -8392,7 +8021,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicProcessInstanceQueryDto3692",
+          "description" : "Parameter historicProcessInstanceQueryDto1926",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricProcessInstanceQueryDto"
@@ -8451,7 +8080,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicProcessInstanceQueryDto7735",
+          "description" : "Parameter historicProcessInstanceQueryDto7124",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricProcessInstanceQueryDto"
@@ -8478,7 +8107,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter deleteHistoricProcessInstancesDto4866",
+          "description" : "Parameter deleteHistoricProcessInstancesDto3507",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/DeleteHistoricProcessInstancesDto"
@@ -8505,7 +8134,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter deleteProcessInstancesDto2461",
+          "description" : "Parameter deleteProcessInstancesDto7368",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/DeleteProcessInstancesDto"
@@ -8532,7 +8161,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter setJobRetriesByProcessDto1691",
+          "description" : "Parameter setJobRetriesByProcessDto6644",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/SetJobRetriesByProcessDto"
@@ -8542,7 +8171,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/BatchDtoSwagger"
+              "$ref" : "#/definitions/BatchDto"
             }
           }
         }
@@ -8559,7 +8188,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter setJobRetriesByProcessDto4675",
+          "description" : "Parameter setJobRetriesByProcessDto2199",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/SetJobRetriesByProcessDto"
@@ -8600,7 +8229,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processInstanceSuspensionStateDto5434",
+          "description" : "Parameter processInstanceSuspensionStateDto158",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessInstanceSuspensionStateDto"
@@ -8697,7 +8326,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processInstanceModificationDto8149",
+          "description" : "Parameter processInstanceModificationDto7111",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessInstanceModificationDto"
@@ -8727,7 +8356,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter processInstanceSuspensionStateDto9690",
+          "description" : "Parameter processInstanceSuspensionStateDto2592",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/ProcessInstanceSuspensionStateDto"
@@ -8787,7 +8416,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto5856",
+          "description" : "Parameter patchVariablesDto2276",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -8857,7 +8486,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto6913",
+          "description" : "Parameter variableValueDto7153",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -8943,7 +8572,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData3806",
+          "description" : "Parameter multipartFormData1246",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -8958,10 +8587,10 @@
     },
     "/task" : {
       "get" : {
-        "tags" : [ "Task" ],
+        "tags" : [ "Historic" ],
         "summary" : "Queries for tasks that fulfill a given filter.\nThe size of the result set can be retrieved by using the Get Task Count",
         "description" : "",
-        "operationId" : "getTasks",
+        "operationId" : "getHistoricTaskInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "firstResult",
@@ -8982,25 +8611,28 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "object"
+              "type" : "array",
+              "items" : {
+                "type" : "object"
+              }
             }
           }
         }
       },
       "post" : {
-        "tags" : [ "Task" ],
+        "tags" : [ "Historic" ],
         "summary" : "Queries for tasks that fulfill a given filter.\nThis method is slightly more powerful than the Get Tasks\nfiltering by multiple process or task variables of types `String`, `Number` or `Boolean`.\nThe size of the result set can be retrieved by using the Get Task Count (POST)",
         "description" : "",
-        "operationId" : "queryTasksList",
+        "operationId" : "queryHistoricTaskInstancesList",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter taskQueryDto317",
+          "description" : "Parameter historicTaskInstanceQueryDto8666",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/TaskQueryDto"
+            "$ref" : "#/definitions/HistoricTaskInstanceQueryDto"
           }
         }, {
           "name" : "firstResult",
@@ -9032,10 +8664,10 @@
     },
     "/task/count" : {
       "get" : {
-        "tags" : [ "Task" ],
+        "tags" : [ "Historic" ],
         "summary" : "Retrieves the number of tasks that fulfill a provided filter.\nCorresponds to the size of the result set when using the Get Tasks",
         "description" : "",
-        "operationId" : "getTasksCount",
+        "operationId" : "getHistoricTaskInstancesCount",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -9047,19 +8679,19 @@
         }
       },
       "post" : {
-        "tags" : [ "Task" ],
+        "tags" : [ "Historic" ],
         "summary" : "Retrieves the number of tasks that fulfill the given filter.\nCorresponds to the size of the result set of the Get Tasks (POST)",
         "description" : "",
-        "operationId" : "queryTasksCount",
+        "operationId" : "queryHistoricTaskInstancesCount",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter taskQueryDto1950",
+          "description" : "Parameter historicTaskInstanceQueryDto107",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/TaskQueryDto"
+            "$ref" : "#/definitions/HistoricTaskInstanceQueryDto"
           }
         } ],
         "responses" : {
@@ -9083,7 +8715,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter taskDto3383",
+          "description" : "Parameter taskDto6784",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/TaskDto"
@@ -9120,7 +8752,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request6898",
+          "description" : "Parameter request2879",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -9149,7 +8781,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter request6252",
+          "description" : "Parameter request7104",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/Request"
@@ -9180,7 +8812,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter taskDto4594",
+          "description" : "Parameter taskDto1751",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/TaskDto"
@@ -9229,7 +8861,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userIdDto7918",
+          "description" : "Parameter userIdDto8266",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserIdDto"
@@ -9286,15 +8918,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo1493",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter multipartFormData7731",
+          "description" : "Parameter multipartFormData6490",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -9412,7 +9036,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userIdDto5898",
+          "description" : "Parameter userIdDto575",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserIdDto"
@@ -9469,15 +9093,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter uriInfo702",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter commentDto915",
+          "description" : "Parameter commentDto9389",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CommentDto"
@@ -9540,7 +9156,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter completeTaskDto1698",
+          "description" : "Parameter completeTaskDto4573",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CompleteTaskDto"
@@ -9570,7 +9186,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userIdDto3286",
+          "description" : "Parameter userIdDto517",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserIdDto"
@@ -9693,7 +9309,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter identityLinkDto6931",
+          "description" : "Parameter identityLinkDto7667",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/IdentityLinkDto"
@@ -9723,7 +9339,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter identityLinkDto4100",
+          "description" : "Parameter identityLinkDto1676",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/IdentityLinkDto"
@@ -9783,7 +9399,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto6866",
+          "description" : "Parameter patchVariablesDto7173",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -9853,7 +9469,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto6166",
+          "description" : "Parameter variableValueDto6923",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -9939,7 +9555,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData153",
+          "description" : "Parameter multipartFormData2724",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -9990,7 +9606,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter completeTaskDto9449",
+          "description" : "Parameter completeTaskDto4624",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CompleteTaskDto"
@@ -10020,7 +9636,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter completeTaskDto4236",
+          "description" : "Parameter completeTaskDto5353",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/CompleteTaskDto"
@@ -10101,7 +9717,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter patchVariablesDto5874",
+          "description" : "Parameter patchVariablesDto2940",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/PatchVariablesDto"
@@ -10171,7 +9787,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter variableValueDto1661",
+          "description" : "Parameter variableValueDto7856",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/VariableValueDto"
@@ -10257,7 +9873,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter multipartFormData9029",
+          "description" : "Parameter multipartFormData9952",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/MultipartFormData"
@@ -10278,14 +9894,6 @@
         "operationId" : "queryTenantsList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo9680",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -10322,7 +9930,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/ResourceOptionsDto"
+              "$ref" : "#/definitions/ResourceOptionsDtoSwagger"
             }
           }
         }
@@ -10339,7 +9947,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -10356,7 +9964,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter tenantDto9299",
+          "description" : "Parameter tenantDto7182",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/TenantDto"
@@ -10382,14 +9990,6 @@
           "description" : "The id of the tenant to be retrieved.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6172",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10416,7 +10016,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter tenantDto6178",
+          "description" : "Parameter tenantDto8643",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/TenantDto"
@@ -10459,14 +10059,6 @@
           "description" : "Parameter id",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo7497",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10491,14 +10083,6 @@
           "description" : "The id of the tenant",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6285",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10575,14 +10159,6 @@
           "description" : "The id of the tenant",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo8742",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10654,14 +10230,6 @@
         "operationId" : "queryUsersList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo5848",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -10712,14 +10280,6 @@
         "operationId" : "queryUserOperationEntriesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo5311",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Parameter firstResult",
@@ -10758,7 +10318,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CountResultDto"
+              "$ref" : "#/definitions/CountResultDtoSwagger"
             }
           }
         }
@@ -10792,7 +10352,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userDto3878",
+          "description" : "Parameter userDto5487",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserDto"
@@ -10837,14 +10397,6 @@
           "description" : "Parameter id",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo6025",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10873,7 +10425,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userCredentialsDto5780",
+          "description" : "Parameter userCredentialsDto9991",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserCredentialsDto"
@@ -10899,14 +10451,6 @@
           "description" : "The id of the user to be retrieved.",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo232",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -10933,7 +10477,7 @@
         }, {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter userProfileDto3270",
+          "description" : "Parameter userProfileDto5718",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UserProfileDto"
@@ -10954,14 +10498,6 @@
         "operationId" : "getHistoricVariableInstancesList",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Parameter uriInfo3359",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/UriInfo"
-          }
-        }, {
           "name" : "firstResult",
           "in" : "query",
           "description" : "Pagination of results. Specifies the index of the first result to return.",
@@ -11003,7 +10539,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicVariableInstanceQueryDto2573",
+          "description" : "Parameter historicVariableInstanceQueryDto9305",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricVariableInstanceQueryDto"
@@ -11067,7 +10603,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "Parameter historicVariableInstanceQueryDto9263",
+          "description" : "Parameter historicVariableInstanceQueryDto7985",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/HistoricVariableInstanceQueryDto"
@@ -15467,23 +15003,6 @@
         }
       }
     },
-    "PathSegment" : {
-      "type" : "object",
-      "properties" : {
-        "path" : {
-          "type" : "string"
-        },
-        "matrixParameters" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      }
-    },
     "PriorityDto" : {
       "type" : "object",
       "properties" : {
@@ -16515,74 +16034,6 @@
         },
         "local" : {
           "type" : "boolean"
-        }
-      }
-    },
-    "UriBuilder" : {
-      "type" : "object"
-    },
-    "UriInfo" : {
-      "type" : "object",
-      "properties" : {
-        "path" : {
-          "type" : "string"
-        },
-        "absolutePath" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "pathParameters" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "queryParameters" : {
-          "type" : "object",
-          "additionalProperties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "baseUri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "baseUriBuilder" : {
-          "$ref" : "#/definitions/UriBuilder"
-        },
-        "pathSegments" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/PathSegment"
-          }
-        },
-        "requestUri" : {
-          "type" : "string",
-          "format" : "uri"
-        },
-        "requestUriBuilder" : {
-          "$ref" : "#/definitions/UriBuilder"
-        },
-        "absolutePathBuilder" : {
-          "$ref" : "#/definitions/UriBuilder"
-        },
-        "matchedURIs" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string"
-          }
-        },
-        "matchedResources" : {
-          "type" : "array",
-          "items" : {
-            "type" : "object"
-          }
         }
       }
     },

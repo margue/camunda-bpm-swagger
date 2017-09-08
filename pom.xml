@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.camunda</groupId>
-		<artifactId>camunda-release-parent</artifactId>
-		<version>2.5</version>
-		<!-- DO NOT REMOVE EMPTY TAG https://issues.apache.org/jira/browse/MNG-4687 -->
-		<relativePath />
-	</parent>
+  <parent>
+    <groupId>org.camunda</groupId>
+    <artifactId>camunda-release-parent</artifactId>
+    <version>2.5</version>
+    <!-- DO NOT REMOVE EMPTY TAG https://issues.apache.org/jira/browse/MNG-4687 -->
+    <relativePath/>
+  </parent>
 
-	<groupId>org.camunda.bpm.extension.swagger.project</groupId>
-	<artifactId>camunda-bpm-swagger-root</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+  <groupId>org.camunda.bpm.extension.swagger.project</groupId>
+  <artifactId>camunda-bpm-swagger-root</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<version.java>${java.version}</version.java>
-		<camunda.version>7.7.0</camunda.version>
-		<swagger.version>1.5.16</swagger.version>
-		<version.jersey2>2.25.1</version.jersey2>
-	</properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <version.java>${java.version}</version.java>
+    <camunda.version>7.7.0</camunda.version>
+    <swagger.version>1.5.16</swagger.version>
+    <version.jersey2>2.25.1</version.jersey2>
+  </properties>
 
-	<modules>
+  <modules>
     <module>maven-plugin</module>
 
-		<module>extension/core</module>
-		<module>extension/assembly</module>
-		<module>extension/swagger-ui</module>
+    <module>extension/core</module>
+    <module>extension/assembly</module>
+    <module>extension/swagger-ui</module>
 
     <module>example/spring-boot</module>
   </modules>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<!-- Import dependency management from camunda -->
-				<groupId>org.camunda.bpm</groupId>
-				<artifactId>camunda-bom</artifactId>
-				<version>${camunda.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>org.camunda.bpm.extension.swagger</groupId>
-				<artifactId>camunda-bpm-swagger-core</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <!-- Import dependency management from camunda -->
+        <groupId>org.camunda.bpm</groupId>
+        <artifactId>camunda-bom</artifactId>
+        <version>${camunda.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm.extension.swagger</groupId>
+        <artifactId>camunda-bpm-swagger-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
@@ -59,14 +59,20 @@
         <scope>provided</scope>
       </dependency>
 
-		</dependencies>
-	</dependencyManagement>
+    </dependencies>
+  </dependencyManagement>
 
   <profiles>
     <profile>
       <id>restDocs</id>
       <modules>
         <module>extension/rest-docs</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>generateJsonModule</id>
+      <modules>
+        <module>extension/swagger-json</module>
       </modules>
     </profile>
   </profiles>

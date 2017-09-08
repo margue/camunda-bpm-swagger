@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.camunda.bpm.extension.swagger.project</groupId>
+    <artifactId>camunda-bpm-swagger-root</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <groupId>org.camunda.bpm.extension.swagger</groupId>
+  <artifactId>camunda-bpm-swagger-json</artifactId>
+  <version>${camunda.version}</version>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
+        <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
+        <version>${project.parent.version}</version>
+        <executions>
+          <execution>
+            <id>generate-swagger-json</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>generate-swagger-json</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+
+</project>
