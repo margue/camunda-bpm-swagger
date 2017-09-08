@@ -4,6 +4,8 @@ import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.CAMUNDA_
 
 import javax.annotation.Generated;
 
+import lombok.Setter;
+import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
 import org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory;
 
@@ -27,6 +29,10 @@ public class CamundaDto extends AbstractModel {
 
   @Getter
   private Class<?> baseClass;
+
+  @Getter
+  @Setter
+  private RestOperation restOperation;
 
   @SneakyThrows
   public CamundaDto(final ModelRepository modelRepository, final Class<?> baseClass) {

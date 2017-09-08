@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -24,6 +25,12 @@ public class ModelRepository {
       models.add(model);
     }
     return model;
+  }
+
+  public <T extends AbstractModel> Optional<T> get(Class<?> type) {
+    return (Optional<T>) models.stream()
+      .filter(m -> type.equals(m.getBaseClass()))
+      .findFirst();
   }
 
 }

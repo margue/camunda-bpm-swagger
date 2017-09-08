@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.step.Invocation;
 import org.camunda.bpm.swagger.maven.model.CamundaDto;
 import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
@@ -26,10 +28,12 @@ public class SwaggerDtoModelGenerator implements CodeGenerator {
   private static final String DTO_PARAM = "dto";
   private final CamundaDto camundaDto;
   private final JCodeModel codeModel;
+  private final RestOperation doc;
 
   public SwaggerDtoModelGenerator(final CamundaDto camundaDto) {
     this.camundaDto = camundaDto;
     this.codeModel = camundaDto.getCodeModel();
+    this.doc = camundaDto.getRestOperation();
     log.debug("Processing DTO: {}", camundaDto.getFullQualifiedName());
   }
 
@@ -57,8 +61,14 @@ public class SwaggerDtoModelGenerator implements CodeGenerator {
       final JMethod method = c.method(JMod.PUBLIC, m.getReturnType(), m.getName());
       method.annotate(Override.class);
 
+      String fieldname = StringHelper.getFieldnameFromGetter(m.getName());
+
+
       // TODO Hook with the dictionary
       final JAnnotationUse getterAnnotation = method.annotate(ApiModelProperty.class);
+      if (doc != null) {
+        // get info from doc and add getterAnnotation
+      }
       getterAnnotation.param("example", "some example");
       getterAnnotation.param("value", "description of the property");
       method.body()._return(JExpr._super().invoke(m.getName()));

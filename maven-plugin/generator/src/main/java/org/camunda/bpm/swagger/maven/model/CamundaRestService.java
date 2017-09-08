@@ -33,6 +33,8 @@ public class CamundaRestService extends AbstractModel {
   @Getter
   private final JDefinedClass definedClass;
 
+
+
   @SneakyThrows
   public CamundaRestService(final ModelRepository repository, final Class<?> serviceInterfaceClass, final Class<?> serviceImplClass) {
 
@@ -64,6 +66,11 @@ public class CamundaRestService extends AbstractModel {
   @Override
   public Package getPackage() {
     return serviceInterfaceClass.getPackage();
+  }
+
+  @Override
+  public Class<?> getBaseClass() {
+    return serviceInterfaceClass;
   }
 
   public String getTag() {

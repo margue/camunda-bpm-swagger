@@ -15,4 +15,10 @@ public class StringHelperTest {
   public void camelizeTest2() throws Exception {
     assertThat(StringHelper.camelize("tenantId")).isEqualTo("tenantId");
   }
+
+  @Test
+  public void getFieldname() throws Exception {
+    assertThat(StringHelper.getFieldnameFromGetter("getFoo")).isEqualTo("foo");
+    assertThat(StringHelper.getFieldnameFromGetter("getSomethingVeryWicked")).isEqualTo("somethingVeryWicked");
+  }
 }

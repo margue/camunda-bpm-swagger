@@ -1,5 +1,6 @@
 package org.camunda.bpm.swagger.maven.model;
 
+import org.camunda.bpm.engine.rest.dto.management.JobDefinitionDto;
 import org.camunda.bpm.engine.rest.dto.task.TaskDto;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.junit.Test;
@@ -30,5 +31,14 @@ public class ModelRepositoryTest {
     AbstractModel abstractModel = repository.addModel(taskDto);
 
     assertThat(repository.getModels()).containsOnly(abstractModel);
+  }
+
+  @Test
+  public void get_model() throws Exception {
+    CamundaDto taskDto = new CamundaDto(repository, TaskDto.class);
+    repository.addModel(taskDto);
+    repository.addModel(new CamundaDto(repository, JobDefinitionDto.class));
+
+    assertThat(repository.get(TaskDto.class)).hasValue(taskDto);
   }
 }

@@ -27,6 +27,8 @@ public abstract class AbstractModel {
 
   public abstract Package getPackage();
 
+  public abstract Class<?> getBaseClass();
+
 
   @SneakyThrows
   public void write(final File destination) {
