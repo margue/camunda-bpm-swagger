@@ -30,7 +30,6 @@
 	<modules>
     <module>maven-plugin</module>
 
-    <module>extension/rest-docs</module>
 		<module>extension/core</module>
 		<module>extension/assembly</module>
 		<module>extension/swagger-ui</module>
@@ -63,5 +62,13 @@
 		</dependencies>
 	</dependencyManagement>
 
+  <profiles>
+    <profile>
+      <id>restDocs</id>
+      <modules>
+        <module>extension/rest-docs</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

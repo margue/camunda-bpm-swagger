@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.camunda.bpm.extension.swagger</groupId>
       <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
-      <version>${project.version}</version>
+      <version>${camunda.version}</version>
     </dependency>
 
     <!-- JAVA -->

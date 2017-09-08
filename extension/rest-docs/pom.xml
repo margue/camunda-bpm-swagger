@@ -12,6 +12,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
+  <version>${camunda.version}</version>
 
   <dependencies>
     <dependency>
@@ -52,7 +53,7 @@
       <plugin>
         <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
         <artifactId>camunda-bpm-swagger-plugin-rest-docs</artifactId>
-        <version>${project.version}</version>
+        <version>${parent.version}</version>
         <executions>
           <execution>
             <phase>generate-resources</phase>
@@ -60,7 +61,6 @@
               <goal>generate-documentation-yaml</goal>
             </goals>
           </execution>
-
         </executions>
       </plugin>
     </plugins>
