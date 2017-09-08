@@ -7,7 +7,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -201,11 +200,18 @@ public class Invocation extends AbstractMethodStep {
       } else {
         paramName = param.getType().getSimpleName();
       }
-      // TODO: is this good enough?
-      // FIXME: we need this only on methods with several parameters of the same type and no hints on names
-      final boolean sameTypeParametersPresent = Arrays.stream(all)
-          .anyMatch(p -> (!parameterAnnotation(param).isPresent() && p.getType().equals(param.getType())));
-      if (sameTypeParametersPresent) {
+
+      // find all occurrences of not annotated parameters with the same type.
+      int found = 0;
+      for (final Parameter p : all) {
+        if (!parameterAnnotation(param).isPresent() && p.getType().equals(param.getType())) {
+          found++;
+        }
+      }
+
+      // if there is more than one, try to avoid name clash
+      if (found > 1) {
+        // TODO: is this good enough?
         paramName += ThreadLocalRandom.current().nextInt(0, 9999); // add number modify
       }
     }

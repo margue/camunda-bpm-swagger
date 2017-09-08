@@ -6,7 +6,8 @@ import lombok.*;
 @Builder
 @ToString
 public class ParameterDescription {
-    @Getter @Setter private String id;
+    @Getter @Setter @NonNull private String id;
     @Getter @Setter private String type;
-    @Getter @Setter private String description;
+    @Getter @Setter @NonNull private String description;
+    @Getter @Setter private Boolean required;
 }

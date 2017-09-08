@@ -2,11 +2,13 @@ package org.camunda.bpm.swagger.docs;
 
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.docs.model.RestOperations;
 import org.yaml.snakeyaml.Yaml;
@@ -33,10 +35,9 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
       // FIXME: MAGIC -> this delivers duplicate key.
       // this.operations = items.getRestOperations().stream().collect(Collectors.toMap(p -> Pair.of(p.getPath(), p.getMethod()), Function.identity()));
 
-      this.operations = new HashMap<>();
-      for (final RestOperation r : items.getRestOperations()) {
-        this.operations.put(Pair.of(r.getPath(), r.getMethod()), r);
-      }
+      this.operations = items.getRestOperations().stream()
+        .collect(Collectors.groupingBy(p -> Pair.of(p.getPath(), p.getMethod()),
+          Collectors.reducing(null, this::reduceDuplicateRestOperations)));
     }
   }
 
@@ -61,5 +62,20 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
 
   public void info() {
     print(this.operations);
+  }
+
+  private RestOperation reduceDuplicateRestOperations(RestOperation acc, RestOperation elem) {
+    if (acc == null)
+      return elem;
+    log.info("duplicate entry for " + acc.getPath() + "(" + acc.getMethod() + ") - trying to merge");
+    expandAttr(acc, elem, RestOperation::getPathParameters);
+    expandAttr(acc, elem, RestOperation::getQueryParameters);
+    expandAttr(acc, elem, RestOperation::getResponseCodes);
+    return acc;
+  }
+
+  private void expandAttr(RestOperation acc, RestOperation elem, Function<RestOperation, Map<String, ParameterDescription>> func) {
+    final Map<String, ParameterDescription> accMap = func.apply(acc);
+    func.apply(elem).forEach(accMap::putIfAbsent);
   }
 }
