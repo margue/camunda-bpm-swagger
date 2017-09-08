@@ -175,8 +175,20 @@ public class DocumentInterpreter {
         case "LinkRef":
           nodeToString(node.getFirstChildAny(Text.class), sb);
           return true;
-        default:
-          log.info("class " + node.getClass().getSimpleName() + " not known");
+      case "StrongEmphasis":
+      case "Emphasis":
+        nodeToString(node.getFirstChildAny(Text.class), sb);
+        break;
+      case "HtmlInline":
+        if(node.getChars().toString().equals("<br/>") || node.getChars().toString().equals("</br>")) {
+          sb.append("\n");
+        } else {
+          log.debug("unknown htmlInline element: (" + node.getChars().toString() +")");
+
+        }
+        break;
+      default:
+          log.debug("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() +")");
       }
     }
     return false;
