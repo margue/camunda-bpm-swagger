@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import javax.annotation.Generated;
 
 import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
-import org.camunda.bpm.swagger.maven.generator.StringHelper;
 
 import com.helger.jcodemodel.JCodeModel;
 import com.helger.jcodemodel.JDefinedClass;
@@ -71,10 +70,6 @@ public class CamundaRestService extends AbstractModel {
   @Override
   public Class<?> getBaseClass() {
     return serviceInterfaceClass;
-  }
-
-  public String getTag() {
-    return StringHelper.splitCamelCase(getSimpleName()).split(" ")[0];
   }
 
   @SneakyThrows

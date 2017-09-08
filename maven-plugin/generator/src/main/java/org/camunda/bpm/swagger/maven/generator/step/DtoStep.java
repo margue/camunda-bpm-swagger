@@ -21,9 +21,12 @@ public class DtoStep {
   private final Class<?> baseClazz;
   private final ModelRepository modelRepository;
 
-  public DtoStep(final ModelRepository modelRepository, final Class<?> clazz) {
+  private final JCodeModel owner;
+
+  public DtoStep(final ModelRepository modelRepository, final Class<?> clazz, final JCodeModel owner) {
     this.modelRepository = modelRepository;
     this.baseClazz = clazz;
+    this.owner = owner;
   }
 
 
@@ -41,9 +44,8 @@ public class DtoStep {
   }
 
   private AbstractJClass generateDto() {
-    final CamundaDto dto = new CamundaDto(modelRepository, baseClazz);
+    final CamundaDto dto = new CamundaDto(modelRepository, baseClazz, owner);
     this.camundaDto = Optional.of(dto);
-    dto.generate();
     return dto.getDefinedClass();
   }
 }

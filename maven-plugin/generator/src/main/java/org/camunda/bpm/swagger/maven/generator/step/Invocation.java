@@ -115,7 +115,7 @@ public class Invocation extends AbstractMethodStep {
 
     final Pair<Class<?>, String> pair = parameter(p, all);
 
-    final DtoStep dtoStep = new DtoStep(modelRepository, pair.getLeft());
+    final DtoStep dtoStep = new DtoStep(modelRepository, pair.getLeft(), method.owner());
     final AbstractJType type = dtoStep.getType(method.owner());
 
     if (parameterAnnotationValue.isPresent()) {

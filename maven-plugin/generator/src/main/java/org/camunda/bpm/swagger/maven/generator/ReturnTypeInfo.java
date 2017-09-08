@@ -59,8 +59,7 @@ public class ReturnTypeInfo {
           // plain class X -> List<X>
           final Class<?> candidateParameterClass = (Class<?>) typeArg;
           if (TypeHelper.isDto(candidateParameterClass)) {
-            final CamundaDto camundaDto = new CamundaDto(modelRepository, candidateParameterClass);
-            camundaDto.generate();
+            final CamundaDto camundaDto = new CamundaDto(modelRepository, candidateParameterClass, codeModel);
             parameterClasses[i] = camundaDto.getDefinedClass();
           } else {
             parameterClasses[i] = codeModel.ref(candidateParameterClass);

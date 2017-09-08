@@ -1,7 +1,6 @@
 package org.camunda.bpm.swagger.maven.generator.step;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
@@ -13,10 +12,7 @@ import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
 import com.helger.jcodemodel.AbstractJType;
 import com.helger.jcodemodel.JDefinedClass;
-import com.helger.jcodemodel.JExpr;
 import com.helger.jcodemodel.JInvocation;
-import com.helger.jcodemodel.JLambda;
-import com.helger.jcodemodel.JLambdaParam;
 import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 
@@ -65,7 +61,7 @@ public class MethodStep {
 
       methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
-      final DtoStep returnType = new DtoStep(modelRepository, info.getRawType());
+      final DtoStep returnType = new DtoStep(modelRepository, info.getRawType(), clazz.owner());
       this.returnTypeStyle = returnType.isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
       this.methodReturnType = returnType.getType(this.clazz.owner());
       methodName = methodName(parentInvocations, info.getMethod().getName(), null);
@@ -95,6 +91,14 @@ public class MethodStep {
     if (TypeHelper.isVoid(getReturnType())) {
       method.body().add(invoke);
     } else {
+
+      // overriding, only if it is a simple return type (not parameterized, not DTO, not a resource)
+      if (parentInvocations == null) {
+        method.annotate(Override.class);
+      }
+
+      method.body()._return(invoke);
+      /*
       switch (getReturnTypeStyle()) {
       case PLAIN:
 
@@ -152,6 +156,7 @@ public class MethodStep {
       default:
         throw new IllegalArgumentException("This is a bug. You changed the enum, but forgot to add a case.");
       }
+       */        
     }
 
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
