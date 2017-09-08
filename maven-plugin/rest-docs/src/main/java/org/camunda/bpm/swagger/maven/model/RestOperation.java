@@ -18,6 +18,7 @@ public class RestOperation {
     @Getter @Setter private String path;
     @Getter @Setter private String description;
     @Getter @Setter private String resultDescription;
+    @Getter @Setter private Map<String, ParameterDescription> requestBody;
     @Getter @Setter private Map<String, ParameterDescription> pathParameters;
     @Getter @Setter private Map<String, ParameterDescription> queryParameters;
     @Getter @Setter private Map<String, ParameterDescription> responseCodes;

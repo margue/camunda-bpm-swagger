@@ -26,6 +26,7 @@ public class DocumentInterpreter {
   private static final String RESULT = "Result";
   private static final String PARAMETERS__PATH_PARAMETERS = "Parameters.Path Parameters";
   private static final String PARAMETERS__QUERY_PARAMETERS = "Parameters.Query Parameters";
+  private static final String PARAMETERS__REQUEST_BODY = "Parameters.Request Body";
   private static final String RESPONSE_CODES = "Response Codes";
   private final Log log;
 
@@ -40,8 +41,9 @@ public class DocumentInterpreter {
     resolveDescription(parsedObject).ifPresent(builder::description);
     resolveResultDescription(parsedObject).ifPresent(builder::resultDescription);
     resolvePathParameters(parsedObject).ifPresent(builder::pathParameters);
-    resolveResponseCodes(parsedObject).ifPresent(builder::responseCodes);
     resolveQueryParameters(parsedObject).ifPresent(builder::queryParameters);
+    resolveRequestBody(parsedObject).ifPresent(builder::requestBody);
+    resolveResponseCodes(parsedObject).ifPresent(builder::responseCodes);
     return builder.build();
   }
 
@@ -62,6 +64,13 @@ public class DocumentInterpreter {
   private Optional<Map<String, ParameterDescription>> resolveQueryParameters(Map<String, Node> parsedObject) {
     Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(PARAMETERS__QUERY_PARAMETERS))
+      .map(node -> resolveNode(classes, node, HtmlBlock.class))
+      .map(this::htmlNodeToMap);
+  }
+
+  private Optional<Map<String, ParameterDescription>> resolveRequestBody(Map<String, Node> parsedObject) {
+    Stack<Class> classes = createPath(HtmlBlock.class);
+    return Optional.ofNullable(parsedObject.get(PARAMETERS__REQUEST_BODY))
       .map(node -> resolveNode(classes, node, HtmlBlock.class))
       .map(this::htmlNodeToMap);
   }
@@ -100,6 +109,7 @@ public class DocumentInterpreter {
       switch(element.text()) {
         case "Name":
         case "Code":
+        case "Form Part Name":
           nameIdx = i;
           break;
         case "Description":
@@ -107,6 +117,7 @@ public class DocumentInterpreter {
           break;
         case "Media type":
         case "Type":
+        case "Content Type":
         case "Value":
           typeIdx = i;
           break;
@@ -121,15 +132,15 @@ public class DocumentInterpreter {
     HashMap<String, ParameterDescription> result = new HashMap<>();
     for (Element tr : trs) {
       Elements tds = tr.select("td");
-      if(tds.size() == 0)
-        break;
-      ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
-      Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
-      Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
-      Optional.ofNullable(typeIdx).map(tds::get).map(Element::text).ifPresent(builder::type);
-      Optional.ofNullable(requiredIdx).map(tds::get).map(Element::text).map(o -> o.equals("Yes")).ifPresent(builder::required);
+      if(tds.size() > 2) {
+        ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
+        Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
+        Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
+        Optional.ofNullable(typeIdx).map(tds::get).map(Element::text).ifPresent(builder::type);
+        Optional.ofNullable(requiredIdx).map(tds::get).map(Element::text).map(o -> o.equals("Yes")).ifPresent(builder::required);
         ParameterDescription parameterDescription = builder.build();
         result.put(parameterDescription.getId(), parameterDescription);
+      }
 
     }
     return result;

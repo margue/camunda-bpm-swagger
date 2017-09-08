@@ -27,6 +27,7 @@ public class RestOperation {
    * Description of the result.
    */
   private String resultDescription;
+  private Map<String, ParameterDescription> requestBody = new HashMap<>();
   private Map<String, ParameterDescription> pathParameters = new HashMap<>();
   private Map<String, ParameterDescription> queryParameters = new HashMap<>();
   private Map<String, ParameterDescription> responseCodes = new HashMap<>();
