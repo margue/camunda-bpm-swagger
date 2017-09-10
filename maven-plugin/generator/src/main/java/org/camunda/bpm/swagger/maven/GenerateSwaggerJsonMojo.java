@@ -1,6 +1,7 @@
 package org.camunda.bpm.swagger.maven;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
 import static org.camunda.bpm.swagger.maven.GenerateSwaggerJsonMojo.GOAL;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
@@ -38,7 +39,7 @@ import org.twdata.maven.mojoexecutor.MojoExecutor.ExecutionEnvironment;
  */
 @Mojo(
     name = GOAL,
-    defaultPhase = COMPILE,
+    defaultPhase = GENERATE_RESOURCES,
     requiresDependencyResolution = COMPILE_PLUS_RUNTIME
     )
 public class GenerateSwaggerJsonMojo extends AbstractMojo {

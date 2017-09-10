@@ -29,8 +29,6 @@ public class DtoStep {
     this.owner = owner;
   }
 
-
-
   public boolean isDto() {
     return TypeHelper.isDto(baseClazz);
   }

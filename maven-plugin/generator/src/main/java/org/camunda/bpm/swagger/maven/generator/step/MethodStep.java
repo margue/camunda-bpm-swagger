@@ -1,6 +1,7 @@
 package org.camunda.bpm.swagger.maven.generator.step;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
@@ -44,6 +45,7 @@ public class MethodStep {
 
     // determine method name and return type
     final String methodName;
+    Optional<DtoStep> dtoStep = Optional.empty();
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
 
@@ -61,9 +63,9 @@ public class MethodStep {
 
       methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
-      final DtoStep returnType = new DtoStep(modelRepository, info.getRawType(), clazz.owner());
-      this.returnTypeStyle = returnType.isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
-      this.methodReturnType = returnType.getType(this.clazz.owner());
+      dtoStep = Optional.of(new DtoStep(modelRepository, info.getRawType(), clazz.owner()));
+      this.returnTypeStyle = dtoStep.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
+      this.methodReturnType = dtoStep.get().getType(this.clazz.owner());
       methodName = methodName(parentInvocations, info.getMethod().getName(), null);
     }
 
@@ -83,6 +85,9 @@ public class MethodStep {
     consumesAndProduces.annotate(info.getMethod());
 
     final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
+    if (dtoStep.isPresent() && dtoStep.get().getCamundaDto().isPresent()) {
+      modelRepository.getDtoDocs().putIfAbsent(dtoStep.get().getCamundaDto().get().getFullQualifiedName(), doc);
+    }
 
     // create invocation
     final JInvocation invoke = new Invocation(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
@@ -156,7 +161,7 @@ public class MethodStep {
       default:
         throw new IllegalArgumentException("This is a bug. You changed the enum, but forgot to add a case.");
       }
-       */        
+       */
     }
 
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);

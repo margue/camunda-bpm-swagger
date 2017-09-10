@@ -35,11 +35,6 @@
       <artifactId>camunda-engine</artifactId>
       <version>${camunda.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.camunda.bpm</groupId>
-      <artifactId>camunda-engine-rest-core</artifactId>
-      <version>${camunda.version}</version>
-    </dependency>
 
     <!-- REST -->
     <dependency>
@@ -90,6 +85,14 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.7.25</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-rest-core</artifactId>
+      <version>${camunda.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 

@@ -23,6 +23,8 @@ import spoon.SpoonAPI;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
@@ -66,6 +68,7 @@ public class SpoonProcessingMojo extends AbstractMojo {
       return this;
     }
 
+    @SneakyThrows
     private SpoonAPI spoon() {
       final Launcher spoon = new Launcher();
       spoon.getEnvironment().setShouldCompile(shouldCompile);
@@ -74,6 +77,16 @@ public class SpoonProcessingMojo extends AbstractMojo {
 
       spoon.addProcessor(new ApiModelProcessor());
       spoon.addProcessor(new ApiModelPropertyProcessor(this));
+
+      String[] classpathElements = executionEnvironment.getMavenProject()
+        .getCompileClasspathElements()
+        .stream()
+        .filter(s -> !executionEnvironment.getMavenProject().getBuild().getOutputDirectory().equals(s))
+        .toArray(String[]::new);
+
+      log.debug("classpath: {}", classpathElements);
+
+      spoon.getEnvironment().setSourceClasspath(classpathElements);
 
       spoon.addInputResource(unpackDirectory.getPath());
       spoon.setSourceOutputDirectory(outputDirectory.getPath());
@@ -116,11 +129,13 @@ public class SpoonProcessingMojo extends AbstractMojo {
   @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
     Context.builder()
+      .executionEnvironment(executionEnvironment(project, session, buildPluginManager))
       .camundaVersion(camundaVersion)
       .unpackDirectory(unpackDirectory)
       .outputDirectory(outputDirectory)
-      .noClasspath(true)
-      .executionEnvironment(executionEnvironment(project, session, buildPluginManager))
+      .noClasspath(false)
+      .autoImports(false)
+      .shouldCompile(false)
       .build()
       .initDirectory()
       .downloadSources()

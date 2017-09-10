@@ -15,8 +15,6 @@ import lombok.SneakyThrows;
 @EqualsAndHashCode(exclude = { "codeModel", "definedClass" }, callSuper = false)
 public class CamundaDto {
 
-  public static final String PACKAGE = CAMUNDA_REST_ROOT_PKG + ".swagger.dto";
-
   private final JCodeModel codeModel;
 
   @Getter
@@ -37,7 +35,7 @@ public class CamundaDto {
   }
 
   public String getFullQualifiedName() {
-    return String.format("%s.%sSwagger", PACKAGE, getSimpleName());
+    return baseClass.getCanonicalName();
   }
 
   public String getSimpleName() {
