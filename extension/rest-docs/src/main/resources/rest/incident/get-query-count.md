@@ -68,8 +68,8 @@ GET `/incident/count`
     <td>Restricts to incidents that have the given incident id as root cause incident.</td>
   </tr>
   <tr>
-    <td>configuration</td>
-    <td>Restricts to incidents that have the given parameter set as configuration.</td>
+    <td>context</td>
+    <td>Restricts to incidents that have the given parameter set as context.</td>
   </tr>
   <tr>
     <td>tenantIdIn</td>

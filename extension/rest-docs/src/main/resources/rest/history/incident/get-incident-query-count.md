@@ -67,8 +67,8 @@ GET `/history/incident/count`
     <td>Restricts to incidents that have the given incident id as root cause incident.</td>
   </tr>
   <tr>
-    <td>configuration</td>
-    <td>Restricts to incidents that have the given parameter set as configuration.</td>
+    <td>context</td>
+    <td>Restricts to incidents that have the given parameter set as context.</td>
   </tr>
   <tr>
     <td>tenantIdIn</td>
@@ -93,7 +93,7 @@ GET `/history/incident/count`
   <tr>
     <td>sortBy</td>
     <td>Sort the results lexicographically by a given criterion. Valid values are
-    <code>incidentId</code>, <code>createTime</code>, <code>endTime</code>, <code>incidentType</code>, <code>executionId</code>, <code>activityId</code>, <code>processInstanceId</code>, <code>processDefinitionId</code>, <code>causeIncidentId</code>, <code>rootCauseIncidentId</code>, <code>configuration</code> and <code>tenantId</code>.
+    <code>incidentId</code>, <code>createTime</code>, <code>endTime</code>, <code>incidentType</code>, <code>executionId</code>, <code>activityId</code>, <code>processInstanceId</code>, <code>processDefinitionId</code>, <code>causeIncidentId</code>, <code>rootCauseIncidentId</code>, <code>context</code> and <code>tenantId</code>.
     Must be used in conjunction with the <code>sortOrder</code> parameter.</td>
   </tr>
   <tr>

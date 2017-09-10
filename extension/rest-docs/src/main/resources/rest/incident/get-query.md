@@ -68,8 +68,8 @@ GET `/incident`
     <td>Restricts to incidents that have the given incident id as root cause incident.</td>
   </tr>
   <tr>
-    <td>configuration</td>
-    <td>Restricts to incidents that have the given parameter set as configuration.</td>
+    <td>context</td>
+    <td>Restricts to incidents that have the given parameter set as context.</td>
   </tr>
   <tr>
     <td>tenantIdIn</td>
@@ -82,7 +82,7 @@ GET `/incident`
   <tr>
     <td>sortBy</td>
     <td>Sort the results lexicographically by a given criterion. Valid values are
-    <code>incidentId</code>, <code>incidentTimestamp</code>, <code>incidentType</code>, <code>executionId</code>, <code>activityId</code>, <code>processInstanceId</code>, <code>processDefinitionId</code>, <code>causeIncidentId</code>, <code>rootCauseIncidentId</code>, <code>configuration</code> and <code>tenantId</code>.
+    <code>incidentId</code>, <code>incidentTimestamp</code>, <code>incidentType</code>, <code>executionId</code>, <code>activityId</code>, <code>processInstanceId</code>, <code>processDefinitionId</code>, <code>causeIncidentId</code>, <code>rootCauseIncidentId</code>, <code>context</code> and <code>tenantId</code>.
     Must be used in conjunction with the <code>sortOrder</code> parameter.</td>
   </tr>
   <tr>
@@ -150,7 +150,7 @@ Each incident object has the following properties:
     <td>The id of the associated root cause incident which has been triggered.</td>
   </tr>
   <tr>
-    <td>configuration</td>
+    <td>context</td>
     <td>String</td>
     <td>The payload of this incident.</td>
   </tr>
@@ -214,7 +214,7 @@ GET `/incident?processInstanceId=aProcInstId`
     "activityId": "serviceTask",
     "causeIncidentId": "aCauseIncidentId",
     "rootCauseIncidentId": "aRootCauseIncidentId",
-    "configuration": "aConfiguration",
+    "context": "aConfiguration",
     "tenantId": null,
     "incidentMessage": "anIncidentMessage",
     "jobDefinitionId": "aJobDefinitionId"
@@ -229,7 +229,7 @@ GET `/incident?processInstanceId=aProcInstId`
     "activityId": "userTask",
     "causeIncidentId": "anotherCauseIncidentId",
     "rootCauseIncidentId": "anotherRootCauseIncidentId",
-    "configuration": "anotherConfiguration",
+    "context": "anotherConfiguration",
     "tenantId": null,
     "incidentMessage": "anotherIncidentMessage",
     "jobDefinitionId": null

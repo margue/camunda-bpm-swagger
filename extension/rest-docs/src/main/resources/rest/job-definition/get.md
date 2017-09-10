@@ -76,7 +76,7 @@ Its properties are as follows:
   <tr>
     <td>jobConfiguration</td>
     <td>String</td>
-    <td>The configuration of a job definition provides details about the jobs which will be created. For example: for timer jobs it is the timer configuration.</td>
+    <td>The context of a job definition provides details about the jobs which will be created. For example: for timer jobs it is the timer context.</td>
   </tr>
   <tr>
     <td>overridingJobPriority</td>

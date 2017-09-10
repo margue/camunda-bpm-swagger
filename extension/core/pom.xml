@@ -57,6 +57,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
+        <artifactId>camunda-bpm-swagger-plugin-spoon</artifactId>
+        <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-rest-core</artifactId>
+            <version>${camunda.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>process-camunda-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/generated-sources/rest</outputDirectory>
+            </configuration>
+
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 

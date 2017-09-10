@@ -196,14 +196,14 @@
     \ that the currently authenticated user can perform on the `/authorization` resource.\
     \ Whether the user can perform an operation or not may depend on various factors,\
     \ including the users authorizations to interact with this resource and the internal\
-    \ configuration of the process engine."
+    \ context of the process engine."
   resultDescription: "The `/authorization` resource supports two custom OPTIONS requests,\
     \ one for the resource as such and one for individual authorization instances.\
     \ The OPTIONS request allows you to check for the set of available operations\
     \ that the currently authenticated user can perform on the `/authorization` resource.\
     \ Whether the user can perform an operation or not may depend on various factors,\
     \ including the users authorizations to interact with this resource and the internal\
-    \ configuration of the process engine."
+    \ context of the process engine."
   responseCodes:
     200:
       id: "200"
@@ -4569,14 +4569,14 @@
     \ allows you to check for the set of available operations that the currently authenticated\
     \ user can perform on the `/filter` resource. Whether the user can perform an\
     \ operation or not may depend on various factors, including the users authorizations\
-    \ to interact with this resource and the internal configuration of the process\
+    \ to interact with this resource and the internal context of the process\
     \ engine."
   resultDescription: "The `/filter` resource supports two custom OPTIONS requests,\
     \ one for the resource as such and one for individual filter instances. The OPTIONS\
     \ request allows you to check for the set of available operations that the currently\
     \ authenticated user can perform on the `/filter` resource. Whether the user can\
     \ perform an operation or not may depend on various factors, including the users\
-    \ authorizations to interact with this resource and the internal configuration\
+    \ authorizations to interact with this resource and the internal context\
     \ of the process engine."
   responseCodes:
     200:
@@ -4886,12 +4886,12 @@
   description: "The OPTIONS request allows checking for the set of available operations\
     \ that the currently authenticated user can perform on the resource. If the user\
     \ can perform an operation or not may depend on various things, including the\
-    \ users authorizations to interact with this resource and the internal configuration\
+    \ users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   resultDescription: "The OPTIONS request allows checking for the set of available\
     \ operations that the currently authenticated user can perform on the resource.\
     \ If the user can perform an operation or not may depend on various things, including\
-    \ the users authorizations to interact with this resource and the internal configuration\
+    \ the users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   pathParameters:
     id:
@@ -4938,13 +4938,13 @@
     \ allows checking for the set of available operations that the currently authenticated\
     \ user can perform on the `/group` resource. If the user can perform an operation\
     \ or not may depend on various things, including the users authorizations to interact\
-    \ with this resource and the internal configuration of the process engine."
+    \ with this resource and the internal context of the process engine."
   resultDescription: "The `/group` resource supports two custom OPTIONS requests,\
     \ one for the resource as such and one for individual group instances. The OPTIONS\
     \ request allows checking for the set of available operations that the currently\
     \ authenticated user can perform on the `/group` resource. If the user can perform\
     \ an operation or not may depend on various things, including the users authorizations\
-    \ to interact with this resource and the internal configuration of the process\
+    \ to interact with this resource and the internal context of the process\
     \ engine."
   pathParameters:
     id:
@@ -7290,10 +7290,10 @@
       id: "incidentMessage"
       type: null
       description: "Restricts to incidents that have the given incident message."
-    configuration:
-      id: "configuration"
+    context:
+      id: "context"
       type: null
-      description: "Restricts to incidents that have the given parameter set as configuration."
+      description: "Restricts to incidents that have the given parameter set as context."
     jobDefinitionIdIn:
       id: "jobDefinitionIdIn"
       type: null
@@ -7345,7 +7345,7 @@
       description: "Sort the results lexicographically by a given criterion. Valid\
         \ values are incidentId, createTime, endTime, incidentType, executionId, activityId,\
         \ processInstanceId, processDefinitionId, causeIncidentId, rootCauseIncidentId,\
-        \ configuration and tenantId. Must be used in conjunction with the sortOrder\
+        \ context and tenantId. Must be used in conjunction with the sortOrder\
         \ parameter."
     incidentId:
       id: "incidentId"
@@ -7391,10 +7391,10 @@
       id: "incidentMessage"
       type: null
       description: "Restricts to incidents that have the given incident message."
-    configuration:
-      id: "configuration"
+    context:
+      id: "context"
       type: null
-      description: "Restricts to incidents that have the given parameter set as configuration."
+      description: "Restricts to incidents that have the given parameter set as context."
     jobDefinitionIdIn:
       id: "jobDefinitionIdIn"
       type: null
@@ -7446,7 +7446,7 @@
       description: "Sort the results lexicographically by a given criterion. Valid\
         \ values are incidentId, createTime, endTime, incidentType, executionId, activityId,\
         \ processInstanceId, processDefinitionId, causeIncidentId, rootCauseIncidentId,\
-        \ configuration, tenantId and incidentState. Must be used in conjunction with\
+        \ context, tenantId and incidentState. Must be used in conjunction with\
         \ the sortOrder parameter."
     incidentId:
       id: "incidentId"
@@ -7513,7 +7513,7 @@
     jobDefinitionConfiguration:
       id: "jobDefinitionConfiguration"
       type: null
-      description: "Filter by job definition configuration."
+      description: "Filter by job definition context."
     executionIdIn:
       id: "executionIdIn"
       type: null
@@ -7615,7 +7615,7 @@
     jobDefinitionConfiguration:
       id: "jobDefinitionConfiguration"
       type: null
-      description: "Filter by job definition configuration."
+      description: "Filter by job definition context."
     executionIdIn:
       id: "executionIdIn"
       type: null
@@ -9595,10 +9595,10 @@
       id: "incidentMessage"
       type: null
       description: "Restricts to incidents that have the given incident message."
-    configuration:
-      id: "configuration"
+    context:
+      id: "context"
       type: null
-      description: "Restricts to incidents that have the given parameter set as configuration."
+      description: "Restricts to incidents that have the given parameter set as context."
     tenantIdIn:
       id: "tenantIdIn"
       type: null
@@ -9660,10 +9660,10 @@
       id: "incidentMessage"
       type: null
       description: "Restricts to incidents that have the given incident message."
-    configuration:
-      id: "configuration"
+    context:
+      id: "context"
       type: null
-      description: "Restricts to incidents that have the given parameter set as configuration."
+      description: "Restricts to incidents that have the given parameter set as context."
     jobDefinitionIdIn:
       id: "jobDefinitionIdIn"
       type: null
@@ -9711,7 +9711,7 @@
       description: "Sort the results lexicographically by a given criterion. Valid\
         \ values are incidentId, incidentTimestamp, incidentType, executionId, activityId,\
         \ processInstanceId, processDefinitionId, causeIncidentId, rootCauseIncidentId,\
-        \ configuration and tenantId. Must be used in conjunction with the sortOrder\
+        \ context and tenantId. Must be used in conjunction with the sortOrder\
         \ parameter."
     incidentId:
       id: "incidentId"
@@ -10329,8 +10329,8 @@
     jobConfiguration:
       id: "jobConfiguration"
       type: null
-      description: "Only include job definitions which exist for the given job configuration.\
-        \ For example: for timer jobs it is the timer configuration."
+      description: "Only include job definitions which exist for the given job context.\
+        \ For example: for timer jobs it is the timer context."
     jobType:
       id: "jobType"
       type: null
@@ -10431,8 +10431,8 @@
     jobConfiguration:
       id: "jobConfiguration"
       type: null
-      description: "Only include job definitions which exist for the given job configuration.\
-        \ For example: for timer jobs it is the timer configuration."
+      description: "Only include job definitions which exist for the given job context.\
+        \ For example: for timer jobs it is the timer context."
     jobType:
       id: "jobType"
       type: null
@@ -13869,12 +13869,12 @@
   description: "The OPTIONS request allows checking for the set of available operations\
     \ that the currently authenticated user can perform on the resource. If the user\
     \ can perform an operation or not may depend on various things, including the\
-    \ users authorizations to interact with this resource and the internal configuration\
+    \ users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   resultDescription: "The OPTIONS request allows checking for the set of available\
     \ operations that the currently authenticated user can perform on the resource.\
     \ If the user can perform an operation or not may depend on various things, including\
-    \ the users authorizations to interact with this resource and the internal configuration\
+    \ the users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   pathParameters:
     id:
@@ -13920,13 +13920,13 @@
     \ allows checking for the set of available operations that the currently authenticated\
     \ user can perform on the `/tenant` resource. If the user can perform an operation\
     \ or not may depend on various things, including the users authorizations to interact\
-    \ with this resource and the internal configuration of the process engine."
+    \ with this resource and the internal context of the process engine."
   resultDescription: "The `/tenant` resource supports two custom OPTIONS requests,\
     \ one for the resource as such and one for individual tenant instances. The OPTIONS\
     \ request allows checking for the set of available operations that the currently\
     \ authenticated user can perform on the `/tenant` resource. If the user can perform\
     \ an operation or not may depend on various things, including the users authorizations\
-    \ to interact with this resource and the internal configuration of the process\
+    \ to interact with this resource and the internal context of the process\
     \ engine."
   pathParameters:
     id:
@@ -14015,12 +14015,12 @@
   description: "The OPTIONS request allows checking for the set of available operations\
     \ that the currently authenticated user can perform on the resource. If the user\
     \ can perform an operation or not may depend on various things, including the\
-    \ users authorizations to interact with this resource and the internal configuration\
+    \ users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   resultDescription: "The OPTIONS request allows checking for the set of available\
     \ operations that the currently authenticated user can perform on the resource.\
     \ If the user can perform an operation or not may depend on various things, including\
-    \ the users authorizations to interact with this resource and the internal configuration\
+    \ the users authorizations to interact with this resource and the internal context\
     \ of the process engine."
   pathParameters:
     id:
@@ -14238,13 +14238,13 @@
     \ allows checking for the set of available operations that the currently authenticated\
     \ user can perform on the `/user` resource. If the user can perform an operation\
     \ or not may depend on various things, including the user's authorizations to\
-    \ interact with this resource and the internal configuration of the process engine."
+    \ interact with this resource and the internal context of the process engine."
   resultDescription: "The `/user` resource supports two custom OPTIONS requests, one\
     \ for the resource as such and one for individual user instances. The OPTIONS\
     \ request allows checking for the set of available operations that the currently\
     \ authenticated user can perform on the `/user` resource. If the user can perform\
     \ an operation or not may depend on various things, including the user's authorizations\
-    \ to interact with this resource and the internal configuration of the process\
+    \ to interact with this resource and the internal context of the process\
     \ engine."
   responseCodes:
     200:

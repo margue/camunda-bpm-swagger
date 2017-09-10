@@ -95,7 +95,7 @@ A JSON object with the following properties:
   <tr>
     <td>jobDefinitionConfiguration</td>
     <td>String</td>
-    <td>The job definition configuration type of the associated job.</td>
+    <td>The job definition context type of the associated job.</td>
   </tr>
   <tr>
     <td>activityId</td>

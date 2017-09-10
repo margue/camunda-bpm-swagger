@@ -55,7 +55,7 @@ A JSON object with the following properties:
   </tr>
   <tr>
     <td>jobDefinitionConfiguration</td>
-    <td>Filter by job definition configuration.</td>
+    <td>Filter by job definition context.</td>
   </tr>
   <tr>
     <td>activityIdIn</td>

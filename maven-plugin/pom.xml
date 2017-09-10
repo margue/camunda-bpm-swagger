@@ -16,6 +16,7 @@
   <modules>
     <module>generator</module>
     <module>rest-docs</module>
+    <module>spoon</module>
   </modules>
 
   <properties>

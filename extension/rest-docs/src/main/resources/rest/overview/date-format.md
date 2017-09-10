@@ -19,7 +19,7 @@ can be specified by the context parameter
 `org.camunda.bpm.engine.rest.jackson.dateFormat`.
 
 For example,  if the date format should contain milliseconds and timezone
-information (`yyyy-MM-dd'T'HH:mm:ss.SSSZ`) the following configuration can be
+information (`yyyy-MM-dd'T'HH:mm:ss.SSSZ`) the following context can be
 used.
 
 To achieve this, you can edit the `WEB-INF/web.xml` file as follows:
@@ -47,6 +47,6 @@ To achieve this, you can edit the `WEB-INF/web.xml` file as follows:
 </web-app>
 ```
 
-With this configuration the REST API will return dates with millisecond
+With this context the REST API will return dates with millisecond
 precision and timezone information. Also, new dates, with milliseconds and timezone information, 
 can be submitted to the REST API without losing these details.

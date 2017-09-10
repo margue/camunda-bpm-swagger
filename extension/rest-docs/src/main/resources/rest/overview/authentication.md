@@ -43,7 +43,7 @@ The authentication filter works fine whenever the JAX-RS application containing 
 
 RESTEasy allows deployment of a JAX-RS application as a servlet filter (see the [RESTEasy docs](http://docs.jboss.org/resteasy/docs/2.3.5.Final/userguide/html/Installation_Configuration.html#filter)). If you choose this method to deploy the REST API application, which we also do in the Tomcat distribution, the authentication filter requires an extra init-param named `rest-url-pattern-prefix`. The value has to correspond to the servlet path (see [HttpServletRequest#getServletPath()](http://docs.oracle.com/javaee/6/api/javax/servlet/http/HttpServletRequest.html#getServletPath%28%29)) as in the case that the JAX-RS application is deployed as a servlet.
 
-Example: If the RESTEasy configuration is
+Example: If the RESTEasy context is
 
 ```xml
 <filter>

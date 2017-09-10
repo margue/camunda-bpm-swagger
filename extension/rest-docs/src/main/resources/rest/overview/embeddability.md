@@ -60,7 +60,7 @@ public class MyApplication extends Application {
 
 To restrict the exposed REST resources to specific types (e.g., only process-definition-related methods), a subclass of `org.camunda.bpm.engine.rest.impl.AbstractProcessEngineRestServiceImpl` can be implemented and registered with the JAX-RS application. Such a subclass can control which resources get exposed by offering JAX-RS-annotated methods. See the sources of `NamedProcessEngineRestServiceImpl` and `DefaultProcessEngineRestServiceImpl` for an example. **Note**: The path to a subresource should always match the path defined in the subresource's interface.
 
-The configuration class `JacksonConfigurator` is required to correctly configure the serialization of date fields.
+The context class `JacksonConfigurator` is required to correctly configure the serialization of date fields.
 You may also have to add the following Jackson providers: `com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider`,
 `org.camunda.bpm.engine.rest.exception.JsonMappingExceptionHandler` and `org.camunda.bpm.engine.rest.exception.JsonParseExceptionHandler`.
 Depending on the runtime environment, this may not be necessary.
