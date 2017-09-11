@@ -1,17 +1,14 @@
 package org.camunda.bpm.swagger.maven.spoon.processor;
 
-import com.google.inject.Inject;
+import java.lang.annotation.Annotation;
+import java.util.function.Predicate;
+
 import io.swagger.annotations.ApiModel;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.maven.plugin.logging.Log;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.ModifierKind;
-
-import java.lang.annotation.Annotation;
-import java.util.function.Predicate;
 
 /**
  * Processes all classes that end with "Dto" and annotates them with {@link ApiModel}.
@@ -25,8 +22,8 @@ public class ApiModelProcessor extends AbstractProcessor<CtClass<?>> {
   @Override
   public boolean isToBeProcessed(final CtClass<?> candidate) {
     return isNamedDto
-      .and(isNotAbstract)
-      .test(candidate);
+        .and(isNotAbstract)
+        .test(candidate);
   }
 
   @Override

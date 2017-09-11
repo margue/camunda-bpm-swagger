@@ -1,10 +1,13 @@
 package org.camunda.bpm.swagger.maven.spoon;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
+import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
+import static org.camunda.bpm.swagger.maven.spoon.SpoonProcessingMojo.GOAL;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
+
+import java.io.File;
+import java.nio.file.Files;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -18,24 +21,20 @@ import org.camunda.bpm.swagger.maven.spoon.fn.DownloadCamundaSources;
 import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelProcessor;
 import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelPropertyProcessor;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import spoon.Launcher;
 import spoon.SpoonAPI;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
-import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
-import static org.camunda.bpm.swagger.maven.spoon.SpoonProcessingMojo.GOAL;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
-
 @Mojo(
-  name = GOAL,
-  defaultPhase = GENERATE_SOURCES,
-  requiresDependencyResolution = COMPILE_PLUS_RUNTIME
-)
+    name = GOAL,
+    defaultPhase = GENERATE_SOURCES,
+    requiresDependencyResolution = COMPILE_PLUS_RUNTIME
+    )
 @Slf4j
 public class SpoonProcessingMojo extends AbstractMojo {
 
@@ -43,21 +42,21 @@ public class SpoonProcessingMojo extends AbstractMojo {
   @Getter
   public static class Context {
 
-    private boolean shouldCompile;
-    private boolean autoImports;
-    private boolean noClasspath;
+    private final boolean shouldCompile;
+    private final boolean autoImports;
+    private final boolean noClasspath;
 
     @NonNull
-    private File unpackDirectory;
+    private final File unpackDirectory;
 
     @NonNull
-    private File outputDirectory;
+    private final File outputDirectory;
 
     @NonNull
-    private String camundaVersion;
+    private final String camundaVersion;
 
     @NonNull
-    private MojoExecutor.ExecutionEnvironment executionEnvironment;
+    private final MojoExecutor.ExecutionEnvironment executionEnvironment;
 
     @SneakyThrows
     public Context initDirectory() {
@@ -78,11 +77,11 @@ public class SpoonProcessingMojo extends AbstractMojo {
       spoon.addProcessor(new ApiModelProcessor());
       spoon.addProcessor(new ApiModelPropertyProcessor(this));
 
-      String[] classpathElements = executionEnvironment.getMavenProject()
-        .getCompileClasspathElements()
-        .stream()
-        .filter(s -> !executionEnvironment.getMavenProject().getBuild().getOutputDirectory().equals(s))
-        .toArray(String[]::new);
+      final String[] classpathElements = executionEnvironment.getMavenProject()
+          .getCompileClasspathElements()
+          .stream()
+          .filter(s -> !executionEnvironment.getMavenProject().getBuild().getOutputDirectory().equals(s))
+          .toArray(String[]::new);
 
       log.debug("classpath: {}", classpathElements);
 
@@ -129,18 +128,18 @@ public class SpoonProcessingMojo extends AbstractMojo {
   @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
     Context.builder()
-      .executionEnvironment(executionEnvironment(project, session, buildPluginManager))
-      .camundaVersion(camundaVersion)
-      .unpackDirectory(unpackDirectory)
-      .outputDirectory(outputDirectory)
-      .noClasspath(false)
-      .autoImports(false)
-      .shouldCompile(false)
-      .build()
-      .initDirectory()
-      .downloadSources()
-      .processSources()
-      ;
+    .executionEnvironment(executionEnvironment(project, session, buildPluginManager))
+    .camundaVersion(camundaVersion)
+    .unpackDirectory(unpackDirectory)
+    .outputDirectory(outputDirectory)
+    .noClasspath(false)
+    .autoImports(false)
+    .shouldCompile(false)
+    .build()
+    .initDirectory()
+    .downloadSources()
+    .processSources()
+    ;
   }
 
 }
