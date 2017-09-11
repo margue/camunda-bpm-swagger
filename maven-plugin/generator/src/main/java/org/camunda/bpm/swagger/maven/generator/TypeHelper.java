@@ -3,7 +3,7 @@ package org.camunda.bpm.swagger.maven.generator;
 import java.util.List;
 import java.util.Map;
 
-import com.helger.jcodemodel.AbstractJClass;
+import com.helger.jcodemodel.AbstractJType;
 
 public class TypeHelper {
 
@@ -19,8 +19,8 @@ public class TypeHelper {
     return clazz.getName().endsWith("Dto");
   }
 
-  public static boolean isString(final AbstractJClass abstractJClass) {
-    return "String".equals(abstractJClass.name());
+  public static boolean isString(final AbstractJType abstractJType) {
+    return "String".equals(abstractJType.name());
   }
 
   public static boolean isMap(final Class<?> clazz) {

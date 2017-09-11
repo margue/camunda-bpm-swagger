@@ -11,6 +11,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Repository for parameter names (reserved one).
+ * 
+ * @author Simon Zambrovski
+ *
+ */
 public class ParameterRepository {
 
   private static Map<String, Pair<Class<?>, String>> predefinedParameters = new HashMap<>();

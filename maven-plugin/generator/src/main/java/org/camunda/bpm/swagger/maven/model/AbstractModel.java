@@ -16,7 +16,7 @@ public abstract class AbstractModel {
 
   public AbstractModel(final ModelRepository modelRepository) {
     this.modelRepository = modelRepository;
-    modelRepository.addModel(this);
+    this.modelRepository.addModel(this);
   }
 
   public abstract JCodeModel getCodeModel();

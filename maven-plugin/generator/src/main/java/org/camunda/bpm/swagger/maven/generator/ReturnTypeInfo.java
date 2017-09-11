@@ -3,16 +3,20 @@ package org.camunda.bpm.swagger.maven.generator;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
-import org.camunda.bpm.swagger.maven.model.CamundaDto;
+import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.camunda.bpm.swagger.maven.generator.step.TypeStep;
+import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
 import com.helger.jcodemodel.AbstractJClass;
 import com.helger.jcodemodel.JCodeModel;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -21,14 +25,17 @@ import lombok.extern.slf4j.Slf4j;
  * @author Simon Zambrovski, Holisticon AG.
  *
  */
-@Data
 @Slf4j
 public class ReturnTypeInfo {
 
+  @Getter
   private final Method method;
+  @Getter
   private Class<?> rawType;
+  @Getter
   private AbstractJClass[] parameterTypes;
-  private ModelRepository modelRepository;
+  private final List<TypeStep> dtos = new ArrayList<>();
+  private final ModelRepository modelRepository;
   private final JCodeModel codeModel;
 
   /**
@@ -59,9 +66,13 @@ public class ReturnTypeInfo {
           // plain class X -> List<X>
           final Class<?> candidateParameterClass = (Class<?>) typeArg;
           if (TypeHelper.isDto(candidateParameterClass)) {
-            final CamundaDto camundaDto = new CamundaDto(modelRepository, candidateParameterClass, codeModel);
-            parameterClasses[i] = camundaDto.getDefinedClass();
+            final TypeStep dto = new TypeStep(modelRepository, candidateParameterClass, codeModel);
+            // collect DTO
+            dtos.add(dto);
+            // an DTO is always a class
+            parameterClasses[i] = (AbstractJClass) dto.getType();
           } else {
+            // non DTO
             parameterClasses[i] = codeModel.ref(candidateParameterClass);
           }
 
@@ -70,16 +81,29 @@ public class ReturnTypeInfo {
           log.error(
               "The return type was a class parameterized by a parametrized class. The generator doesn't support it yet. Falling back to the basic type for {}",
               method);
-          parameterClasses = null;
+          parameterClasses = new AbstractJClass[0];
           break;
         }
       }
+
       this.parameterTypes = parameterClasses;
 
     } else {
       result = method.getReturnType();
     }
     this.rawType = result;
+  }
+
+  /**
+   * Assign rest operation documentation to found DTOs.
+   * 
+   * @param restOperation
+   *          rest operation conatning docs.
+   */
+  public void documentationFound(final RestOperation restOperation) {
+    for (final TypeStep dto : dtos) {
+      modelRepository.addDoc(dto.getFullQualifiedName(), restOperation, DocStyle.TYPE_PARAM);
+    }
   }
 
   /**

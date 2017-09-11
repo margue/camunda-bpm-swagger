@@ -1,6 +1,5 @@
 package org.camunda.bpm.swagger.maven;
 
-import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
 import static org.camunda.bpm.swagger.maven.GenerateSwaggerJsonMojo.GOAL;

@@ -12,11 +12,11 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PathAnnotation extends AbstractMethodStep {
+public class PathAnnotationStep extends AbstractMethodStep {
 
   private String path;
 
-  public PathAnnotation(final JMethod method) {
+  public PathAnnotationStep(final JMethod method) {
     super(method);
   }
 

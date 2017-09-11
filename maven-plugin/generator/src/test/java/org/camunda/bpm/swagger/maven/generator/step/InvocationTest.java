@@ -19,7 +19,7 @@ public class InvocationTest {
     for (final Method m : methods) {
       final Parameter[] all = m.getParameters();
       final Parameter param = all[0];
-      final String paramName = Invocation.paramName(param, all);
+      final String paramName = InvocationStep.paramName(param, all);
       log.info(paramName);
       assertTrue( all.length == 1 && !paramName.matches(".*\\d+.*") || all.length > 1 && paramName.matches(".*\\d+.*"));
     }

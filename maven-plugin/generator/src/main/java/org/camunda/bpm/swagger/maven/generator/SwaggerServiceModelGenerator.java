@@ -9,9 +9,8 @@ import java.util.stream.Collectors;
 import javax.ws.rs.Path;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.camunda.bpm.swagger.maven.generator.step.Invocation;
+import org.camunda.bpm.swagger.maven.generator.step.InvocationStep;
 import org.camunda.bpm.swagger.maven.generator.step.MethodStep;
-import org.camunda.bpm.swagger.maven.generator.step.ResourceMethodGenerationHelper;
 import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 
@@ -43,12 +42,12 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     // class information
     c._extends(camundaRestService.getServiceImplClass());
     c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
-    // TODO add docs here
+    // TODO add service docs here
     c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", TagRespository.lookup(camundaRestService));
 
     // generate constructor
     for (final Constructor<?> constructor : camundaRestService.getServiceImplClass().getConstructors()) {
-      new Invocation(c.constructor(constructor.getModifiers())).constructor(constructor);
+      new InvocationStep(c.constructor(constructor.getModifiers())).constructor(constructor);
     }
 
     // construct return type information

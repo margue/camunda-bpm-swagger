@@ -1,12 +1,10 @@
-package org.camunda.bpm.swagger.maven.generator.step;
+package org.camunda.bpm.swagger.maven.generator;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
-import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
 import com.helger.jcodemodel.JCodeModel;

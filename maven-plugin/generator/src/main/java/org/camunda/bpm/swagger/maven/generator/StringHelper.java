@@ -1,10 +1,9 @@
 package org.camunda.bpm.swagger.maven.generator;
 
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
-
-import java.lang.reflect.Method;
-import java.util.StringTokenizer;
 
 public class StringHelper {
 
@@ -39,7 +38,7 @@ public class StringHelper {
     return s.replaceAll(String.format("%s|%s|%s", "(?<=[A-Z])(?=[A-Z][a-z])", "(?<=[^A-Z])(?=[A-Z])", "(?<=[A-Za-z])(?=[^A-Za-z])"), " ");
   }
 
-  public static String getFieldnameFromGetter(String methodName) {
+  public static String getFieldnameFromGetter(final String methodName) {
     return  WordUtils.uncapitalize(StringUtils.removeStart(methodName, "get"));
   }
 }

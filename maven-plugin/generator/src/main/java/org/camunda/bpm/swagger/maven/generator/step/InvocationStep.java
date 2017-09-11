@@ -19,6 +19,7 @@ import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.ParameterRepository;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
+import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 import org.springframework.beans.BeanUtils;
 
@@ -32,9 +33,9 @@ import com.helger.jcodemodel.JVar;
 
 import io.swagger.annotations.ApiParam;
 
-public class Invocation extends AbstractMethodStep {
+public class InvocationStep extends AbstractMethodStep {
 
-  public Invocation(final JMethod method) {
+  public InvocationStep(final JMethod method) {
     super(method);
   }
 
@@ -115,15 +116,15 @@ public class Invocation extends AbstractMethodStep {
 
     final Pair<Class<?>, String> pair = parameter(p, all);
 
-    final DtoStep dtoStep = new DtoStep(modelRepository, pair.getLeft(), method.owner());
-    final AbstractJType type = dtoStep.getType(method.owner());
+    final TypeStep dtoStep = new TypeStep(modelRepository, pair.getLeft(), method.owner());
+    final AbstractJType type = dtoStep.getType();
 
     if (parameterAnnotationValue.isPresent()) {
       final Pair<Class<? extends Annotation>, String> parameterAnnotation = parameterAnnotationValue.get();
       jvar = method.param(type, parameterAnnotation.getRight());
       jvar.annotate(parameterAnnotation.getLeft()).param("value", parameterAnnotation.getRight());
 
-      if (doc != null) {
+      if (doc != null) {        
         // extract docs
         ParameterDescription parameterDescription = null;
         if (parameterAnnotation.getLeft().isAssignableFrom(QueryParam.class)) {
@@ -149,6 +150,9 @@ public class Invocation extends AbstractMethodStep {
 
       if (dtoStep.isDto()) {
         apiParam.param("type", type.fullName());
+
+        // add docs
+        modelRepository.addDoc(dtoStep.getFullQualifiedName(), doc, DocStyle.METHOD_PARAM);
       }
     }
     return jvar;

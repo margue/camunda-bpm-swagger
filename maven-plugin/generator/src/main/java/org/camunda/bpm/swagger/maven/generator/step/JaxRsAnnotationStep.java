@@ -15,12 +15,12 @@ import com.helger.jcodemodel.JMethod;
 
 import lombok.Getter;
 
-public class JaxRsAnnotation extends AbstractMethodStep {
+public class JaxRsAnnotationStep extends AbstractMethodStep {
 
   @Getter
   private Class<? extends Annotation> type = GET.class;
 
-  public JaxRsAnnotation(final JMethod method) {
+  public JaxRsAnnotationStep(final JMethod method) {
     super(method);
   }
 

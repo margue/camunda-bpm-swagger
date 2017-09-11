@@ -9,6 +9,7 @@ import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
+import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
 import com.helger.jcodemodel.AbstractJType;
@@ -45,7 +46,7 @@ public class MethodStep {
 
     // determine method name and return type
     final String methodName;
-    Optional<DtoStep> dtoStep = Optional.empty();
+    Optional<TypeStep> dto = Optional.empty();
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
 
@@ -63,34 +64,36 @@ public class MethodStep {
 
       methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
-      dtoStep = Optional.of(new DtoStep(modelRepository, info.getRawType(), clazz.owner()));
-      this.returnTypeStyle = dtoStep.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
-      this.methodReturnType = dtoStep.get().getType(this.clazz.owner());
+      dto = Optional.of(new TypeStep(modelRepository, info.getRawType(), clazz.owner()));
+      this.returnTypeStyle = dto.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
+      this.methodReturnType = dto.get().getType();
       methodName = methodName(parentInvocations, info.getMethod().getName(), null);
     }
 
     method = clazz.method(JMod.PUBLIC, methodReturnType, methodName);
 
     // path annotation
-    final PathAnnotation pathAnnotationStep = new PathAnnotation(method);
+    final PathAnnotationStep pathAnnotationStep = new PathAnnotationStep(method);
     pathAnnotationStep.annotate(pathPrefix.getRight(), info.getMethod());
     this.path = pathAnnotationStep.getPath();
 
     // JAX RS
-    final JaxRsAnnotation jaxrsAnnotation = new JaxRsAnnotation(method);
+    final JaxRsAnnotationStep jaxrsAnnotation = new JaxRsAnnotationStep(method);
     jaxrsAnnotation.annotate(info.getMethod());
 
     // consume and produce
-    final ConsumesAndProduces consumesAndProduces = new ConsumesAndProduces(method);
+    final ConsumesAndProducesStep consumesAndProduces = new ConsumesAndProducesStep(method);
     consumesAndProduces.annotate(info.getMethod());
 
     final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
-    if (dtoStep.isPresent() && dtoStep.get().getCamundaDto().isPresent()) {
-      modelRepository.getDtoDocs().putIfAbsent(dtoStep.get().getCamundaDto().get().getFullQualifiedName(), doc);
+
+    // register docs for this DTO.
+    if (dto.isPresent()) {
+      modelRepository.addDoc(dto.get().getFullQualifiedName(), doc, DocStyle.RETURN_TYPE);
     }
 
     // create invocation
-    final JInvocation invoke = new Invocation(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
+    final JInvocation invoke = new InvocationStep(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
 
     // body
     if (TypeHelper.isVoid(getReturnType())) {
@@ -103,65 +106,6 @@ public class MethodStep {
       }
 
       method.body()._return(invoke);
-      /*
-      switch (getReturnTypeStyle()) {
-      case PLAIN:
-
-        // overriding, only if it is a simple return type (not parameterized, not DTO, not a resource)
-        if (parentInvocations == null) {
-          method.annotate(Override.class);
-        }
-
-        method.body()._return(invoke);
-        break;
-      case DTO:
-        method.body()._return(JExpr._new(getMethodReturnType()).arg(invoke));
-        break;
-      case DTO_LIST:
-        // return super.getSome().stream().map(o -> new SomeOther(o)).collect(Collectors.toList());
-        final JLambda listMapping = new JLambda();
-        listMapping.body()
-        .lambdaExpr(JExpr
-            ._new( // -> new
-                info.getParameterTypes()[0]) // DtoSwagger
-            .arg(listMapping.addParam("o"))); // (o)
-
-        method.body()._return( // return
-            invoke.invoke("stream") // stream
-            .invoke("map") // map
-            .arg(listMapping) // lambda
-            .invoke("collect") // collect
-            .arg(getMethod().owner().ref(Collectors.class).staticInvoke("toList")));
-
-        break;
-      case DTO_MAP_STRING:
-
-        final JLambda keyMapping = new JLambda();
-        final JLambdaParam keyEntry = keyMapping.addParam("e"); // e
-        keyMapping.body().lambdaExpr(keyEntry.invoke("getKey")); // -> e.getKey
-
-        final JLambda valueMapping = new JLambda();
-        final JLambdaParam valueEntry = valueMapping.addParam("e"); // e
-        valueMapping.body()
-        .lambdaExpr(JExpr
-            ._new( // -> new
-                info.getParameterTypes()[1]) // DtoSwagger
-            .arg(valueEntry.invoke("getValue"))); // (e.getValue)
-
-        method.body()._return( // return
-            invoke.invoke("entrySet") // entrySet()
-            .invoke("stream") // stream()
-            .invoke("collect") // collect
-            .arg(getMethod().owner().ref(Collectors.class).staticInvoke("toMap") // Collectors.toMap
-                .arg(keyMapping) // key lambda
-                .arg(valueMapping) // value lambda
-                ));
-
-        break;
-      default:
-        throw new IllegalArgumentException("This is a bug. You changed the enum, but forgot to add a case.");
-      }
-       */
     }
 
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);

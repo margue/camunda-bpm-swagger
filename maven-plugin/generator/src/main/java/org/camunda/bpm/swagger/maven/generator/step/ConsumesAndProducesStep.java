@@ -12,9 +12,9 @@ import javax.ws.rs.Produces;
 
 import com.helger.jcodemodel.JMethod;
 
-public class ConsumesAndProduces extends AbstractMethodStep {
+public class ConsumesAndProducesStep extends AbstractMethodStep {
 
-  public ConsumesAndProduces(final JMethod method) {
+  public ConsumesAndProducesStep(final JMethod method) {
     super(method);
   }
 

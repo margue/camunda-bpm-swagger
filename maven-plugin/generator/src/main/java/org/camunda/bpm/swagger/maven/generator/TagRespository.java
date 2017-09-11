@@ -14,6 +14,12 @@ import org.camunda.bpm.engine.rest.ProcessDefinitionRestService;
 import org.camunda.bpm.engine.rest.ProcessInstanceRestService;
 import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 
+/**
+ * Repository for tags to classify the methods based on class services.
+ * 
+ * @author Simon Zambrovski
+ *
+ */
 public class TagRespository {
 
   private static Map<Class<?>, String> tags = new HashMap<>();

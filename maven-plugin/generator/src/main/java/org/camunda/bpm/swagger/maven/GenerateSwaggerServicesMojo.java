@@ -1,6 +1,15 @@
 package org.camunda.bpm.swagger.maven;
 
-import lombok.SneakyThrows;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
+import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -10,22 +19,14 @@ import org.apache.maven.project.MavenProject;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.maven.fn.ReflectionsFactory;
 import org.camunda.bpm.swagger.maven.fn.ScanRestServices;
-import org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory;
+import org.camunda.bpm.swagger.maven.generator.SwaggerServiceModelGenerator;
 import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
-import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
-import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
+import lombok.SneakyThrows;
 
 @Mojo(name = GOAL, defaultPhase = GENERATE_SOURCES, requiresDependencyResolution = COMPILE_PLUS_RUNTIME, threadSafe = false)
 public class GenerateSwaggerServicesMojo extends AbstractMojo {
@@ -46,19 +47,12 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
   @Parameter(property = "codeGeneratorFactory", required = true, defaultValue = "org.camunda.bpm.swagger.maven.generator.SwaggerCodeGeneratorFactory")
   protected String codeGeneratorFactoryClass;
 
-  @Parameter(
-    defaultValue = "${project.build.directory}/generated-sources/camunda-rest-dto-docs.yaml",
-    required = true,
-    readonly = true
-  )
+  @Parameter(defaultValue = "${project.build.directory}/generated-sources/camunda-rest-dto-docs.yaml", required = true, readonly = true)
   protected File yamlFile;
-
-  protected final SwaggerCodeGeneratorFactory codeGeneratorFactory = new SwaggerCodeGeneratorFactory();
 
   @Override
   @SneakyThrows
   public void execute() throws MojoExecutionException, MojoFailureException {
-
 
     documentation = new DocumentationYaml();
     modelRepository = new ModelRepository(documentation);
@@ -75,21 +69,20 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
     getLog().info("==================");
 
-    camundaRestServices.stream().map(codeGeneratorFactory::createCodeGenerator).forEach(CodeGenerator::generate);
+    camundaRestServices.stream().map(service -> new SwaggerServiceModelGenerator(service)).forEach(CodeGenerator::generate);
 
     // write all models
     modelRepository.getModels().forEach(r -> r.write(outputDirectory));
 
     getLog().info("==================");
 
-    if (modelRepository.getDtoDocs() == null || modelRepository.getDtoDocs().isEmpty()) {
-      throw new IllegalStateException("docs not set");
+    if (modelRepository.getDtoDocs().isEmpty()) {
+      throw new IllegalStateException("No docs has been provided.");
     }
 
-
     if (yamlFile != null) {
-      Yaml yaml = new Yaml();
-      FileWriter writer = new FileWriter(yamlFile);
+      final Yaml yaml = new Yaml();
+      final FileWriter writer = new FileWriter(yamlFile);
       yaml.dump(modelRepository.getDtoDocs(), writer);
     }
   }
