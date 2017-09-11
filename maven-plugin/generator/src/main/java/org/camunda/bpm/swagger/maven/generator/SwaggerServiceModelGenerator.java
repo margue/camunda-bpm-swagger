@@ -44,7 +44,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     c._extends(camundaRestService.getServiceImplClass());
     c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
     // TODO add docs here
-//    c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", TagRespository.lookup(camundaRestService));
+    c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", TagRespository.lookup(camundaRestService));
 
     // generate constructor
     for (final Constructor<?> constructor : camundaRestService.getServiceImplClass().getConstructors()) {

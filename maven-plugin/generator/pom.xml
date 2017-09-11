@@ -90,7 +90,7 @@
       <groupId>org.camunda.bpm</groupId>
       <artifactId>camunda-engine-rest-core</artifactId>
       <version>${camunda.version}</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
 
 
