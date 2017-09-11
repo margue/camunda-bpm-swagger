@@ -50,6 +50,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-json</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
