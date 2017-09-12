@@ -1,18 +1,17 @@
 package org.camunda.bpm.swagger.maven.model;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.camunda.bpm.swagger.docs.DocumentationYaml;
+import org.camunda.bpm.swagger.docs.model.DocStyleOperationPair;
+import org.camunda.bpm.swagger.docs.model.RestOperation;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.camunda.bpm.swagger.docs.DocumentationYaml;
-import org.camunda.bpm.swagger.docs.model.RestOperation;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ModelRepository {
@@ -24,7 +23,7 @@ public class ModelRepository {
   private final DocumentationYaml documentation;
 
   @Getter
-  private final Map<String, List<Pair<DocStyle, RestOperation>>> dtoDocs = new HashMap<>();
+  private final Map<String, List<DocStyleOperationPair>> dtoDocs = new HashMap<>();
 
   public ModelRepository(final DocumentationYaml documentation) {
     this.documentation = documentation;
@@ -39,12 +38,12 @@ public class ModelRepository {
     if (resOp == null) {
       return;
     }
-    List<Pair<DocStyle, RestOperation>> list = dtoDocs.get(fqn);
+    List<DocStyleOperationPair> list = dtoDocs.get(fqn);
     if (list == null) {
       list = new ArrayList<>();
       dtoDocs.put(fqn, list);
     }
-    list.add(Pair.of(style, resOp));
+    list.add(new DocStyleOperationPair(style.name(), resOp));
   }
 
   public AbstractModel addModel(final AbstractModel model) {

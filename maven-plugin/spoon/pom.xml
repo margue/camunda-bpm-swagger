@@ -32,6 +32,12 @@
       <artifactId>mojo-executor</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.apache.commons</groupId>
