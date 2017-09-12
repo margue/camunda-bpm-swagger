@@ -33,9 +33,8 @@ public class ApiOperationStep extends AbstractMethodStep {
       final String description = restOperation != null ? restOperation.getDescription() : WordUtils.capitalize(StringHelper.splitCamelCase(m.getName()));
 
       getMethod().annotate(ApiOperation.class) //
-      .param("value", description);
-      // notes are not used
-      // .param("notes", "Operation " + capitalize(StringHelper.splitCamelCase(m.getName())));
+      .param("notes", description)
+      .param("value", StringHelper.firstSentence(description));
     }
   }
 

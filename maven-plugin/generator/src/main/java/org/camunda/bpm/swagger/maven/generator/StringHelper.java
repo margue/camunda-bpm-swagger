@@ -39,6 +39,23 @@ public class StringHelper {
   }
 
   public static String getFieldnameFromGetter(final String methodName) {
-    return  WordUtils.uncapitalize(StringUtils.removeStart(methodName, "get"));
+    return WordUtils.uncapitalize(StringUtils.removeStart(methodName, "get"));
+  }
+
+  /**
+   * Returns a first sentence of the text if found.
+   * 
+   * @param description
+   *          text.
+   * @return text until first dot or the entire text if no dot found.
+   */
+  public static String firstSentence(final String description) {
+    if (description == null) {
+      return null;
+    }
+
+    final int indexOf = description.indexOf(".");
+    return indexOf > 0 ? description.substring(0, indexOf) : description;
+
   }
 }

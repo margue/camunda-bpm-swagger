@@ -21,4 +21,11 @@ public class StringHelperTest {
     assertThat(StringHelper.getFieldnameFromGetter("getFoo")).isEqualTo("foo");
     assertThat(StringHelper.getFieldnameFromGetter("getSomethingVeryWicked")).isEqualTo("somethingVeryWicked");
   }
+
+  @Test
+  public void getFirstSentence() {
+    assertThat(StringHelper.firstSentence("This . is . a . text")).isEqualTo("This ");
+    assertThat(StringHelper.firstSentence("This")).isEqualTo("This");
+    assertThat(StringHelper.firstSentence(".")).isEqualTo(".");
+  }
 }

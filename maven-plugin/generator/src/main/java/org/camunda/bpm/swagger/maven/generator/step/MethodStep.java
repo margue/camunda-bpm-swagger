@@ -111,6 +111,9 @@ public class MethodStep {
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
     apiOperation.annotate(this, info.getMethod());
 
+    final ApiResponsesStep responesStep = new ApiResponsesStep(method, doc);
+    responesStep.annotate(this, info.getMethod());
+
     return method;
   }
 
