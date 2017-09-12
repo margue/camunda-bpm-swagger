@@ -1,36 +1,32 @@
 package org.camunda.bpm.swagger.docs;
 
-import org.camunda.bpm.swagger.docs.model.DocStyleOperationPair;
-import org.camunda.bpm.swagger.docs.model.DtoDocumentation;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.util.List;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.camunda.bpm.swagger.docs.model.DtoDocs;
+import org.camunda.bpm.swagger.docs.model.ParameterDescription;
+import org.junit.Test;
 
 public class DtoDocumentationYamlTest {
 
   private final File  file = new File("src/test/resources/camunda-rest-dto-docs.yaml");
 
-  private final DtoDocumentationYaml yaml = new DtoDocumentationYaml();
+  private final DtoDocsYaml yaml = new DtoDocsYaml();
 
   @Test
   public void read() throws Exception {
 
-    DtoDocumentation dtoDocumentation = yaml.apply(file);
-
+    final DtoDocs dtoDocumentation = yaml.apply(file);
     assertThat(dtoDocumentation).isNotNull();
 
-    List<DocStyleOperationPair> docStyleOperationPairs = dtoDocumentation.get("org.camunda.bpm.engine.rest.sub.history.HistoricVariableInstanceResource");
+    final Map<String, ParameterDescription> doc = dtoDocumentation.get("org.camunda.bpm.engine.rest.dto.migration.MigrationPlanDto");
+    assertThat(doc).isNotNull().hasSize(4);
 
-    assertThat(docStyleOperationPairs).isNotNull().hasSize(1);
-
-    DocStyleOperationPair p = docStyleOperationPairs.get(0);
-
-    assertThat(p.getDocStyle()).isEqualTo("RETURN_TYPE");
-    assertThat(p.getRestOperation().getDescription()).isEqualTo("Retrieves a variable by id.");
-    assertThat(p.getRestOperation().getMethod()).isEqualTo("GET");
+    final ParameterDescription p = doc.get("instructions");
+    assertThat(p.getDescription()).startsWith("A list of migration instructions which map equal activities.");
+    assertThat(p.getType()).isEqualTo(null);
 
   }
 }

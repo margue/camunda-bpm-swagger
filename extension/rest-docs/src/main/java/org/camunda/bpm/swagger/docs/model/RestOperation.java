@@ -31,4 +31,5 @@ public class RestOperation {
   private Map<String, ParameterDescription> pathParameters = new HashMap<>();
   private Map<String, ParameterDescription> queryParameters = new HashMap<>();
   private Map<String, ParameterDescription> responseCodes = new HashMap<>();
+  private Map<String, ParameterDescription> result = new HashMap<>();
 }

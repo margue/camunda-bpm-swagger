@@ -4,15 +4,15 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import lombok.extern.slf4j.Slf4j;
-import org.camunda.bpm.swagger.docs.model.DocStyleOperationPair;
+import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.maven.spoon.SpoonProcessingMojo;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.extern.slf4j.Slf4j;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
@@ -33,21 +33,13 @@ public class ApiModelPropertyProcessor extends AbstractProcessor<CtMethod<?>> {
     this.context = context;
   }
 
-  private String getClassname(final
-                              CtMethod<?> method) {
-    return Optional.of(method)
-      .map(m -> m.getParent(CtClass.class))
-      .map(CtClass::getQualifiedName)
-      .orElse("");
+  private String getClassname(final CtMethod<?> method) {
+    return Optional.of(method).map(m -> m.getParent(CtClass.class)).map(CtClass::getQualifiedName).orElse("");
   }
 
   @Override
   public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsDto
-      .and(startsWithGet)
-      .and(isPublic)
-      .and(takesNoParameters)
-      .test(candidate);
+    return classIsDto.and(startsWithGet).and(isPublic).and(takesNoParameters).test(candidate);
   }
 
   @Override
@@ -57,16 +49,21 @@ public class ApiModelPropertyProcessor extends AbstractProcessor<CtMethod<?>> {
     final String fieldName = uncapitalize(removeStart(method.getSimpleName(), "get"));
     final String classFqn = getClassname(method);
 
-
-    List<DocStyleOperationPair> docs = context.getDtoDocumentation().get(classFqn);
-    // todo: now what? - attention: docs might not be present for every dto!
-
-    log.info("docs for {}: {}", classFqn, docs);
+    final Map<String, ParameterDescription> docs = context.getDtoDocumentation().get(classFqn);
+    if (docs != null) {
+      final ParameterDescription parameterDescription = docs.get(fieldName);
+      if (parameterDescription != null) {
+        log.info("Found parameter description for {} {}", classFqn, fieldName);
+        annotation.addValue("value", parameterDescription.getDescription());
+        if (parameterDescription.getRequired() != null) {
+          annotation.addValue("required", parameterDescription.getRequired().booleanValue());
+        }
+      }
+    }
 
     annotation.addValue("name", fieldName);
 
     method.addAnnotation(annotation);
   }
-
 
 }

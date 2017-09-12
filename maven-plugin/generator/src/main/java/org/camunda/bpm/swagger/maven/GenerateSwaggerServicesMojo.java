@@ -1,6 +1,15 @@
 package org.camunda.bpm.swagger.maven;
 
-import lombok.SneakyThrows;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
+import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -8,7 +17,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
-import org.camunda.bpm.swagger.docs.model.DtoDocumentation;
+import org.camunda.bpm.swagger.docs.model.DtoDocs;
 import org.camunda.bpm.swagger.maven.fn.ReflectionsFactory;
 import org.camunda.bpm.swagger.maven.fn.ScanRestServices;
 import org.camunda.bpm.swagger.maven.generator.SwaggerServiceModelGenerator;
@@ -18,15 +27,7 @@ import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
-import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
-import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
+import lombok.SneakyThrows;
 
 @Mojo(name = GOAL, defaultPhase = GENERATE_SOURCES, requiresDependencyResolution = COMPILE_PLUS_RUNTIME, threadSafe = false)
 public class GenerateSwaggerServicesMojo extends AbstractMojo {
@@ -76,14 +77,14 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
     getLog().info("==================");
 
-    if (modelRepository.getDtoDocs().isEmpty()) {
+    if (modelRepository.getDtoParameterDescriptions().isEmpty()) {
       throw new IllegalStateException("No docs has been provided.");
     }
 
     if (yamlFile != null) {
       final Yaml yaml = new Yaml();
       final FileWriter writer = new FileWriter(yamlFile);
-      yaml.dump(new DtoDocumentation(modelRepository.getDtoDocs()), writer);
+      yaml.dump(new DtoDocs(modelRepository.getDtoParameterDescriptions()), writer);
     }
   }
 

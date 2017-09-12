@@ -13,6 +13,9 @@ import com.helger.jcodemodel.JMethod;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+/**
+ * Generates response codes.
+ */
 public class ApiResponsesStep extends AbstractMethodStep {
 
   private final RestOperation restOperation;
