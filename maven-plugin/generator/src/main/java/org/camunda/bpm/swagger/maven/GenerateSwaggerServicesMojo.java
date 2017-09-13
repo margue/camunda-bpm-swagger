@@ -1,15 +1,6 @@
 package org.camunda.bpm.swagger.maven;
 
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
-import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
-import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.util.Optional;
-import java.util.Set;
-
+import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,7 +18,15 @@ import org.camunda.bpm.swagger.maven.spi.CodeGenerator;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 
-import lombok.SneakyThrows;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
+import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
+import static org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo.GOAL;
 
 @Mojo(name = GOAL, defaultPhase = GENERATE_SOURCES, requiresDependencyResolution = COMPILE_PLUS_RUNTIME, threadSafe = false)
 public class GenerateSwaggerServicesMojo extends AbstractMojo {

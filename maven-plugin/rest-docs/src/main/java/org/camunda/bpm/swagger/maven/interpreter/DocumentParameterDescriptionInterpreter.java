@@ -2,6 +2,7 @@ package org.camunda.bpm.swagger.maven.interpreter;
 
 import com.vladsch.flexmark.ast.HtmlBlock;
 import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ast.Paragraph;
 import org.apache.maven.plugin.logging.Log;
 import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.jsoup.Jsoup;
@@ -13,43 +14,48 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 
-public class DocumentParameterDescriptionInterpreter extends AbstractDocumentInterpreter {
+class DocumentParameterDescriptionInterpreter extends AbstractDocumentInterpreter {
 
   private static final String PARAMETERS__PATH_PARAMETERS = "Parameters.Path Parameters";
   private static final String PARAMETERS__QUERY_PARAMETERS = "Parameters.Query Parameters";
   private static final String PARAMETERS__REQUEST_BODY = "Parameters.Request Body";
   private static final String RESPONSE_CODES = "Response Codes";
+  private static final String RESULT = "Result";
 
   private final Log log;
 
-  DocumentParameterDescriptionInterpreter(Log log) {
+  DocumentParameterDescriptionInterpreter(final Log log) {
     this.log = log;
   }
 
-  Optional<Map<String, ParameterDescription>> resolvePathParameters(Map<String, Node> parsedObject) {
+  Optional<Map<String, ParameterDescription>> resolvePathParameters(final Map<String, Node> parsedObject) {
     return getParameterDescription(parsedObject, PARAMETERS__PATH_PARAMETERS);
   }
 
-  Optional<Map<String, ParameterDescription>> resolveQueryParameters(Map<String, Node> parsedObject) {
+  Optional<Map<String, ParameterDescription>> resolveQueryParameters(final Map<String, Node> parsedObject) {
     return getParameterDescription(parsedObject, PARAMETERS__QUERY_PARAMETERS);
   }
 
-  Optional<Map<String, ParameterDescription>> resolveRequestBody(Map<String, Node> parsedObject) {
+  Optional<Map<String, ParameterDescription>> resolveRequestBody(final Map<String, Node> parsedObject) {
     return getParameterDescription(parsedObject, PARAMETERS__REQUEST_BODY);
   }
 
-  Optional<Map<String, ParameterDescription>> resolveResponseCodes(Map<String, Node> parsedObject) {
+  Optional<Map<String, ParameterDescription>> resolveResponseCodes(final Map<String, Node> parsedObject) {
     return getParameterDescription(parsedObject, RESPONSE_CODES);
   }
 
-  private Optional<Map<String, ParameterDescription>> getParameterDescription(Map<String, Node> parsedObject, String entryPoint) {
-    Stack<Class> classes = createPath(HtmlBlock.class);
+  Optional<Map<String, ParameterDescription>> resolveResult(final Map<String, Node> parsedObject) {
+    return getParameterDescription(parsedObject, RESULT);
+  }
+
+  private Optional<Map<String, ParameterDescription>> getParameterDescription(final Map<String, Node> parsedObject, String entryPoint) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(entryPoint))
       .map(node -> resolveNode(classes, node, HtmlBlock.class))
       .map(this::htmlNodeToMap);
   }
 
-  private Map<String, ParameterDescription> htmlNodeToMap(HtmlBlock htmlBlock) {
+  private Map<String, ParameterDescription> htmlNodeToMap(final HtmlBlock htmlBlock) {
     String htmlBlockBody = prepareHTML(htmlBlock);
     org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
     Elements trs = document.select("tr");
@@ -57,7 +63,7 @@ public class DocumentParameterDescriptionInterpreter extends AbstractDocumentInt
     Integer descriptionIdx = null;
     Integer typeIdx = null;
     Integer requiredIdx = null;
-    Elements ths = trs.get(0).select("th");
+    final Elements ths = trs.get(0).select("th");
     if(ths.size() == 0) {
       // Workaround for missing table header
       nameIdx = 0;
@@ -72,7 +78,7 @@ public class DocumentParameterDescriptionInterpreter extends AbstractDocumentInt
       }
     }
     for (int i = 0; i < ths.size(); i++) {
-      Element element = ths.get(i);
+      final Element element = ths.get(i);
       switch(element.text()) {
       case "Name":
       case "Code":
@@ -98,7 +104,7 @@ public class DocumentParameterDescriptionInterpreter extends AbstractDocumentInt
     }
     HashMap<String, ParameterDescription> result = new HashMap<>();
     for (Element tr : trs) {
-      Elements tds = tr.select("td");
+      final Elements tds = tr.select("td");
       if(tds.size() > 2) {
         ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
         Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
@@ -113,7 +119,7 @@ public class DocumentParameterDescriptionInterpreter extends AbstractDocumentInt
     return result;
   }
 
-  private String prepareHTML(HtmlBlock htmlBlock) {
+  private String prepareHTML(final HtmlBlock htmlBlock) {
     return htmlBlock
       .getChars().toString()
       .replaceAll("\\{\\{[^}]+\\}\\}", "")
