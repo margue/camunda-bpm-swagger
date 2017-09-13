@@ -7,6 +7,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -22,6 +23,7 @@ import org.camunda.bpm.swagger.docs.model.DtoDocs;
 import org.camunda.bpm.swagger.maven.spoon.fn.DownloadCamundaSources;
 import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelProcessor;
 import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelPropertyProcessor;
+import org.camunda.bpm.swagger.maven.spoon.processor.RestResourceProcessor;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import lombok.Builder;
@@ -83,6 +85,7 @@ public class SpoonProcessingMojo extends AbstractMojo {
 
       spoon.addProcessor(new ApiModelProcessor());
       spoon.addProcessor(new ApiModelPropertyProcessor(this));
+      spoon.addProcessor(new RestResourceProcessor());
 
       final String[] classpathElements = executionEnvironment.getMavenProject()
           .getCompileClasspathElements()
@@ -90,7 +93,9 @@ public class SpoonProcessingMojo extends AbstractMojo {
           .filter(s -> !executionEnvironment.getMavenProject().getBuild().getOutputDirectory().equals(s))
           .toArray(String[]::new);
 
-      log.debug("classpath: {}", classpathElements);
+      final StringBuilder builder = new StringBuilder();
+      Arrays.stream(classpathElements).forEach(builder::append);
+      log.debug("Using classpath: {}", builder.toString());
 
       spoon.getEnvironment().setSourceClasspath(classpathElements);
 

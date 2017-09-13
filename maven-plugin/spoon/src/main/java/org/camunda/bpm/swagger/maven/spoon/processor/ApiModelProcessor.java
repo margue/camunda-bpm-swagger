@@ -28,11 +28,10 @@ public class ApiModelProcessor extends AbstractProcessor<CtClass<?>> {
 
   @Override
   public void process(final CtClass<?> element) {
+
     final CtAnnotation<Annotation> annotation = getFactory().Code().createAnnotation(getFactory().Code().createCtTypeReference(ApiModel.class));
-
     element.addAnnotation(annotation);
-
-    log.debug("add ApiModel to {}", element.getQualifiedName());
+    log.debug("Add ApiModel to {}", element.getQualifiedName());
   }
 
 }
