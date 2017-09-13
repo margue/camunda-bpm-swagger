@@ -22,11 +22,13 @@ import java.util.function.Predicate;
 public class RestResourceProcessor extends AbstractProcessor<CtMethod<?>> {
 
   Predicate<CtMethod<?>> classIsNamedResource = m -> getClassname(m).endsWith("Resource");
+  Predicate<CtMethod<?>> classIsNamedService = m -> getClassname(m).endsWith("Service");
   Predicate<CtMethod<?>> isPathAnnotated = m -> m.getAnnotation(Path.class) != null;
+  Predicate<CtMethod<?>> returnsResource = m -> m.getType().getQualifiedName().endsWith("Resource");
 
   @Override
   public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsNamedResource.and(isPathAnnotated).test(candidate);
+    return classIsNamedResource.and(isPathAnnotated).test(candidate) || classIsNamedService.and(isPathAnnotated).and(returnsResource).test(candidate);
   }
 
   @Override

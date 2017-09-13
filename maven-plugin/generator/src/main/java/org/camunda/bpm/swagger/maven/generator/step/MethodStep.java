@@ -45,35 +45,32 @@ public class MethodStep {
     this.returnType = info.getRawType();
 
     // determine method name and return type
-    final String methodName;
+
     Optional<TypeStep> dto = Optional.empty();
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
-
       if (TypeHelper.isList(info.getRawType())) {
         this.returnTypeStyle = ReturnTypeStyle.DTO_LIST;
       } else if (TypeHelper.isMap(info.getRawType()) // map
-          && info.getParameterTypes().length == 2 // parameterized
+          && info.getParameterTypes().length == 2 // parametrized
           && TypeHelper.isString(info.getParameterTypes()[0])) { // with string as key
         this.returnTypeStyle = ReturnTypeStyle.DTO_MAP_STRING;
       } else {
-        // doesn't support return parameterized type
+        // doesn't support return parametrized type
         log.warn("Unsupported return collection type with {} type parameters:", info.getParameterTypes().length, info.getRawType().getName());
         this.returnTypeStyle = ReturnTypeStyle.PLAIN;
       }
-
-      methodName = methodName(parentInvocations, info.getMethod().getName(), this.returnType);
     } else {
       dto = Optional.of(new TypeStep(modelRepository, info.getRawType(), clazz.owner()));
       this.returnTypeStyle = dto.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
       this.methodReturnType = dto.get().getType();
-      methodName = methodName(parentInvocations, info.getMethod().getName(), null);
     }
 
+    final String methodName = methodName(parentInvocations, info.getMethod().getName());
     method = clazz.method(JMod.PUBLIC, methodReturnType, methodName);
 
     // path annotation
-    final PathAnnotationStep pathAnnotationStep = new PathAnnotationStep(method);
+    final PathAnnotationStep pathAnnotationStep = new PathAnnotationStep(this);
     pathAnnotationStep.annotate(pathPrefix.getRight(), info.getMethod());
     this.path = pathAnnotationStep.getPath();
 
@@ -119,16 +116,12 @@ public class MethodStep {
     return method;
   }
 
-  static String methodName(final ParentInvocation[] parentInvocations, final String name, final Class<?> relevantReturnType) {
+  static String methodName(final ParentInvocation[] parentInvocations, final String name) {
     final StringBuilder builder = new StringBuilder();
     for (final ParentInvocation parentInvocation : parentInvocations) {
       builder.append(StringHelper.toFirstUpper(parentInvocation.getMethodName()));
     }
     builder.append(StringHelper.toFirstUpper(name));
-    // Add parameter type name
-    if (relevantReturnType != null) {
-      builder.append(relevantReturnType.getSimpleName());
-    }
     return StringHelper.toFirstLower(builder.toString());
   }
 }

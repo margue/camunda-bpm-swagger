@@ -26,3 +26,7 @@ This plugin creates new server REST implementation around Camunda Engine REST, b
 - The method `DecisionDefinitionResource#evaluateDecision(@Context UriInfo context, EvaluateDecisionDto parameters)` returns `List<Map<String, VariableValueDto>>` is delivers a return type not supported by the plugin.
 - The method `DeploymentRestServiceImpl#createDeployment(UriInfo uriInfo, MultipartFormData payload)` returns `DeploymentWithDefinitionsDto` extending the `DeploymentDto` which is a return type of the method from interface method `DeploymentRestService#createDeployment(@Context UriInfo uriInfo, MultipartFormData multipartFormData)`. The return type is compatible, but not a part of interface which is probably a bug.
 
+
+## Idea
+ - Instead of deletion of @Path on ResourceMethods -> Generate docs there with spoon
+ 

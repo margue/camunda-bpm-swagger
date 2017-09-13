@@ -9,15 +9,18 @@ import com.helger.jcodemodel.JMethod;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.camunda.bpm.swagger.maven.generator.TypeHelper;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PathAnnotationStep extends AbstractMethodStep {
 
+  private final MethodStep methodStep;
   private String path;
 
-  public PathAnnotationStep(final JMethod method) {
-    super(method);
+  public PathAnnotationStep(final MethodStep methodStep) {
+    super(methodStep.getMethod());
+    this.methodStep = methodStep;
   }
 
   public static String path(final String parentPathPrefix, final Method method) {
@@ -36,8 +39,11 @@ public class PathAnnotationStep extends AbstractMethodStep {
   }
 
   public JMethod annotate(final String parentPathPrefix, final Method method) {
+
     this.path = path(parentPathPrefix, method);
-    getMethod().annotate(Path.class).param("value", this.path);
+    if (!TypeHelper.isResource(methodStep.getReturnType())) {
+      getMethod().annotate(Path.class).param("value", this.path);
+    }
     return getMethod();
   }
 }

@@ -30,7 +30,7 @@ public class ApiOperationStep extends AbstractMethodStep {
     // resources are not annotated at all, because the resource itself will contain a method
     // that will get into the public API. It is a method with GET annotation and empty path.
     if (!TypeHelper.isResource(methodStep.getReturnType())) {
-      final String description = restOperation != null ? restOperation.getDescription() : WordUtils.capitalize(StringHelper.splitCamelCase(m.getName()));
+      final String description = restOperation != null && restOperation.getDescription() != null ? restOperation.getDescription() : WordUtils.capitalize(StringHelper.splitCamelCase(m.getName()));
 
       getMethod().annotate(ApiOperation.class) //
       .param("notes", description)
@@ -41,7 +41,7 @@ public class ApiOperationStep extends AbstractMethodStep {
   /**
    * Finds a method annotated with GET annotation, which misses the Path annotation or has a Path annotation without any path specified and uses its return
    * type.
-   * 
+   *
    * @param resource
    *          resource class.
    * @return type of the resource.
