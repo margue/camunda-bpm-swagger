@@ -52,9 +52,12 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
     final DocumentParser parser = new DocumentParser();
     final DocumentInterpreter interpreter = new DocumentInterpreter(getLog());
 
+    final Function<String, String> prepareFileContents = fileContents ->
+      fileContents.replaceAll("\\{\\{[^}]+\\}\\}", "");
+
     final Function<String, RestOperation> createRestOperation = filename -> {
       final Path path = Paths.get(filename);
-      final String fileContents = readFileContents(path);
+      final String fileContents = prepareFileContents.apply(readFileContents(path));
       final Map<String, Node> parsedTree = parser.parse(fileContents);
       return Optional.ofNullable(parsedTree).map(interpreter::interpret).orElse(null);
     };

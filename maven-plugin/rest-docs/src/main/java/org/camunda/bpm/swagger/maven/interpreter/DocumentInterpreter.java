@@ -96,7 +96,7 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
     return sb.toString().trim();
   }
 
-  private boolean nodeToString(final Node node, final StringBuffer sb) {
+  private void nodeToString(final Node node, final StringBuffer sb) {
     if (node != null) {
       switch (node.getClass().getSimpleName()) {
       case "Text":
@@ -108,17 +108,17 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
         sb.append("`");
         break;
       case "Paragraph":
-        boolean ignoreNext = false;
         for (final Node childNode : node.getChildren()) {
-          ignoreNext = !ignoreNext && nodeToString(childNode, sb);
+          nodeToString(childNode, sb);
         }
         break;
       case "SoftLineBreak":
-        sb.append("\n");
+        sb.append(" ");
         break;
       case "LinkRef":
+      case "Link":
         nodeToString(node.getFirstChildAny(Text.class), sb);
-        return true;
+        break;
       case "StrongEmphasis":
       case "Emphasis":
         nodeToString(node.getFirstChildAny(Text.class), sb);
@@ -127,7 +127,7 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
         if(node.getChars().toString().equals("<br/>") || node.getChars().toString().equals("</br>")) {
           sb.append("\n");
         } else {
-          log.debug("unknown htmlInline element: (" + node.getChars().toString() +")");
+          log.debug("unknown htmlInline element: (" + node.getChars().toString() + ")");
 
         }
         break;
@@ -135,7 +135,6 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
         log.debug("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() +")");
       }
     }
-    return false;
   }
 
   private Node printTree(final int indentionLevel, final Node node) {
