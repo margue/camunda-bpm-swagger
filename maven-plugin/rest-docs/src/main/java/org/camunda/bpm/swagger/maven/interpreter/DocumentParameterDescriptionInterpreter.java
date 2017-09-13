@@ -1,7 +1,6 @@
 package org.camunda.bpm.swagger.maven.interpreter;
 
 import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.Node;
 import org.apache.maven.plugin.logging.Log;
 import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.jsoup.Jsoup;
@@ -11,15 +10,8 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
 
-class DocumentParameterDescriptionInterpreter extends AbstractDocumentInterpreter {
-
-  private static final String PARAMETERS__PATH_PARAMETERS = "Parameters.Path Parameters";
-  private static final String PARAMETERS__QUERY_PARAMETERS = "Parameters.Query Parameters";
-  private static final String PARAMETERS__REQUEST_BODY = "Parameters.Request Body";
-  private static final String RESPONSE_CODES = "Response Codes";
-  private static final String RESULT = "Result";
+class DocumentParameterDescriptionInterpreter {
 
   private final Log log;
 
@@ -27,37 +19,14 @@ class DocumentParameterDescriptionInterpreter extends AbstractDocumentInterprete
     this.log = log;
   }
 
-  Optional<Map<String, ParameterDescription>> resolvePathParameters(final Map<String, Node> parsedObject) {
-    return getParameterDescription(parsedObject, PARAMETERS__PATH_PARAMETERS);
-  }
-
-  Optional<Map<String, ParameterDescription>> resolveQueryParameters(final Map<String, Node> parsedObject) {
-    return getParameterDescription(parsedObject, PARAMETERS__QUERY_PARAMETERS);
-  }
-
-  Optional<Map<String, ParameterDescription>> resolveRequestBody(final Map<String, Node> parsedObject) {
-    return getParameterDescription(parsedObject, PARAMETERS__REQUEST_BODY);
-  }
-
-  Optional<Map<String, ParameterDescription>> resolveResponseCodes(final Map<String, Node> parsedObject) {
-    return getParameterDescription(parsedObject, RESPONSE_CODES);
-  }
-
-  Optional<Map<String, ParameterDescription>> resolveResult(final Map<String, Node> parsedObject) {
-    return getParameterDescription(parsedObject, RESULT);
-  }
-
-  private Optional<Map<String, ParameterDescription>> getParameterDescription(final Map<String, Node> parsedObject, String entryPoint) {
-    final Stack<Class> classes = createPath(HtmlBlock.class);
-    return Optional.ofNullable(parsedObject.get(entryPoint))
-      .map(node -> resolveNode(classes, node, HtmlBlock.class))
-      .map(this::htmlNodeToMap);
+  Map<String, ParameterDescription> getParameterDescription(final HtmlBlock node) {
+    return htmlNodeToMap(node);
   }
 
   private Map<String, ParameterDescription> htmlNodeToMap(final HtmlBlock htmlBlock) {
-    String htmlBlockBody = prepareHTML(htmlBlock);
-    org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
-    Elements trs = document.select("tr");
+    final String htmlBlockBody = prepareHTML(htmlBlock);
+    final org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
+    final Elements trs = document.select("tr");
     Integer nameIdx = null;
     Integer descriptionIdx = null;
     Integer typeIdx = null;
@@ -101,16 +70,16 @@ class DocumentParameterDescriptionInterpreter extends AbstractDocumentInterprete
         break;
       }
     }
-    HashMap<String, ParameterDescription> result = new HashMap<>();
-    for (Element tr : trs) {
+    final HashMap<String, ParameterDescription> result = new HashMap<>();
+    for (final Element tr : trs) {
       final Elements tds = tr.select("td");
       if(tds.size() > 2) {
-        ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
+        final ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
         Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
         Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
         Optional.ofNullable(typeIdx).map(tds::get).map(Element::text).ifPresent(builder::type);
         Optional.ofNullable(requiredIdx).map(tds::get).map(Element::text).map(o -> o.equals("Yes")).ifPresent(builder::required);
-        ParameterDescription parameterDescription = builder.build();
+        final ParameterDescription parameterDescription = builder.build();
         result.put(parameterDescription.getId(), parameterDescription);
       }
 

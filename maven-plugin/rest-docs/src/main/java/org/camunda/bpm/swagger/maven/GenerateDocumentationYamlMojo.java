@@ -81,7 +81,6 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
         target.getParentFile().mkdirs();
         target.createNewFile();
       }
-      ;
       generator = new YAMLFactory().createGenerator(new PrintWriter(target, "UTF-8"));
       generator.setCodec(new ObjectMapper());
     }

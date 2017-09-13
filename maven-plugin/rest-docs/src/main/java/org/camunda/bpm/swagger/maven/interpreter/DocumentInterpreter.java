@@ -2,17 +2,25 @@ package org.camunda.bpm.swagger.maven.interpreter;
 
 import com.vladsch.flexmark.ast.*;
 import org.apache.maven.plugin.logging.Log;
+import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.camunda.bpm.swagger.maven.model.RestOperation;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.function.Consumer;
 
 public class DocumentInterpreter extends AbstractDocumentInterpreter {
 
+  private static final String DESCRIPTION = "#";
   private static final String METHOD = "Method";
   private static final String RESULT = "Result";
+
+  private static final String PARAMETERS__PATH_PARAMETERS = "Parameters.Path Parameters";
+  private static final String PARAMETERS__QUERY_PARAMETERS = "Parameters.Query Parameters";
+  private static final String PARAMETERS__REQUEST_BODY = "Parameters.Request Body";
+  private static final String RESPONSE_CODES = "Response Codes";
 
   private final Log log;
   private final DocumentParameterDescriptionInterpreter parameterDescriptionInterpreter;
@@ -22,57 +30,72 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
     this.log = log;
   }
 
-  public RestOperation interpret(final Map<String, Node> parsedObject) {
+  public RestOperation interpret(final Map<String, Node> parsed) {
     final RestOperation.RestOperationBuilder builder = RestOperation.builder();
-    resolveMethod(parsedObject).ifPresent(builder::method);
-    resolvePath(parsedObject).ifPresent(builder::path);
-    resolveDescription(parsedObject).ifPresent(builder::description);
-    resolveResultDescription(parsedObject).ifPresent(builder::resultDescription);
-    parameterDescriptionInterpreter.resolvePathParameters(parsedObject).ifPresent(builder::pathParameters);
-    parameterDescriptionInterpreter.resolveQueryParameters(parsedObject).ifPresent(builder::queryParameters);
-    parameterDescriptionInterpreter.resolveRequestBody(parsedObject).ifPresent(builder::requestBody);
-    parameterDescriptionInterpreter.resolveResponseCodes(parsedObject).ifPresent(builder::responseCodes);
-    parameterDescriptionInterpreter.resolveResult(parsedObject).ifPresent(builder::result);
-    return builder.build();
+    resolveSubDocument(METHOD, parsed).map(this::resolvePath).ifPresent(builder::path);
+    resolveSubDocument(METHOD, parsed).map(this::resolveMethod).ifPresent(builder::method);
+    resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(builder::description);
+    resolveSubDocument(RESULT, parsed).map(this::resolveText).ifPresent(builder::resultDescription);
+
+    resolveParameter(PARAMETERS__REQUEST_BODY, builder::requestBody, parsed);
+    resolveParameter(PARAMETERS__QUERY_PARAMETERS, builder::queryParameters, parsed);
+    resolveParameter(PARAMETERS__PATH_PARAMETERS, builder::pathParameters, parsed);
+    resolveParameter(RESULT, builder::result, parsed);
+    resolveParameter(RESPONSE_CODES, builder::responseCodes, parsed);
+
+    final RestOperation build = builder.build();
+    log.info(build.toString());
+    return build;
   }
 
-  private Optional<String> resolveResultDescription(final Map<String, Node> parsedObject) {
-    final Stack<Class> classes = createPath(Paragraph.class);
-    return Optional.ofNullable(parsedObject.get(RESULT))
-        .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
-        .map(this::nodeToString);
+  private void resolveParameter(final String key, final Consumer<Map<String, ParameterDescription>> consumer, final Map<String, Node> parsed) {
+    resolveSubDocument(key, parsed).map(this::resolveHtmlNode)
+      .map(parameterDescriptionInterpreter::getParameterDescription)
+      .ifPresent(consumer);
   }
 
-  private Optional<String> resolveDescription(final Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(Paragraph.class);
-    return Optional.ofNullable(parsedObject.get(METHOD))
-        .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
-        .map(this::nodeToString);
-  }
-
-  private Optional<String> resolveMethod(final Map<String, Node> parsedObject) {
-    final Stack<Class> classes = createPath(Paragraph.class, Text.class);
-    return Optional.ofNullable(parsedObject.get(METHOD))
-        .map(node -> resolveNode(classes, node, Text.class))
-        .map(Text::getChars)
-        .map(Object::toString)
-        .map(String::trim);
-  }
-
-  private Optional<String> resolvePath(final Map<String, Node> parsedObject) {
+  private String resolvePath(final Node node) {
     final Stack<Class> classes = createPath(Paragraph.class, Code.class, Text.class);
-    return Optional.ofNullable(parsedObject.get(METHOD))
-        .map(node -> resolveNode(classes, node, Text.class))
-        .map(Text::getChars)
-        .map(Object::toString)
-        .map(String::trim);
+    return Optional.ofNullable(resolveNode(classes, node, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim)
+      .orElse(null);
+  }
+
+  private String resolveMethod(final Node node) {
+    final Stack<Class> classes = createPath(Paragraph.class, Text.class);
+    return Optional.ofNullable(resolveNode(classes, node, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim)
+      .orElse(null);
+  }
+
+  private String resolveDescription(final Node node) {
+    return this.resolveText(node.getLastChildAny(ThematicBreak.class));
+  }
+
+  private String resolveText(final Node node) {
+    final Stack<Class> classes = createPath(Paragraph.class);
+    return Optional.ofNullable(resolveNode(classes, node, Paragraph.class))
+      .map(this::nodeToString)
+      .orElse(null);
+  }
+
+  private HtmlBlock resolveHtmlNode(final Node node) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
+    return Optional.ofNullable(resolveNode(classes, node, HtmlBlock.class)).orElse(null);
+  }
+
+  private Optional<Node> resolveSubDocument(final String key, final Map<String, Node> parsedObject) {
+    return Optional.ofNullable(parsedObject.get(key));
   }
 
   private String nodeToString(final Node node) {
-    StringBuffer sb = new StringBuffer();
+    final StringBuffer sb = new StringBuffer();
     nodeToString(node, sb);
-    String trim = sb.toString().trim();
-    return trim;
+    return sb.toString().trim();
   }
 
   private boolean nodeToString(final Node node, final StringBuffer sb) {
