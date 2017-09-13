@@ -15,6 +15,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.camunda.bpm.swagger.maven.interpreter.DocumentInterpreter;
+import org.camunda.bpm.swagger.maven.interpreter.DocumentParameterDescriptionInterpreter;
 import org.camunda.bpm.swagger.maven.model.RestOperation;
 import org.camunda.bpm.swagger.maven.model.RestOperations;
 import org.camunda.bpm.swagger.maven.parser.DocumentParser;
