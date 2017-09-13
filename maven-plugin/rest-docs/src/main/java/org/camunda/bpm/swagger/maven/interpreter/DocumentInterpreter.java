@@ -1,11 +1,12 @@
 package org.camunda.bpm.swagger.maven.interpreter;
 
-import com.vladsch.flexmark.ast.Code;
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.ast.Paragraph;
-import com.vladsch.flexmark.ast.Text;
-import com.vladsch.flexmark.ast.ThematicBreak;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Stack;
+
 import org.apache.maven.plugin.logging.Log;
 import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.camunda.bpm.swagger.maven.model.RestOperation;
@@ -13,12 +14,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Stack;
+import com.vladsch.flexmark.ast.Code;
+import com.vladsch.flexmark.ast.HtmlBlock;
+import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ast.Paragraph;
+import com.vladsch.flexmark.ast.Text;
+import com.vladsch.flexmark.ast.ThematicBreak;
 
 public class DocumentInterpreter {
 
@@ -30,16 +31,17 @@ public class DocumentInterpreter {
   private static final String RESPONSE_CODES = "Response Codes";
   private final Log log;
 
-  public DocumentInterpreter(Log log) {
+  public DocumentInterpreter(final Log log) {
     this.log = log;
   }
 
-  public RestOperation interpret(Map<String, Node> parsedObject) {
-    RestOperation.RestOperationBuilder builder = RestOperation.builder();
+  public RestOperation interpret(final Map<String, Node> parsedObject) {
+    final RestOperation.RestOperationBuilder builder = RestOperation.builder();
     resolveMethod(parsedObject).ifPresent(builder::method);
     resolvePath(parsedObject).ifPresent(builder::path);
     resolveDescription(parsedObject).ifPresent(builder::description);
     resolveResultDescription(parsedObject).ifPresent(builder::resultDescription);
+    resolveResult(parsedObject).ifPresent(builder::result);
     resolvePathParameters(parsedObject).ifPresent(builder::pathParameters);
     resolveQueryParameters(parsedObject).ifPresent(builder::queryParameters);
     resolveRequestBody(parsedObject).ifPresent(builder::requestBody);
@@ -47,98 +49,107 @@ public class DocumentInterpreter {
     return builder.build();
   }
 
-  private Optional<String> resolveResultDescription(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(Paragraph.class);
+  private Optional<Map<String, ParameterDescription>> resolveResult(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(RESULT))
-      .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
-      .map(this::nodeToString);
+        .map(node -> resolveNode(classes, node, HtmlBlock.class))
+        .map(this::htmlNodeToMap);
+
   }
 
-  private Optional<Map<String, ParameterDescription>> resolvePathParameters(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(HtmlBlock.class);
+  private Optional<String> resolveResultDescription(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(Paragraph.class);
+    return Optional.ofNullable(parsedObject.get(RESULT))
+        .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
+        .map(this::nodeToString);
+  }
+
+
+  private Optional<Map<String, ParameterDescription>> resolvePathParameters(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(PARAMETERS__PATH_PARAMETERS))
-      .map(node -> resolveNode(classes, node, HtmlBlock.class))
-      .map(this::htmlNodeToMap);
+        .map(node -> resolveNode(classes, node, HtmlBlock.class))
+        .map(this::htmlNodeToMap);
   }
 
-  private Optional<Map<String, ParameterDescription>> resolveQueryParameters(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(HtmlBlock.class);
+  private Optional<Map<String, ParameterDescription>> resolveQueryParameters(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(PARAMETERS__QUERY_PARAMETERS))
-      .map(node -> resolveNode(classes, node, HtmlBlock.class))
-      .map(this::htmlNodeToMap);
+        .map(node -> resolveNode(classes, node, HtmlBlock.class))
+        .map(this::htmlNodeToMap);
   }
 
-  private Optional<Map<String, ParameterDescription>> resolveRequestBody(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(HtmlBlock.class);
+  private Optional<Map<String, ParameterDescription>> resolveRequestBody(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(PARAMETERS__REQUEST_BODY))
-      .map(node -> resolveNode(classes, node, HtmlBlock.class))
-      .map(this::htmlNodeToMap);
+        .map(node -> resolveNode(classes, node, HtmlBlock.class))
+        .map(this::htmlNodeToMap);
   }
 
-  private Optional<Map<String, ParameterDescription>> resolveResponseCodes(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(HtmlBlock.class);
+  private Optional<Map<String, ParameterDescription>> resolveResponseCodes(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(HtmlBlock.class);
     return Optional.ofNullable(parsedObject.get(RESPONSE_CODES))
-      .map(node -> resolveNode(classes, node, HtmlBlock.class))
-      .map(this::htmlNodeToMap);
+        .map(node -> resolveNode(classes, node, HtmlBlock.class))
+        .map(this::htmlNodeToMap);
   }
 
-  private Map<String, ParameterDescription> htmlNodeToMap(HtmlBlock htmlBlock) {
-    String htmlBlockBody = prepareHTML(htmlBlock);
-    org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
-    Elements trs = document.select("tr");
+  private Map<String, ParameterDescription> htmlNodeToMap(final HtmlBlock htmlBlock) {
+    final String htmlBlockBody = prepareHTML(htmlBlock);
+    final org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
+    final Elements trs = document.select("tr");
     Integer nameIdx = null;
     Integer descriptionIdx = null;
     Integer typeIdx = null;
     Integer requiredIdx = null;
-    Elements ths = trs.get(0).select("th");
+    final Elements ths = trs.get(0).select("th");
     if(ths.size() == 0) {
       // Workaround for missing table header
       nameIdx = 0;
       switch(trs.get(0).select("td").size()) {
-        case 2:
-          descriptionIdx = 1;
-          break;
-        case 3:
-          typeIdx = 1;
-          descriptionIdx = 2;
-          break;
+      case 2:
+        descriptionIdx = 1;
+        break;
+      case 3:
+        typeIdx = 1;
+        descriptionIdx = 2;
+        break;
       }
     }
     for (int i = 0; i < ths.size(); i++) {
-      Element element = ths.get(i);
+      final Element element = ths.get(i);
       switch(element.text()) {
-        case "Name":
-        case "Code":
-        case "Form Part Name":
-          nameIdx = i;
-          break;
-        case "Description":
-          descriptionIdx = i;
-          break;
-        case "Media type":
-        case "Type":
-        case "Content Type":
-        case "Value":
-          typeIdx = i;
-          break;
-        case "Required?":
-          requiredIdx = i;
-          break;
-        default:
-          log.debug("Fieldname unknown: " + element.text());
-          break;
+      case "Name":
+      case "Code":
+      case "Form Part Name":
+        nameIdx = i;
+        break;
+      case "Description":
+        descriptionIdx = i;
+        break;
+      case "Media type":
+      case "Type":
+      case "Content Type":
+      case "Value":
+        typeIdx = i;
+        break;
+      case "Required?":
+        requiredIdx = i;
+        break;
+      default:
+        log.debug("Fieldname unknown: " + element.text());
+        break;
       }
     }
-    HashMap<String, ParameterDescription> result = new HashMap<>();
-    for (Element tr : trs) {
-      Elements tds = tr.select("td");
+    final HashMap<String, ParameterDescription> result = new HashMap<>();
+    for (final Element tr : trs) {
+      final Elements tds = tr.select("td");
       if(tds.size() > 2) {
-        ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
+        final ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
         Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
         Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
         Optional.ofNullable(typeIdx).map(tds::get).map(Element::text).ifPresent(builder::type);
         Optional.ofNullable(requiredIdx).map(tds::get).map(Element::text).map(o -> o.equals("Yes")).ifPresent(builder::required);
-        ParameterDescription parameterDescription = builder.build();
+        final ParameterDescription parameterDescription = builder.build();
         result.put(parameterDescription.getId(), parameterDescription);
       }
 
@@ -146,90 +157,93 @@ public class DocumentInterpreter {
     return result;
   }
 
-  private String prepareHTML(HtmlBlock htmlBlock) {
+  private String prepareHTML(final HtmlBlock htmlBlock) {
     return htmlBlock
-      .getChars().toString()
-      .replaceAll("\\{\\{[^}]+\\}\\}", "")
-      .replaceAll("\\<\\/tr\\>[\n\t]+\\<tr\\>", "");
+        .getChars().toString()
+        .replaceAll("\\{\\{[^}]+\\}\\}", "")
+        .replaceAll("\\<\\/tr\\>[\n\t]+\\<tr\\>", "");
   }
 
-  private Optional<String> resolveDescription(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(Paragraph.class);
+  private Optional<String> resolveDescription(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(Paragraph.class);
     return Optional.ofNullable(parsedObject.get(METHOD))
-      .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
-      .map(this::nodeToString);
+        .map(node -> resolveNode(classes, node.getPreviousAny(ThematicBreak.class), Paragraph.class))
+        .map(this::nodeToString);
   }
 
-  private Optional<String> resolveMethod(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(Paragraph.class, Text.class);
+  private Optional<String> resolveMethod(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(Paragraph.class, Text.class);
     return Optional.ofNullable(parsedObject.get(METHOD))
-      .map(node -> resolveNode(classes, node, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim);
+        .map(node -> resolveNode(classes, node, Text.class))
+        .map(Text::getChars)
+        .map(Object::toString)
+        .map(String::trim);
   }
 
-  private Optional<String> resolvePath(Map<String, Node> parsedObject) {
-    Stack<Class> classes = createPath(Paragraph.class, Code.class, Text.class);
+  private Optional<String> resolvePath(final Map<String, Node> parsedObject) {
+    final Stack<Class> classes = createPath(Paragraph.class, Code.class, Text.class);
     return Optional.ofNullable(parsedObject.get(METHOD))
-      .map(node -> resolveNode(classes, node, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim);
+        .map(node -> resolveNode(classes, node, Text.class))
+        .map(Text::getChars)
+        .map(Object::toString)
+        .map(String::trim);
   }
 
-  private <T> T resolveNode(Stack<Class> classes, Node node, Class<T> _className) {
-    if (node == null)
+  private <T> T resolveNode(final Stack<Class> classes, final Node node, final Class<T> _className) {
+    if (node == null) {
       return null;
-    Class type = classes.pop();
+    }
+    final Class type = classes.pop();
     return (T) resolveNode(classes, node.getNextAny(type));
   }
 
-  private Node resolveNode(Stack<Class> classes, Node node) {
-    if (node == null)
+  private Node resolveNode(final Stack<Class> classes, final Node node) {
+    if (node == null) {
       return null;
-    if (classes.isEmpty())
+    }
+    if (classes.isEmpty()) {
       return node;
-    Class type = classes.pop();
+    }
+    final Class type = classes.pop();
     return resolveNode(classes, node.getFirstChildAny(type));
   }
 
-  private Stack<Class> createPath(Class... classes) {
-    Stack<Class> result = new Stack<>();
+  private Stack<Class> createPath(final Class... classes) {
+    final Stack<Class> result = new Stack<>();
     result.addAll(Arrays.asList(classes));
     Collections.reverse(result);
     return result;
   }
 
-  private String nodeToString(Node node) {
-    StringBuffer sb = new StringBuffer();
+  private String nodeToString(final Node node) {
+    final StringBuffer sb = new StringBuffer();
     nodeToString(node, sb);
     return sb.toString().trim();
   }
 
-  private boolean nodeToString(Node node, StringBuffer sb) {
+  private boolean nodeToString(final Node node, final StringBuffer sb) {
     if (node != null) {
       switch (node.getClass().getSimpleName()) {
-        case "Text":
-          sb.append(node.getChars());
-          break;
-        case "Code":
-          sb.append("`");
-          nodeToString(node.getFirstChildAny(Text.class), sb);
-          sb.append("`");
-          break;
-        case "Paragraph":
-          boolean ignoreNext = false;
-          for (Node childNode : node.getChildren()) {
-            ignoreNext = !ignoreNext && nodeToString(childNode, sb);
-          }
-          break;
-        case "SoftLineBreak":
-          sb.append("\n");
-          break;
-        case "LinkRef":
-          nodeToString(node.getFirstChildAny(Text.class), sb);
-          return true;
+      case "Text":
+        sb.append(node.getChars());
+        break;
+      case "Code":
+        sb.append("`");
+        nodeToString(node.getFirstChildAny(Text.class), sb);
+        sb.append("`");
+        break;
+      case "Paragraph":
+        boolean ignoreNext = false;
+        for (final Node childNode : node.getChildren()) {
+          ignoreNext = !ignoreNext && nodeToString(childNode, sb);
+        }
+        break;
+      case "SoftLineBreak":
+        sb.append("\n");
+        break;
+      case "LinkRef":
+        nodeToString(node.getFirstChildAny(Text.class), sb);
+        return true;
       case "StrongEmphasis":
       case "Emphasis":
         nodeToString(node.getFirstChildAny(Text.class), sb);
@@ -243,14 +257,14 @@ public class DocumentInterpreter {
         }
         break;
       default:
-          log.debug("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() +")");
+        log.debug("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() +")");
       }
     }
     return false;
   }
 
-  private Node printTree(int indentionLevel, Node node) {
-    String indention = String.join("", Collections.nCopies(indentionLevel, "\t"));
+  private Node printTree(final int indentionLevel, final Node node) {
+    final String indention = String.join("", Collections.nCopies(indentionLevel, "\t"));
     log.info(indention + node.toString());
     node.getChildren().forEach(childNode -> printTree(indentionLevel + 1, childNode));
     return node;
