@@ -2,7 +2,6 @@ package org.camunda.bpm.swagger.maven.interpreter;
 
 import com.vladsch.flexmark.ast.HtmlBlock;
 import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.ast.Paragraph;
 import org.apache.maven.plugin.logging.Log;
 import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.jsoup.Jsoup;

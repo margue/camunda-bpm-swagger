@@ -1,26 +1,13 @@
 package org.camunda.bpm.swagger.maven.interpreter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Stack;
-
+import com.vladsch.flexmark.ast.*;
 import org.apache.maven.plugin.logging.Log;
-import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.camunda.bpm.swagger.maven.model.RestOperation;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
-import com.vladsch.flexmark.ast.Code;
-import com.vladsch.flexmark.ast.HtmlBlock;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.ast.Paragraph;
-import com.vladsch.flexmark.ast.Text;
-import com.vladsch.flexmark.ast.ThematicBreak;
 
 public class DocumentInterpreter extends AbstractDocumentInterpreter {
 
@@ -85,7 +72,6 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
     StringBuffer sb = new StringBuffer();
     nodeToString(node, sb);
     String trim = sb.toString().trim();
-    log.info(trim);
     return trim;
   }
 
