@@ -43,9 +43,7 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
     resolveParameter(RESULT, builder::result, parsed);
     resolveParameter(RESPONSE_CODES, builder::responseCodes, parsed);
 
-    final RestOperation build = builder.build();
-    log.info(build.toString());
-    return build;
+    return builder.build();
   }
 
   private void resolveParameter(final String key, final Consumer<Map<String, ParameterDescription>> consumer, final Map<String, Node> parsed) {
