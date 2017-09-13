@@ -1,17 +1,17 @@
 package org.camunda.bpm.swagger.maven;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-@Ignore
+// FIXME! test is not running
+// @Ignore
 public class GenerateDocumentationYamlMojoTest {
 
   @Rule
@@ -28,12 +28,12 @@ public class GenerateDocumentationYamlMojoTest {
 
     folder.create();
 
-    File projectCopy = this.resources.getBasedir("project-to-test");
-    File pom = new File(projectCopy, "pom.xml");
+    final File projectCopy = this.resources.getBasedir("project-to-test");
+    final File pom = new File(projectCopy, "pom.xml");
 
     assertThat(pom).isNotNull().exists();
 
-    GenerateDocumentationYamlMojo mojo = (GenerateDocumentationYamlMojo) this.rule.lookupMojo(GenerateDocumentationYamlMojo.GOAL, pom);
+    final GenerateDocumentationYamlMojo mojo = (GenerateDocumentationYamlMojo) this.rule.lookupMojo(GenerateDocumentationYamlMojo.GOAL, pom);
     assertThat(mojo).isNotNull();
 
     mojo.execute();
