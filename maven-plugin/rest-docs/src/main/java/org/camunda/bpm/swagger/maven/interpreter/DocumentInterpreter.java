@@ -8,10 +8,9 @@ import org.camunda.bpm.swagger.maven.model.RestOperation;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.function.Consumer;
 
-public class DocumentInterpreter extends AbstractDocumentInterpreter {
+public class DocumentInterpreter {
 
   private static final String DESCRIPTION = "#";
   private static final String METHOD = "Method";
@@ -23,10 +22,10 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
   private static final String RESPONSE_CODES = "Response Codes";
 
   private final Log log;
-  private final DocumentParameterDescriptionInterpreter parameterDescriptionInterpreter;
+  private final HtmlDocumentInterpreter htmlDocumentInterpreter;
 
   public DocumentInterpreter(final Log log) {
-    parameterDescriptionInterpreter = new DocumentParameterDescriptionInterpreter(log);
+    htmlDocumentInterpreter = new HtmlDocumentInterpreter(log);
     this.log = log;
   }
 
@@ -43,60 +42,77 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
     resolveParameter(RESULT, builder::result, parsed);
     resolveParameter(RESPONSE_CODES, builder::responseCodes, parsed);
 
-    return builder.build();
+    final RestOperation build = builder.build();
+    resolveSubDocument(DESCRIPTION, parsed).ifPresent(node -> printTree(0, node));
+    resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(log::info);
+    log.info(build.toString());
+    return build;
   }
 
   private void resolveParameter(final String key, final Consumer<Map<String, ParameterDescription>> consumer, final Map<String, Node> parsed) {
     resolveSubDocument(key, parsed).map(this::resolveHtmlNode)
-      .map(parameterDescriptionInterpreter::getParameterDescription)
+      .map(htmlDocumentInterpreter::getParameterDescription)
       .ifPresent(consumer);
   }
 
   private String resolvePath(final Node node) {
-    final Stack<Class> classes = createPath(Paragraph.class, Code.class, Text.class);
-    return Optional.ofNullable(resolveNode(classes, node, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim)
+    return getChildNode(node, Paragraph.class)
+      .map(child -> getChildNode(child, Code.class)
+        .map(childChild -> getChildNode(childChild, Text.class)
+          .map(Text::getChars)
+          .map(Object::toString)
+          .map(String::trim)
+          .orElse(null))
+        .orElse(null))
       .orElse(null);
   }
 
   private String resolveMethod(final Node node) {
-    final Stack<Class> classes = createPath(Paragraph.class, Text.class);
-    return Optional.ofNullable(resolveNode(classes, node, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim)
+    return getChildNode(node, Paragraph.class)
+      .map(child -> getChildNode(child, Text.class)
+        .map(Text::getChars)
+        .map(Object::toString)
+        .map(String::trim)
+        .orElse(null))
       .orElse(null);
   }
 
   private String resolveDescription(final Node node) {
-    return this.resolveText(node.getLastChildAny(ThematicBreak.class));
+    final Node thematicBreak = node.getLastChildAny(ThematicBreak.class);
+    final Paragraph paragraph = new Paragraph();
+    Node next = thematicBreak.getNext();
+    while (next != null) {
+      paragraph.appendChild(next);
+      next = thematicBreak.getNext();
+    }
+    return nodeToString(paragraph, false);
   }
 
   private String resolveText(final Node node) {
-    final Stack<Class> classes = createPath(Paragraph.class);
-    return Optional.ofNullable(resolveNode(classes, node, Paragraph.class))
-      .map(this::nodeToString)
+    return getChildNode(node, Paragraph.class)
+      .map(childNode -> nodeToString(childNode, false))
       .orElse(null);
   }
 
+  private <T> Optional<T> getChildNode(final Node node, final Class<T> clazz) {
+    return Optional.ofNullable((T) node.getFirstChildAny(clazz));
+  }
+
   private HtmlBlock resolveHtmlNode(final Node node) {
-    final Stack<Class> classes = createPath(HtmlBlock.class);
-    return Optional.ofNullable(resolveNode(classes, node, HtmlBlock.class)).orElse(null);
+    return getChildNode(node, HtmlBlock.class).orElse(null);
   }
 
   private Optional<Node> resolveSubDocument(final String key, final Map<String, Node> parsedObject) {
     return Optional.ofNullable(parsedObject.get(key));
   }
 
-  private String nodeToString(final Node node) {
+  private String nodeToString(final Node node, final Boolean ignoreHtmlBlocks) {
     final StringBuffer sb = new StringBuffer();
-    nodeToString(node, sb);
+    nodeToString(node, sb, ignoreHtmlBlocks);
     return sb.toString().trim();
   }
 
-  private void nodeToString(final Node node, final StringBuffer sb) {
+  private void nodeToString(final Node node, final StringBuffer sb, final Boolean ignoreHtmlBlocks) {
     if (node != null) {
       switch (node.getClass().getSimpleName()) {
       case "Text":
@@ -104,24 +120,30 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
         break;
       case "Code":
         sb.append("`");
-        nodeToString(node.getFirstChildAny(Text.class), sb);
+        nodeToString(node.getFirstChildAny(Text.class), sb, ignoreHtmlBlocks);
         sb.append("`");
         break;
       case "Paragraph":
         for (final Node childNode : node.getChildren()) {
-          nodeToString(childNode, sb);
+          nodeToString(childNode, sb, ignoreHtmlBlocks);
         }
         break;
       case "SoftLineBreak":
         sb.append(" ");
         break;
+      case "HtmlBlock":
+        if (!ignoreHtmlBlocks) {
+          sb.append(htmlDocumentInterpreter.getText((HtmlBlock) node));
+          sb.append("\n");
+        }
+        break;
       case "LinkRef":
       case "Link":
-        nodeToString(node.getFirstChildAny(Text.class), sb);
+        nodeToString(node.getFirstChildAny(Text.class), sb, ignoreHtmlBlocks);
         break;
       case "StrongEmphasis":
       case "Emphasis":
-        nodeToString(node.getFirstChildAny(Text.class), sb);
+        nodeToString(node.getFirstChildAny(Text.class), sb, ignoreHtmlBlocks);
         break;
       case "HtmlInline":
         if(node.getChars().toString().equals("<br/>") || node.getChars().toString().equals("</br>")) {
@@ -132,7 +154,7 @@ public class DocumentInterpreter extends AbstractDocumentInterpreter {
         }
         break;
       default:
-        log.debug("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() +")");
+        log.info("class " + node.getClass().getSimpleName() + " not known: (" + node.getChars().toString() + ")");
       }
     }
   }

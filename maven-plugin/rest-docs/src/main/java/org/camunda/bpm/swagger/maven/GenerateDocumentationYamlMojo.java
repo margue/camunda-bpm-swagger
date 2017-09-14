@@ -67,7 +67,7 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
       final Collection<File> files = FileUtils.listFiles(markdownDir, fileFilter, TrueFileFilter.INSTANCE);
       getLog().info("Reading from " + files.size() + " resources");
       return files.stream().map(File::getAbsolutePath).map(createRestOperation).filter(Objects::nonNull)
-          .filter(res -> res.getPath() != null && res.getMethod() != null).collect(Collectors.toList());
+        .filter(res -> res.getPath() != null && res.getMethod() != null).collect(Collectors.toList());
     };
 
     writer.accept(documentations.get());

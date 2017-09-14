@@ -4,6 +4,7 @@ import com.vladsch.flexmark.ast.HtmlBlock;
 import org.apache.maven.plugin.logging.Log;
 import org.camunda.bpm.swagger.maven.model.ParameterDescription;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -11,11 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-class DocumentParameterDescriptionInterpreter {
+class HtmlDocumentInterpreter {
 
   private final Log log;
 
-  DocumentParameterDescriptionInterpreter(final Log log) {
+  HtmlDocumentInterpreter(final Log log) {
     this.log = log;
   }
 
@@ -23,9 +24,14 @@ class DocumentParameterDescriptionInterpreter {
     return htmlNodeToMap(node);
   }
 
+  String getText(final HtmlBlock node) {
+    final Document document = Jsoup.parseBodyFragment(node.getChars().toString());
+    return document.text();
+  }
+
   private Map<String, ParameterDescription> htmlNodeToMap(final HtmlBlock htmlBlock) {
     final String htmlBlockBody = prepareHTML(htmlBlock);
-    final org.jsoup.nodes.Document document = Jsoup.parseBodyFragment(htmlBlockBody);
+    final Document document = Jsoup.parseBodyFragment(htmlBlockBody);
     final Elements trs = document.select("tr");
     Integer nameIdx = null;
     Integer descriptionIdx = null;

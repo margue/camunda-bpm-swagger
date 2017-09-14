@@ -30,16 +30,20 @@ public class DocumentParser {
     Paragraph subDocument = new Paragraph();
     documentTree.put("#", subDocument);
     for (final Node next : children) {
-      subDocument = resolveHeading(next)
+      final Optional<Paragraph> newSubDocument = resolveHeading(next)
         .map((Heading heading) -> {
           pushHeading(headingStack, heading);
           final String headingTitle = getHeadingTitle(headingStack);
-          final Paragraph newSubDocument = new Paragraph();
-          documentTree.put(headingTitle, next);
-          return newSubDocument;
-        })
-        .orElse(subDocument);
-      subDocument.appendChild(next);
+          final Paragraph subDoc = new Paragraph();
+          documentTree.put(headingTitle, subDoc);
+          return subDoc;
+        });
+      if (newSubDocument.isPresent()) {
+        subDocument = newSubDocument.get();
+      }
+      else {
+        subDocument.appendChild(next);
+      }
     }
     return documentTree;
   }
