@@ -42,11 +42,7 @@ public class DocumentInterpreter {
     resolveParameter(RESULT, builder::result, parsed);
     resolveParameter(RESPONSE_CODES, builder::responseCodes, parsed);
 
-    final RestOperation build = builder.build();
-    resolveSubDocument(DESCRIPTION, parsed).ifPresent(node -> printTree(0, node));
-    resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(log::info);
-    log.info(build.toString());
-    return build;
+    return builder.build();
   }
 
   private void resolveParameter(final String key, final Consumer<Map<String, ParameterDescription>> consumer, final Map<String, Node> parsed) {
@@ -90,7 +86,7 @@ public class DocumentInterpreter {
 
   private String resolveText(final Node node) {
     return getChildNode(node, Paragraph.class)
-      .map(childNode -> nodeToString(childNode, false))
+      .map(childNode -> nodeToString(childNode, true))
       .orElse(null);
   }
 

@@ -38,6 +38,7 @@ class HtmlDocumentInterpreter {
     Integer typeIdx = null;
     Integer requiredIdx = null;
     final Elements ths = trs.get(0).select("th");
+
     if(ths.size() == 0) {
       // Workaround for missing table header
       nameIdx = 0;
@@ -79,7 +80,7 @@ class HtmlDocumentInterpreter {
     final HashMap<String, ParameterDescription> result = new HashMap<>();
     for (final Element tr : trs) {
       final Elements tds = tr.select("td");
-      if(tds.size() > 2) {
+      if (tds.size() >= 2) {
         final ParameterDescription.ParameterDescriptionBuilder builder = ParameterDescription.builder();
         Optional.ofNullable(nameIdx).map(tds::get).map(Element::text).ifPresent(builder::id);
         Optional.ofNullable(descriptionIdx).map(tds::get).map(Element::text).ifPresent(builder::description);
@@ -88,7 +89,6 @@ class HtmlDocumentInterpreter {
         final ParameterDescription parameterDescription = builder.build();
         result.put(parameterDescription.getId(), parameterDescription);
       }
-
     }
     return result;
   }
