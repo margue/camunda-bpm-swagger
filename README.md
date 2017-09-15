@@ -29,7 +29,7 @@ This project produces two WAR artifacts:
 in order to use it in your Camunda BPM Engine installation, please remove the original `camunda-bpm-engine-rest.war` 
 from your deployment directory and copy both artifacts there.
 
-To invoke the Swagger UI, call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json) 
+To invoke the Swagger UI, call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json?docExpansion=none](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json?docExpansion=none) 
 from your browser.
 
 
