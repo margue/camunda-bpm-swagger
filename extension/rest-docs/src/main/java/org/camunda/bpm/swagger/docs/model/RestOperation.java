@@ -1,11 +1,11 @@
 package org.camunda.bpm.swagger.docs.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ToString
 @Getter
@@ -27,6 +27,10 @@ public class RestOperation {
    * Description of the result.
    */
   private String resultDescription;
+  /**
+   * Example of a response.
+   */
+  private String responseExample;
   private Map<String, ParameterDescription> requestBody = new HashMap<>();
   private Map<String, ParameterDescription> pathParameters = new HashMap<>();
   private Map<String, ParameterDescription> queryParameters = new HashMap<>();

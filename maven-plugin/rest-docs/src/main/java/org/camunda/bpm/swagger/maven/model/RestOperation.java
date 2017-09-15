@@ -1,13 +1,12 @@
 package org.camunda.bpm.swagger.maven.model;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Map;
 
 @Builder
 @ToString
@@ -17,6 +16,7 @@ public class RestOperation {
   @Getter @Setter private String path;
   @Getter @Setter private String description;
   @Getter @Setter private String resultDescription;
+  @Getter @Setter private String responseExample;
   @Getter @Setter private Map<String, ParameterDescription> result;
   @Getter @Setter private Map<String, ParameterDescription> requestBody;
   @Getter @Setter private Map<String, ParameterDescription> pathParameters;

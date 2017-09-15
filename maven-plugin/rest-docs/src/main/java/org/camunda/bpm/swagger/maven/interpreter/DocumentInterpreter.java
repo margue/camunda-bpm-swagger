@@ -15,6 +15,9 @@ public class DocumentInterpreter {
   private static final String DESCRIPTION = "#";
   private static final String METHOD = "Method";
   private static final String RESULT = "Result";
+  private static final String EXAMPLE__RESPONSE = "Example.Response";
+  private static final String EXAMPLE_1__RESPONSE = "Example 1.Response";
+  private static final String EXAMPLE_2__RESPONSE = "Example 2.Response";
 
   private static final String PARAMETERS__PATH_PARAMETERS = "Parameters.Path Parameters";
   private static final String PARAMETERS__QUERY_PARAMETERS = "Parameters.Query Parameters";
@@ -35,6 +38,7 @@ public class DocumentInterpreter {
     resolveSubDocument(METHOD, parsed).map(this::resolveMethod).ifPresent(builder::method);
     resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(builder::description);
     resolveSubDocument(RESULT, parsed).map(this::resolveText).ifPresent(builder::resultDescription);
+    resolveExample(parsed).ifPresent(builder::responseExample);
 
     resolveParameter(PARAMETERS__REQUEST_BODY, builder::requestBody, parsed);
     resolveParameter(PARAMETERS__QUERY_PARAMETERS, builder::queryParameters, parsed);
@@ -45,31 +49,44 @@ public class DocumentInterpreter {
     return builder.build();
   }
 
+  private Optional<String> resolveExample(final Map<String, Node> parsed) {
+    Optional<String> result = resolveSubDocument(EXAMPLE__RESPONSE, parsed).map(this::resolveResponse);
+    if (!result.isPresent())
+      result = resolveSubDocument(EXAMPLE_1__RESPONSE, parsed).map(this::resolveResponse);
+    if (!result.isPresent())
+      result = resolveSubDocument(EXAMPLE_2__RESPONSE, parsed).map(this::resolveResponse);
+    return result;
+  }
+
   private void resolveParameter(final String key, final Consumer<Map<String, ParameterDescription>> consumer, final Map<String, Node> parsed) {
     resolveSubDocument(key, parsed).map(this::resolveHtmlNode)
       .map(htmlDocumentInterpreter::getParameterDescription)
       .ifPresent(consumer);
   }
 
+  private String resolveResponse(final Node node) {
+    return getOpChildNode(node, FencedCodeBlock.class)
+      .map(child -> getChildNode(child, Text.class))
+      .map(child -> nodeToString(child, true))
+      .orElse(null);
+  }
+
   private String resolvePath(final Node node) {
-    return getChildNode(node, Paragraph.class)
-      .map(child -> getChildNode(child, Code.class)
-        .map(childChild -> getChildNode(childChild, Text.class)
-          .map(Text::getChars)
-          .map(Object::toString)
-          .map(String::trim)
-          .orElse(null))
-        .orElse(null))
+    return getOpChildNode(node, Paragraph.class)
+      .map(child -> getChildNode(child, Code.class))
+      .map(childChild -> getChildNode(childChild, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim)
       .orElse(null);
   }
 
   private String resolveMethod(final Node node) {
-    return getChildNode(node, Paragraph.class)
-      .map(child -> getChildNode(child, Text.class)
-        .map(Text::getChars)
-        .map(Object::toString)
-        .map(String::trim)
-        .orElse(null))
+    return getOpChildNode(node, Paragraph.class)
+      .map(child -> getChildNode(child, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim)
       .orElse(null);
   }
 
@@ -85,17 +102,21 @@ public class DocumentInterpreter {
   }
 
   private String resolveText(final Node node) {
-    return getChildNode(node, Paragraph.class)
+    return getOpChildNode(node, Paragraph.class)
       .map(childNode -> nodeToString(childNode, true))
       .orElse(null);
   }
 
-  private <T> Optional<T> getChildNode(final Node node, final Class<T> clazz) {
+  private <T> T getChildNode(final Node node, final Class<T> clazz) {
+    return getOpChildNode(node, clazz).orElse(null);
+  }
+
+  private <T> Optional<T> getOpChildNode(final Node node, final Class<T> clazz) {
     return Optional.ofNullable((T) node.getFirstChildAny(clazz));
   }
 
   private HtmlBlock resolveHtmlNode(final Node node) {
-    return getChildNode(node, HtmlBlock.class).orElse(null);
+    return getOpChildNode(node, HtmlBlock.class).orElse(null);
   }
 
   private Optional<Node> resolveSubDocument(final String key, final Map<String, Node> parsedObject) {
@@ -136,6 +157,9 @@ public class DocumentInterpreter {
       case "LinkRef":
       case "Link":
         nodeToString(node.getFirstChildAny(Text.class), sb, ignoreHtmlBlocks);
+        break;
+      case "BulletList":
+        sb.append(node.getChars().toString());
         break;
       case "StrongEmphasis":
       case "Emphasis":
