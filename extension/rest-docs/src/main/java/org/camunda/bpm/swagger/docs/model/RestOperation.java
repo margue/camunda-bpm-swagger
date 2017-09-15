@@ -31,6 +31,10 @@ public class RestOperation {
    * Example of a response.
    */
   private String responseExample;
+  /**
+   * Url to original camunda documentation
+   */
+  private String externalDocUrl;
   private Map<String, ParameterDescription> requestBody = new HashMap<>();
   private Map<String, ParameterDescription> pathParameters = new HashMap<>();
   private Map<String, ParameterDescription> queryParameters = new HashMap<>();

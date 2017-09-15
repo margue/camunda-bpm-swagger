@@ -43,6 +43,9 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
   @Parameter(defaultValue = "${project.build.outputDirectory}/camunda-rest-docs.yaml", required = true, readonly = true)
   private File yamlFile;
 
+  @Parameter(defaultValue = "https://docs.camunda.org/manual/7.7/reference/rest/", required = true, readonly = true)
+  private String camundaDocsBase;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     getLog().info("Working on :" + markdownDir);
@@ -59,7 +62,13 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
       final Path path = Paths.get(filename);
       final String fileContents = prepareFileContents.apply(readFileContents(path));
       final Map<String, Node> parsedTree = parser.parse(fileContents);
-      return Optional.ofNullable(parsedTree).map(interpreter::interpret).orElse(null);
+      final String camundaDocURI = Optional.of(path.toFile().getPath())
+        .map(p -> p.substring(p.lastIndexOf("/rest/") + 6, p.lastIndexOf(".")))
+        .map(p -> camundaDocsBase + p + "/")
+        .orElse(null);
+      return Optional.ofNullable(parsedTree)
+        .map(parsed -> interpreter.interpret(parsed, camundaDocURI))
+        .orElse(null);
     };
 
     final Supplier<List<RestOperation>> documentations = () -> {

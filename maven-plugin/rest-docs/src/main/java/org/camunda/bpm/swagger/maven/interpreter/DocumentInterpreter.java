@@ -32,8 +32,10 @@ public class DocumentInterpreter {
     this.log = log;
   }
 
-  public RestOperation interpret(final Map<String, Node> parsed) {
+  public RestOperation interpret(final Map<String, Node> parsed, final String camundaDocURI) {
     final RestOperation.RestOperationBuilder builder = RestOperation.builder();
+    Optional.of(camundaDocURI).ifPresent(builder::externalDocUrl);
+
     resolveSubDocument(METHOD, parsed).map(this::resolvePath).ifPresent(builder::path);
     resolveSubDocument(METHOD, parsed).map(this::resolveMethod).ifPresent(builder::method);
     resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(builder::description);

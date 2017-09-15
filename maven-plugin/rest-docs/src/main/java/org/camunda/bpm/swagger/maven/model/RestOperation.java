@@ -17,6 +17,7 @@ public class RestOperation {
   @Getter @Setter private String description;
   @Getter @Setter private String resultDescription;
   @Getter @Setter private String responseExample;
+  @Getter @Setter private String externalDocUrl;
   @Getter @Setter private Map<String, ParameterDescription> result;
   @Getter @Setter private Map<String, ParameterDescription> requestBody;
   @Getter @Setter private Map<String, ParameterDescription> pathParameters;
