@@ -45,7 +45,6 @@ public class MethodStep {
     this.returnType = info.getRawType();
 
     // determine method name and return type
-
     Optional<TypeStep> dto = Optional.empty();
     if (info.isParametrized()) {
       this.methodReturnType = this.clazz.owner().ref(info.getRawType()).narrow(info.getParameterTypes());
