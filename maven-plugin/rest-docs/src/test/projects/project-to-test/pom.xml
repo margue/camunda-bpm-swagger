@@ -44,6 +44,7 @@
         <configuration>
           <markdownDir>./src/test/resources/rest</markdownDir>
           <yamlFile>./target/test-classes/camunda-rest-docs.yaml</yamlFile>
+          <camundaDocsBase>https://docs.camunda.org/manual/7.7/reference/rest/</camundaDocsBase>
         </configuration>
       </plugin>
     </plugins>

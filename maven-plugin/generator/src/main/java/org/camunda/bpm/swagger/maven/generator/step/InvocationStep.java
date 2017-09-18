@@ -13,7 +13,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
+import com.helger.jcodemodel.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.ibatis.annotations.Param;
 import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.maven.generator.ParameterRepository;
@@ -22,14 +26,6 @@ import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 import org.springframework.beans.BeanUtils;
-
-import com.helger.jcodemodel.AbstractJType;
-import com.helger.jcodemodel.JAnnotationUse;
-import com.helger.jcodemodel.JBlock;
-import com.helger.jcodemodel.JExpr;
-import com.helger.jcodemodel.JInvocation;
-import com.helger.jcodemodel.JMethod;
-import com.helger.jcodemodel.JVar;
 
 import io.swagger.annotations.ApiParam;
 
@@ -124,7 +120,7 @@ public class InvocationStep extends AbstractMethodStep {
       jvar = method.param(type, parameterAnnotation.getRight());
       jvar.annotate(parameterAnnotation.getLeft()).param("value", parameterAnnotation.getRight());
 
-      if (doc != null) {        
+      if (doc != null) {
         // extract docs
         ParameterDescription parameterDescription = null;
         if (parameterAnnotation.getLeft().isAssignableFrom(QueryParam.class)) {
@@ -146,7 +142,9 @@ public class InvocationStep extends AbstractMethodStep {
 
     // annotate
     if (!ParameterRepository.isPresent(type.fullName())) {
-      final JAnnotationUse apiParam = jvar.annotate(ApiParam.class).param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
+      final JAnnotationUse apiParam = jvar
+        .annotate(ApiParam.class)
+        .param("value", apiDocsParamName == null ? "Parameter " + jvar.name() : apiDocsParamName);
 
       if (dtoStep.isDto()) {
         apiParam.param("type", type.fullName());
@@ -154,13 +152,28 @@ public class InvocationStep extends AbstractMethodStep {
         // add docs
         modelRepository.addDoc(dtoStep.getFullQualifiedName(), doc, DocStyle.METHOD_PARAM);
       }
+    } else if (ParameterRepository.generateIimplicitParams(type.fullName()) && doc != null) {
+      // implicit parameters
+      final JAnnotationArrayMember implicitParamsAnnotation = method.annotate(ApiImplicitParams.class).paramArray("value");
+      for (String paramName : doc.getQueryParameters().keySet()) {
+        final ParameterDescription parameterDescription = doc.getQueryParameters().get(paramName);
+        implicitParamsAnnotation
+          .annotate(ApiImplicitParam.class)
+          .param("name", paramName)
+          .param("value", parameterDescription.getDescription() == null ? "Parameter" + paramName : parameterDescription.getDescription())
+          .param("dataType", parameterDescription.getType() == null ? "string" : parameterDescription.getType())
+          .param("paramType", "query")
+          .param("required", parameterDescription.getRequired() == null ? false : parameterDescription.getRequired())
+        ;
+      }
     }
+
     return jvar;
   }
 
   /**
    * Finds a parameter annotation.
-   * 
+   *
    * @param element
    *          annotated element.
    * @return a pair with annotation type on the left and value on the right.
@@ -182,7 +195,7 @@ public class InvocationStep extends AbstractMethodStep {
 
   /**
    * Creates a parameter pair.
-   * 
+   *
    * @param param
    *          parameter to describe.
    * @param all
@@ -196,7 +209,7 @@ public class InvocationStep extends AbstractMethodStep {
 
   /**
    * Determines parameter name.
-   * 
+   *
    * @param param
    *          parameter to extract name for.
    * @param all
@@ -235,7 +248,7 @@ public class InvocationStep extends AbstractMethodStep {
 
   /**
    * Checks if the parameter is unique along with parent invocations. Currently needed for TaskService#delete only.
-   * 
+   *
    * @param parentInvocations
    *          invocation stack.
    * @param param

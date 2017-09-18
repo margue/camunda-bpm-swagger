@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Repository for parameter names (reserved one).
- * 
+ *
  * @author Simon Zambrovski
  *
  */
@@ -36,5 +36,9 @@ public class ParameterRepository {
 
   public static boolean isPresent(final String fullclassName) {
     return predefinedParameters.containsKey(fullclassName);
+  }
+
+  public static boolean generateIimplicitParams(final String fullClassName) {
+    return UriInfo.class.getName().equals(fullClassName);
   }
 }
