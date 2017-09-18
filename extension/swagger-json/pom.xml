@@ -19,6 +19,7 @@
       <groupId>org.camunda.bpm.extension.swagger</groupId>
       <artifactId>camunda-bpm-swagger-core</artifactId>
       <version>${project.parent.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
