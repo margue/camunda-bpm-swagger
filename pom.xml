@@ -29,12 +29,9 @@
 
   <modules>
     <module>maven-plugin</module>
-
-
     <module>extension/core</module>
-    <module>extension/assembly</module>
+    <module>extension/swagger-json</module>
     <module>extension/swagger-ui</module>
-
     <module>example/spring-boot</module>
   </modules>
 
@@ -69,12 +66,6 @@
       <id>restDocs</id>
       <modules>
         <module>extension/rest-docs</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>generateJsonModule</id>
-      <modules>
-        <module>extension/swagger-json</module>
       </modules>
     </profile>
   </profiles>

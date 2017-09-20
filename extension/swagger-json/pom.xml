@@ -13,6 +13,7 @@
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-json</artifactId>
   <version>${camunda.version}</version>
+  <name>Camunda Swagger JSON</name>
 
   <dependencies>
     <dependency>

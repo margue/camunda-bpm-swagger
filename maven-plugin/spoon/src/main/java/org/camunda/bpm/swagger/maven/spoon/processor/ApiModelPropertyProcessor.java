@@ -53,7 +53,7 @@ public class ApiModelPropertyProcessor extends AbstractProcessor<CtMethod<?>> {
     if (docs != null) {
       final ParameterDescription parameterDescription = docs.get(fieldName);
       if (parameterDescription != null) {
-        log.info("Found parameter description for {} {}", classFqn, fieldName);
+        log.debug("Found parameter description for {} {}", classFqn, fieldName);
         annotation.addValue("value", parameterDescription.getDescription());
         if (parameterDescription.getRequired() != null) {
           annotation.addValue("required", parameterDescription.getRequired().booleanValue());

@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>swagger-ui</artifactId>
-	<name>Swagger UI</name>
+	<name>Camunda Swagger UI</name>
 	<packaging>war</packaging>
 
 
@@ -27,7 +27,14 @@
 			<artifactId>swagger-ui</artifactId>
 			<version>${swagger-ui.version}</version>
 		</dependency>
-	</dependencies>
+
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-json</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+
+  </dependencies>
 	<build>
 		<plugins>
 		  <plugin>
@@ -39,5 +46,5 @@
 		  </plugin>
 		</plugins>
 	</build>
-	
+
 </project>

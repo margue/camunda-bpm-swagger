@@ -12,6 +12,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger.example</groupId>
   <artifactId>camunda-bpm-swagger-example-spring-boot</artifactId>
+  <name>Camunda SpringBoot Swagger Example</name>
 
   <properties>
     <springfox.version>2.7.0</springfox.version>
@@ -53,22 +54,14 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-json</artifactId>
+      <version>${camunda.version}</version>
+    </dependency>
+
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>generateJsonModule</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.camunda.bpm.extension.swagger</groupId>
-          <artifactId>camunda-bpm-swagger-json</artifactId>
-          <version>${camunda.version}</version>
-        </dependency>
-      </dependencies>
-
-    </profile>
-  </profiles>
-
 
   <build>
     <plugins>

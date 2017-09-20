@@ -11,6 +11,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
   <artifactId>camunda-bpm-swagger-plugin-rest-docs</artifactId>
+  <name>Camunda Swagger Docs Extractor Maven Plugin</name>
   <packaging>maven-plugin</packaging>
 
   <dependencies>

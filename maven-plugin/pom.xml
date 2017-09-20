@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>camunda-bpm-swagger-maven-plugin-root</artifactId>
-
+  <name>Camunda Swagger Maven Plugin Root</name>
   <packaging>pom</packaging>
 
   <modules>

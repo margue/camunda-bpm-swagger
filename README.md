@@ -16,21 +16,30 @@ Swagger Support for Camunda BPM REST API.
 
 Checkout the code and run 
 
-    mvn clean install -PrestDocs -PgenerateJson -PgenerateJsonModule
+    mvn clean install -PrestDocs -PgenerateJson
     
-The profiles are needed only once to generate the documentation dictionaries.
+The profiles are needed only once to generate the documentation dictionary and the `swagger.json` artifact.
 
-**How to use**
+**How to use with Spring Boot**
 
-This project produces two WAR artifacts:
- - `camunda-bpm-engine-rest-swagger.war`
- - `swagger-ui.war`
- 
-in order to use it in your Camunda BPM Engine installation, please remove the original `camunda-bpm-engine-rest.war` 
-from your deployment directory and copy both artifacts there.
+In order to use the Swagger in context of a Camunda SpringBoot application, just include 
 
-To invoke the Swagger UI, call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json?docExpansion=none](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/engine-rest/swagger.json?docExpansion=none) 
-from your browser.
+    <dependency>
+      <groupId>org.camunda.bpm.extension.swagger</groupId>
+      <artifactId>camunda-bpm-swagger-json</artifactId>
+      <version>7.7.0</version>
+    </dependency>
+
+into your application and include the content of `example/spring-boot/src/main/resource/static` into your application.
+After packaging and start of Camunda SpringBoot application, call [http://localhost:8080](http://localhost:8080)
+
+**How to use in container**
+
+This project produces a WAR artifact `swagger-ui.war`. Please deploy it into the container (tested with Wildfly 10 Camunda distribution). To invoke the Swagger UI, 
+call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/swagger/swagger.json?docExpansion=none](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/swagger/swagger.json?docExpansion=none) 
+in your browser.
+
+
 
 
 ## Release Notes

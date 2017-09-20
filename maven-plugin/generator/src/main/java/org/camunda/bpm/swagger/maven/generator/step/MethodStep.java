@@ -56,7 +56,7 @@ public class MethodStep {
         this.returnTypeStyle = ReturnTypeStyle.DTO_MAP_STRING;
       } else {
         // doesn't support return parametrized type
-        log.warn("Unsupported return collection type with {} type parameters:", info.getParameterTypes().length, info.getRawType().getName());
+        log.debug("Unsupported return collection type with {} type parameters:", info.getParameterTypes().length, info.getRawType().getName());
         this.returnTypeStyle = ReturnTypeStyle.PLAIN;
       }
     } else {

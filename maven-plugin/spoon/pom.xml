@@ -11,6 +11,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
   <artifactId>camunda-bpm-swagger-plugin-spoon</artifactId>
+  <name>Camunda Swagger Spoon Maven Plugin</name>
   <packaging>maven-plugin</packaging>
 
   <properties>

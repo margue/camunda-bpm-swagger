@@ -11,6 +11,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
   <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
+  <name>Camunda Swagger Model Generator Maven Plugin</name>
   <packaging>maven-plugin</packaging>
 
 
