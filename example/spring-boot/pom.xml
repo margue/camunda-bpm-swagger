@@ -12,7 +12,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger.example</groupId>
   <artifactId>camunda-bpm-swagger-example-spring-boot</artifactId>
-  <name>Camunda SpringBoot Swagger Example</name>
+  <name>Camunda Swagger SpringBoot Example</name>
 
   <properties>
     <springfox.version>2.7.0</springfox.version>

@@ -12,7 +12,7 @@
 
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-core</artifactId>
-  <name>Camunda REST Core Model</name>
+  <name>Camunda Swagger REST core model</name>
 
   <dependencies>
     <dependency>

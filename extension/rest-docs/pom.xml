@@ -13,7 +13,7 @@
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
   <version>${camunda.version}</version>
-  <name>Camunda REST dictionary</name>
+  <name>Camunda Swagger REST dictionary</name>
 
   <dependencies>
     <dependency>
