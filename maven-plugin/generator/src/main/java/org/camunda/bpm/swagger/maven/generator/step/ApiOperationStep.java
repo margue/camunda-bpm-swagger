@@ -38,7 +38,7 @@ public class ApiOperationStep extends AbstractMethodStep {
         .param("notes", description)
       ;
 
-      if (restOperation != null && restOperation.getPath() != null) {
+      if (restOperation != null && restOperation.getExternalDocUrl() != null) {
         getMethod().annotate(ExternalDocs.class)
           .param("value", "Reference Guide")
           .param("url", restOperation.getExternalDocUrl())
