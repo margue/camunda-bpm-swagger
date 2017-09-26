@@ -74,7 +74,8 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
     camundaRestServices.stream().map(service -> new SwaggerServiceModelGenerator(service)).forEach(CodeGenerator::generate);
 
     // write all models
-    modelRepository.getModels().forEach(r -> r.write(outputDirectory));
+    // skip
+    // modelRepository.getModels().forEach(r -> r.write(outputDirectory));
 
     if (modelRepository.getDtoParameterDescriptions().isEmpty()) {
       throw new IllegalStateException("No DTO docs has been provided.");

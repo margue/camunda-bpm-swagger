@@ -29,21 +29,6 @@ public class TypeHelper {
     return Optional.of(method).map(m -> m.getParent(CtClass.class)).map(CtClass::getQualifiedName).orElse("");
   }
 
-  /**
-   * Tries to find the HTTP path and HTTP Method annotated to this method (either directly or to it's definition in the interface).
-   *
-   * @param ctMethod method to inspect.
-   * @return a pair of path and method.
-   */
-  public static Pair<String, String> getPathAndHttpMethod(final CtMethod<?> ctMethod) {
-
-    final Optional<Class<? extends Annotation>> annotation = javaxRsAnnotation(ctMethod);
-    final String method = annotation.map(Class::getSimpleName).orElse("");
-    final String path = path(ctMethod);
-
-    return Pair.of(path, method);
-  }
-
   public static Optional<Class<? extends Annotation>> javaxRsAnnotation(final CtMethod<?> ctMethod) {
     final Optional<CtMethod<?>> interfaceMethod = getInterfaceMethod(ctMethod);
     if (interfaceMethod.isPresent()) {

@@ -36,8 +36,7 @@ public class RestResourceAndRestServiceMethodProcessor extends AbstractProcessor
 
   @Override
   public void process(final CtMethod<?> ctMethod) {
-
-    removePathAnnotation(ctMethod);
+    // removePathAnnotation(ctMethod);
   }
 
   private void removePathAnnotation(final CtMethod<?> ctMethod) {

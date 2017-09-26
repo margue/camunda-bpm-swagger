@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.camunda.bpm.swagger.docs.model.RestService;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
@@ -23,7 +24,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
 @Data
 @Slf4j
 public class MethodStep {
@@ -32,13 +32,21 @@ public class MethodStep {
     PLAIN, DTO, DTO_LIST, DTO_MAP_STRING;
   }
 
-  private final CamundaRestService camundaRestService;
+  private final ModelRepository modelRepository;
+  private final RestService restService;
   private final JDefinedClass clazz;
+
   private JMethod method;
   private Class<?> returnType;
   private ReturnTypeStyle returnTypeStyle;
   private AbstractJType methodReturnType;
   private String path;
+
+  public MethodStep(ModelRepository modelRepository, RestService restService, JDefinedClass clazz) {
+    this.modelRepository = modelRepository;
+    this.restService = restService;
+    this.clazz = clazz;
+  }
 
   public JMethod create(final ReturnTypeInfo info, final Pair<String, String> pathPrefix, final Map<Pair<String, String>, RestOperation> docs,
       final ParentInvocation... parentInvocations) {
@@ -61,7 +69,7 @@ public class MethodStep {
         this.returnTypeStyle = ReturnTypeStyle.PLAIN;
       }
     } else {
-      dto = Optional.of(new TypeStep(camundaRestService.getModelRepository(), info.getRawType(), clazz.owner()));
+      dto = Optional.of(new TypeStep(modelRepository, info.getRawType(), clazz.owner()));
       this.returnTypeStyle = dto.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
       this.methodReturnType = dto.get().getType();
     }
@@ -84,15 +92,13 @@ public class MethodStep {
 
     final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
 
-
-
     // register docs for this DTO.
     if (dto.isPresent()) {
-      camundaRestService.getModelRepository().addDoc(dto.get().getFullQualifiedName(), doc, DocStyle.RETURN_TYPE);
+      modelRepository.addDoc(dto.get().getFullQualifiedName(), doc, DocStyle.RETURN_TYPE);
     }
 
     // create invocation
-    final JInvocation invoke = new InvocationStep(method).method(camundaRestService.getModelRepository(), info.getMethod(), doc, parentInvocations);
+    final JInvocation invoke = new InvocationStep(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
 
     // body
     if (TypeHelper.isVoid(getReturnType())) {
@@ -111,7 +117,7 @@ public class MethodStep {
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
     apiOperation.annotate(this, info.getMethod());
     // add method
-    camundaRestService.getRestService().getOperations().put(methodName, doc);
+    restService.getOperations().put(info.getMethod().getName(), doc);
 
     // ApiResponse
     final ApiResponsesStep responesStep = new ApiResponsesStep(method, doc);

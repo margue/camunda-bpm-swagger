@@ -10,8 +10,10 @@ import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.reference.CtTypeReference;
 
+import javax.ws.rs.Path;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +46,7 @@ public class RestServiceProcessor extends AbstractProcessor<CtClass<?>> {
   public void process(final CtClass<?> impl) {
 
     final CtAnnotation<Annotation> annotation = getFactory().Code().createAnnotation(getFactory().Code().createCtTypeReference(Api.class));
-
+    final CtAnnotation<Path> path = getFactory().Code().createAnnotation(getFactory().Code().createCtTypeReference(Path.class));
     final String classFqn = TypeHelper.getFirstInterfaceClassName(impl);
     final RestService restService = context.getServiceDocumentation().get(classFqn);
 
@@ -52,6 +54,9 @@ public class RestServiceProcessor extends AbstractProcessor<CtClass<?>> {
       annotation.addValue("value", restService.getDescription());
       annotation.addValue("tags", restService.getTags());
       impl.addAnnotation(annotation);
+
+      path.addValue("value", restService.getPath());
+      impl.addAnnotation(path);
 
       log.debug("Added @Api to {} [{}]", impl.getQualifiedName(), classFqn);
     } else {

@@ -14,6 +14,7 @@ public class RestService {
 
   private String tags;
   private String description;
+  private String path;
   private Map<String, RestOperation> operations = new HashMap<>();
 
 }
