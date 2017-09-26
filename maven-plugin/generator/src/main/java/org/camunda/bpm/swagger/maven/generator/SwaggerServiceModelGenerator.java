@@ -42,8 +42,11 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
     // class information
     c._extends(camundaRestService.getServiceImplClass());
     c.annotate(codeModel.ref(Path.class)).param("value", camundaRestService.getPath());
-    // TODO add service docs here
-    c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", TagRespository.lookup(camundaRestService));
+
+    final String tags = TagRespository.lookup(camundaRestService);
+    camundaRestService.getRestService().setTags(tags);
+    camundaRestService.getRestService().setDescription(camundaRestService.getName());
+    c.annotate(codeModel.ref(Api.class)).param("value", camundaRestService.getName()).param("tags", tags);
 
     // generate constructor
     for (final Constructor<?> constructor : camundaRestService.getServiceImplClass().getConstructors()) {
@@ -67,7 +70,7 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
 
     for (final Method m : methods.keySet()) {
       // create method
-      final MethodStep methodStep = new MethodStep(camundaRestService.getModelRepository(), clazz);
+      final MethodStep methodStep = new MethodStep(camundaRestService, clazz);
       methodStep.create(methods.get(m), Pair.of(camundaRestService.getPath(), parentPathPrefix), camundaRestService.getModelRepository().getDocumentation().get(), parentInvocations);
 
       // dive into resource processing

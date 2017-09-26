@@ -9,6 +9,7 @@ import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
+import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
 
@@ -31,7 +32,7 @@ public class MethodStep {
     PLAIN, DTO, DTO_LIST, DTO_MAP_STRING;
   }
 
-  private final ModelRepository modelRepository;
+  private final CamundaRestService camundaRestService;
   private final JDefinedClass clazz;
   private JMethod method;
   private Class<?> returnType;
@@ -60,7 +61,7 @@ public class MethodStep {
         this.returnTypeStyle = ReturnTypeStyle.PLAIN;
       }
     } else {
-      dto = Optional.of(new TypeStep(modelRepository, info.getRawType(), clazz.owner()));
+      dto = Optional.of(new TypeStep(camundaRestService.getModelRepository(), info.getRawType(), clazz.owner()));
       this.returnTypeStyle = dto.get().isDto() ? ReturnTypeStyle.DTO : ReturnTypeStyle.PLAIN;
       this.methodReturnType = dto.get().getType();
     }
@@ -83,20 +84,22 @@ public class MethodStep {
 
     final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
 
+
+
     // register docs for this DTO.
     if (dto.isPresent()) {
-      modelRepository.addDoc(dto.get().getFullQualifiedName(), doc, DocStyle.RETURN_TYPE);
+      camundaRestService.getModelRepository().addDoc(dto.get().getFullQualifiedName(), doc, DocStyle.RETURN_TYPE);
     }
 
     // create invocation
-    final JInvocation invoke = new InvocationStep(method).method(modelRepository, info.getMethod(), doc, parentInvocations);
+    final JInvocation invoke = new InvocationStep(method).method(camundaRestService.getModelRepository(), info.getMethod(), doc, parentInvocations);
 
     // body
     if (TypeHelper.isVoid(getReturnType())) {
       method.body().add(invoke);
     } else {
 
-      // overriding, only if it is a simple return type (not parameterized, not DTO, not a resource)
+      // overriding, only if it is a simple return type (not parametrized, not DTO, not a resource)
       if (parentInvocations == null) {
         method.annotate(Override.class);
       }
@@ -107,6 +110,8 @@ public class MethodStep {
     // ApiOperation
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
     apiOperation.annotate(this, info.getMethod());
+    // add method
+    camundaRestService.getRestService().getOperations().put(methodName, doc);
 
     // ApiResponse
     final ApiResponsesStep responesStep = new ApiResponsesStep(method, doc);

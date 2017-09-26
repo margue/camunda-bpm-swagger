@@ -18,23 +18,30 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Predicate;
 
-@Slf4j
-public class RestResourceProcessor extends AbstractProcessor<CtMethod<?>> {
+import static org.camunda.bpm.swagger.maven.spoon.processor.MethodPredicates.*;
 
-  Predicate<CtMethod<?>> classIsNamedResource = m -> getClassname(m).endsWith("Resource");
-  Predicate<CtMethod<?>> classIsNamedService = m -> getClassname(m).endsWith("Service");
-  Predicate<CtMethod<?>> isPathAnnotated = m -> m.getAnnotation(Path.class) != null;
-  Predicate<CtMethod<?>> returnsResource = m -> m.getType().getQualifiedName().endsWith("Resource");
+@Slf4j
+public class RestResourceAndRestServiceMethodProcessor extends AbstractProcessor<CtMethod<?>> {
 
   @Override
   public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsNamedResource.and(isPathAnnotated).test(candidate) || classIsNamedService.and(isPathAnnotated).and(returnsResource).test(candidate);
+    return classIsNamedResource
+      .and(isPathAnnotated)
+      .test(candidate) ||
+      classIsNamedService
+        .and(isPathAnnotated)
+        .and(returnsResource)
+        .test(candidate);
   }
 
   @Override
   public void process(final CtMethod<?> ctMethod) {
 
-    log.debug("Processing {}#{}", getClassname(ctMethod), ctMethod.getSimpleName());
+    removePathAnnotation(ctMethod);
+  }
+
+  private void removePathAnnotation(final CtMethod<?> ctMethod) {
+    log.debug("Processing {}#{}", TypeHelper.getClassname(ctMethod), ctMethod.getSimpleName());
     final CtTypeReference<Path> pathRef = getFactory().createCtTypeReference(Path.class);
     final Optional<CtAnnotation<? extends Annotation>> ann = ctMethod.getAnnotations().stream().filter(a -> a.getAnnotationType().isSubtypeOf(pathRef)).findFirst();
 
@@ -43,7 +50,4 @@ public class RestResourceProcessor extends AbstractProcessor<CtMethod<?>> {
     }
   }
 
-  private static String getClassname(final CtMethod<?> method) {
-    return Optional.of(method).map(m -> m.getDeclaringType()).map(CtType::getQualifiedName).orElse("");
-  }
 }
