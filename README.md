@@ -36,7 +36,7 @@ After packaging and start of Camunda SpringBoot application, call [http://localh
 **How to use in container**
 
 This project produces a WAR artifact `swagger-ui.war`. Please deploy it into the container (tested with Wildfly 10 Camunda distribution). To invoke the Swagger UI, 
-call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/swagger/swagger.json?docExpansion=none](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?url=/swagger/swagger.json?docExpansion=none) 
+call [http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?docExpansion=none&url=/swagger/swagger.json](http://localhost:8080/swagger/webjars/swagger-ui/3.1.4/index.html?docExpansion=none&url=/swagger/swagger.json) 
 in your browser.
 
 
