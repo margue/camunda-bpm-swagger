@@ -29,4 +29,9 @@ This plugin creates new server REST implementation around Camunda Engine REST, b
 
 ## Idea
  - Instead of deletion of @Path on ResourceMethods -> Generate docs there with spoon
+ - SpringBoot Support durch besseres packaging
+ - Github change owner
+ - CI
+ - 1.0 release
+ 
  

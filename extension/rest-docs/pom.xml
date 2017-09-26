@@ -61,7 +61,7 @@
       <plugin>
         <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
         <artifactId>camunda-bpm-swagger-plugin-rest-docs</artifactId>
-        <version>${parent.version}</version>
+        <version>${project.parent.version}</version>
         <executions>
           <execution>
             <phase>generate-resources</phase>
