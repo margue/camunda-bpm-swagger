@@ -86,11 +86,14 @@ public class SpoonProcessingMojo extends AbstractMojo {
       spoon.getEnvironment().setAutoImports(autoImports);
       spoon.getEnvironment().setNoClasspath(noClasspath);
 
+      // DTO
       spoon.addProcessor(new ApiModelProcessor());
       spoon.addProcessor(new ApiModelPropertyProcessor(this));
-      spoon.addProcessor(new RestResourceAndRestServiceMethodProcessor());
-      spoon.addProcessor(new RestServiceProcessor(this));
+      // Sub Resources
+      spoon.addProcessor(new RestResourceProcessor(this));
       spoon.addProcessor(new RestResourceMethodProcessor( this ));
+      // Service
+      spoon.addProcessor(new RestServiceProcessor(this));
       spoon.addProcessor(new RestServiceMethodProcessor(this));
 
       final String[] classpathElements = executionEnvironment.getMavenProject()

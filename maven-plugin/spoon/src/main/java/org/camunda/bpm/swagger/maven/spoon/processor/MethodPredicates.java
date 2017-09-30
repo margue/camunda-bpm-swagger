@@ -12,6 +12,7 @@ public class MethodPredicates {
   public static final Predicate<CtMethod<?>> classIsNamedResource = m -> TypeHelper.getClassname(m).endsWith("Resource");
   public static final Predicate<CtMethod<?>> classIsNamedResourceImpl = m -> TypeHelper.getClassname(m).endsWith("ResourceImpl");
   public static final Predicate<CtMethod<?>> classIsNamedService = m -> TypeHelper.getClassname(m).endsWith("Service");
+  public static final Predicate<CtMethod<?>> classIsNamedRestService = m -> TypeHelper.getClassname(m).endsWith("RestService");
   public static final Predicate<CtMethod<?>> classIsNamedRestServiceImpl = m -> TypeHelper.getClassname(m).endsWith("RestServiceImpl");
   public static final Predicate<CtMethod<?>> classIsNamedDto = m -> TypeHelper.getClassname(m).endsWith("Dto");
   public static final Predicate<CtMethod<?>> classImplementsRestInterface = m -> ClassPredicates.implementsRestInterface.test((CtClass<?>) m.getParent());

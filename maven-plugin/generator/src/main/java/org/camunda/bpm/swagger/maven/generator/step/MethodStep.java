@@ -90,7 +90,16 @@ public class MethodStep {
     final ConsumesAndProducesStep consumesAndProduces = new ConsumesAndProducesStep(method);
     consumesAndProduces.annotate(info.getMethod());
 
-    final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
+    Pair key = Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName());
+    RestOperation doc = docs.get(key);
+    if (doc == null && !this.path.endsWith("/")) {
+      // sometimes this helps!
+      Pair key2 = Pair.of(pathPrefix.getLeft() + this.path + "/", jaxrsAnnotation.getType().getSimpleName());
+      doc = docs.get(key2);
+      if (doc == null) {
+        log.error("No doc found for {}", key);
+      }
+    }
 
     // register docs for this DTO.
     if (dto.isPresent()) {

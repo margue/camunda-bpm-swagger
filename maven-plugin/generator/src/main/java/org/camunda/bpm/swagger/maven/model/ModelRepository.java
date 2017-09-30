@@ -43,10 +43,15 @@ public class ModelRepository {
       return;
     }
     if (restServiceDescriptions.containsKey(fqn)) {
-      log.error("Duplicate REST service documentation for {}", fqn);
+      log.error("Duplicate REST service documentation for {}, merging values.", fqn);
+      final RestService savedRestService = restServiceDescriptions.get(fqn);
+      savedRestService.getOperations().putAll(restService.getOperations());
+      if (savedRestService.getTags() != null && restService.getTags() != null && !savedRestService.getTags().contains(restService.getTags())) {
+       savedRestService.setTags(savedRestService.getTags() + "," + restService.getTags());
+      }
+    } else {
+      restServiceDescriptions.put(fqn, restService);
     }
-
-    restServiceDescriptions.put(fqn, restService);
   }
 
 

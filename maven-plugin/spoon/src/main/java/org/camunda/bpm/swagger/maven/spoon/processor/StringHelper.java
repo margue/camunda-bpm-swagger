@@ -55,7 +55,7 @@ public class StringHelper {
     }
 
     final int indexOf = description.indexOf(".");
-    return indexOf > 0 ? description.substring(0, indexOf) : description;
+    return (indexOf > 0 ? description.substring(0, indexOf) : description) + ".";
 
   }
 }

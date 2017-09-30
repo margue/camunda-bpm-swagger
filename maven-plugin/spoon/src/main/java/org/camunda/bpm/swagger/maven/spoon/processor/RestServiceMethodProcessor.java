@@ -32,13 +32,9 @@ public class RestServiceMethodProcessor extends AbstractProcessor<CtMethod<?>> {
     this.context = context;
   }
 
-
   @Override
   public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsNamedRestServiceImpl
-      .and(isPublic)
-      .and(classImplementsRestInterface)
-      .and(existsInInterface)
+    return classIsNamedRestService
       .test(candidate);
   }
 

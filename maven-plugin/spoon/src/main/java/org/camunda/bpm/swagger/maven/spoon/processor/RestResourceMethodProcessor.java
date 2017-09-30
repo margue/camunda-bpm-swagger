@@ -24,10 +24,7 @@ public class RestResourceMethodProcessor extends AbstractProcessor<CtMethod<?>> 
 
   @Override
   public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsNamedResourceImpl
-      .and(isPublic)
-      .and(classImplementsResourceInterface)
-      .and(existsInInterface)
+    return classIsNamedResource
       .test(candidate);
   }
 

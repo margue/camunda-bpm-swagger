@@ -79,8 +79,10 @@ public class SwaggerServiceModelGenerator implements CodeGenerator {
       if (TypeHelper.isResource(methodStep.getReturnType())) {
 
         // add doc reference
-        RestService resourceService = new RestService();
-        resourceService.setTags(methodStep.getReturnType().getName());
+        final RestService resourceService = new RestService();
+        resourceService.setTags(TagRespository.lookup(camundaRestService));
+        // path is not needed for the sub resource
+        // resourceService.setPath(camundaRestService.getPath() + methodStep.getPath());
         camundaRestService.getModelRepository().addService(methodStep.getReturnType().getName(), resourceService);
 
         generateMethods(clazz, // the class

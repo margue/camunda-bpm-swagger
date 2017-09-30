@@ -1,10 +1,7 @@
 package org.camunda.bpm.swagger.maven.spoon.processor;
 
 import org.apache.commons.lang3.tuple.Pair;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtInterface;
-import spoon.reflect.declaration.CtMethod;
-import spoon.reflect.declaration.CtParameter;
+import spoon.reflect.declaration.*;
 import spoon.reflect.reference.CtTypeReference;
 
 import javax.ws.rs.*;
@@ -26,19 +23,16 @@ public class TypeHelper {
   }
 
   public static String getClassname(final CtMethod<?> method) {
-    return Optional.of(method).map(m -> m.getParent(CtClass.class)).map(CtClass::getQualifiedName).orElse("");
+    return Optional.of(method).map(m -> m.getParent(CtType.class)).map(CtType::getQualifiedName).orElse("");
   }
 
-  public static Optional<Class<? extends Annotation>> javaxRsAnnotation(final CtMethod<?> ctMethod) {
-    final Optional<CtMethod<?>> interfaceMethod = getInterfaceMethod(ctMethod);
-    if (interfaceMethod.isPresent()) {
-      for (final Class<? extends Annotation> a : Arrays.asList(POST.class, GET.class, PUT.class, DELETE.class, OPTIONS.class)) {
-        if (interfaceMethod.get().getAnnotation(a) != null) {
-          return Optional.of(a);
-        }
+  public static Class<? extends Annotation> javaxRsAnnotation(final CtMethod<?> ctMethod) {
+    for (final Class<? extends Annotation> a : Arrays.asList(POST.class, GET.class, PUT.class, DELETE.class, OPTIONS.class)) {
+      if (ctMethod.getAnnotation(a) != null) {
+        return a;
       }
     }
-    return Optional.of(GET.class);
+    return null;
   }
 
   public static String path(final CtMethod<?> ctMethod) {
@@ -47,7 +41,7 @@ public class TypeHelper {
   }
 
   public static Optional<CtMethod<?>> getInterfaceMethod(CtMethod<?> ctMethod) {
-    if (ctMethod.getDeclaringType() instanceof CtClass){
+    if (ctMethod.getDeclaringType() instanceof CtClass) {
       final Optional<CtTypeReference<?>> firstSuperInterface = getFirstSuperInterface((CtClass<?>) ctMethod.getDeclaringType());
       if (firstSuperInterface.isPresent()) {
         return firstSuperInterface.get().getDeclaration().getMethods().stream().filter(m -> m.getSignature().equals(ctMethod.getSignature())).findFirst();
@@ -58,6 +52,7 @@ public class TypeHelper {
 
   /**
    * Extends a parameter annotation from the method parameter from the declaring interface.
+   *
    * @param ctParameter parameter of the implementation.
    * @return annotation class, if present in the defining interface.
    */
@@ -72,8 +67,9 @@ public class TypeHelper {
 
   /**
    * Retrieves the parameter from the super interface if exists.
+   *
    * @param parameter parameter of the method.
-   * @param ctMethod method.
+   * @param ctMethod  method.
    * @return parameter from the super interface with the same type and same name.
    */
   public static Optional<CtParameter<?>> getInterfaceParameter(final CtParameter parameter, final CtMethod ctMethod) {
@@ -81,6 +77,6 @@ public class TypeHelper {
       .filter(p -> parameter.getType().isSubtypeOf(p.getType()))
       .filter(p -> p.getSimpleName().equals(parameter.getSimpleName()))
       .findFirst())
-    .orElse(Optional.empty());
+      .orElse(Optional.empty());
   }
 }
