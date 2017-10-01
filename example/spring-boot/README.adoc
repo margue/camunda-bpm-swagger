@@ -1,4 +1,16 @@
-This example works using the swagger-ui-dist in resources/static/ and copying the swagger.json
-from core/META-INF/resources and modifying its basePath.
+# Camunda Spring Boot REST using swagger.json
 
-not automated, buit at least st to work with.
+standard camunda-bpm-spring-boot-rest with additional dependencies
+
+* swagger-ui-webjar - this brings the swagger-ui html/js/css resources and allows access via /webjars/swagger-ui/<version>
+* camunda-swagger-json - just containing the camunda swagger.json, so its accesible on "/swagger.json"
+
+To use, run the main application and go to
+
+http://localhost:8080/webjars/swagger-ui/3.1.4/index.html
+
+you must than change the swagger.json url from petshop to `/swagger.json` and hit explore.
+
+
+
+
