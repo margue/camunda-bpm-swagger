@@ -1,10 +1,15 @@
 package org.camunda.bpm.swagger.maven;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.vladsch.flexmark.ast.Node;
-import lombok.SneakyThrows;
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -17,17 +22,12 @@ import org.camunda.bpm.swagger.maven.interpreter.DocumentInterpreter;
 import org.camunda.bpm.swagger.maven.model.RestOperation;
 import org.camunda.bpm.swagger.maven.model.RestOperations;
 import org.camunda.bpm.swagger.maven.parser.DocumentParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.vladsch.flexmark.ast.Node;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME;
@@ -58,7 +58,7 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
     final Function<String, String> prepareFileContents = fileContents ->
       fileContents.replaceAll("\\{\\{[^}]+\\}\\}", "");
 
-    final Function<String, RestOperation> createRestOperation = filename -> {
+    final Function<String, List<RestOperation>> createRestOperation = filename -> {
       final Path path = Paths.get(filename);
       final String fileContents = prepareFileContents.apply(readFileContents(path));
       final Map<String, Node> parsedTree = parser.parse(fileContents);
@@ -68,14 +68,18 @@ public class GenerateDocumentationYamlMojo extends AbstractMojo {
         .orElse(null);
       return Optional.ofNullable(parsedTree)
         .map(parsed -> interpreter.interpret(parsed, camundaDocURI))
-        .orElse(null);
+        .orElse(Collections.emptyList());
     };
 
     final Supplier<List<RestOperation>> documentations = () -> {
       final WildcardFileFilter fileFilter = new WildcardFileFilter("*.md");
       final Collection<File> files = FileUtils.listFiles(markdownDir, fileFilter, TrueFileFilter.INSTANCE);
       getLog().info("Reading from " + files.size() + " resources");
-      return files.stream().map(File::getAbsolutePath).map(createRestOperation).filter(Objects::nonNull)
+      return files.stream()
+        .map(File::getAbsolutePath)
+        .map(createRestOperation)
+        .flatMap(List::stream)
+        .filter(Objects::nonNull)
         .filter(res -> res.getPath() != null && res.getMethod() != null).collect(Collectors.toList());
     };
 

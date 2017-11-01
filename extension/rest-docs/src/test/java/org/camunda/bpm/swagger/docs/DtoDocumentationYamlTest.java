@@ -1,13 +1,13 @@
 package org.camunda.bpm.swagger.docs;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.camunda.bpm.swagger.docs.model.DtoDocs;
+import org.camunda.bpm.swagger.docs.model.ParameterDescription;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Map;
 
-import org.camunda.bpm.swagger.docs.model.DtoDocs;
-import org.camunda.bpm.swagger.docs.model.ParameterDescription;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DtoDocumentationYamlTest {
 
@@ -27,6 +27,5 @@ public class DtoDocumentationYamlTest {
     final ParameterDescription p = doc.get("instructions");
     assertThat(p.getDescription()).startsWith("A list of migration instructions which map equal activities.");
     assertThat(p.getType()).isEqualTo(null);
-
   }
 }

@@ -1,13 +1,15 @@
 package org.camunda.bpm.swagger.maven.interpreter;
 
-import com.vladsch.flexmark.ast.*;
-import org.apache.maven.plugin.logging.Log;
-import org.camunda.bpm.swagger.maven.model.ParameterDescription;
-import org.camunda.bpm.swagger.maven.model.RestOperation;
-
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import org.apache.maven.plugin.logging.Log;
+import org.camunda.bpm.swagger.maven.model.ParameterDescription;
+import org.camunda.bpm.swagger.maven.model.RestOperation;
+import com.google.common.collect.Lists;
+import com.vladsch.flexmark.ast.*;
 
 public class DocumentInterpreter {
 
@@ -33,12 +35,9 @@ public class DocumentInterpreter {
     this.log = log;
   }
 
-  public RestOperation interpret(final Map<String, Node> parsed, final String camundaDocURI) {
+  public List<RestOperation> interpret(final Map<String, Node> parsed, final String camundaDocURI) {
     final RestOperation.RestOperationBuilder builder = RestOperation.builder();
     Optional.of(camundaDocURI).ifPresent(builder::externalDocUrl);
-
-    resolveSubDocument(METHOD, parsed).map(this::resolvePath).ifPresent(builder::path);
-    resolveSubDocument(METHOD, parsed).map(this::resolveMethod).ifPresent(builder::method);
     resolveSubDocument(DESCRIPTION, parsed).map(this::resolveDescription).ifPresent(builder::description);
     resolveSubDocument(RESULT, parsed).map(mdInterpreter::resolveText).ifPresent(builder::resultDescription);
     resolveExample(parsed).ifPresent(builder::responseExample);
@@ -48,8 +47,42 @@ public class DocumentInterpreter {
     resolveParameter(PARAMETERS__PATH_PARAMETERS, builder::pathParameters, parsed);
     resolveParameter(RESULT, builder::result, parsed);
     resolveParameter(RESPONSE_CODES, builder::responseCodes, parsed);
+    final RestOperation build = builder.build();
 
-    return builder.build();
+    return resolveSubDocument(METHOD, parsed)
+      .map(node -> this.resolveMethods(node, build))
+      .orElse(Collections.emptyList());
+  }
+
+  private List<RestOperation> resolveMethods(final Node node, final RestOperation restOperation) {
+    final List<RestOperation> results = Lists.newArrayList();
+    node.getChildren().forEach(child -> {
+      if (child.getClass().equals(Paragraph.class)) {
+        final Optional<String> method = resolveMethod(child);
+        final Optional<String> path = resolvePath(child);
+        if (method.isPresent() && path.isPresent()) {
+          results.add(restOperation.toBuilder().path(path.get()).method(method.get()).build());
+        }
+      }
+    });
+    return results;
+  }
+
+  private Optional<String> resolvePath(final Node child) {
+    return Optional.of(child)
+      .map(n -> mdInterpreter.getChildNode(n, Code.class))
+      .map(n -> mdInterpreter.getChildNode(n, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim);
+  }
+
+  private Optional<String> resolveMethod(final Node child) {
+    return Optional.of(child)
+      .map(n -> mdInterpreter.getChildNode(n, Text.class))
+      .map(Text::getChars)
+      .map(Object::toString)
+      .map(String::trim);
   }
 
   private Optional<Node> resolveSubDocument(final String key, final Map<String, Node> parsedObject) {
@@ -78,25 +111,6 @@ public class DocumentInterpreter {
     return mdInterpreter.getOpChildNode(node, FencedCodeBlock.class)
       .map(child -> mdInterpreter.getChildNode(child, Text.class))
       .map(child -> mdInterpreter.nodeToString(child, true))
-      .orElse(null);
-  }
-
-  private String resolvePath(final Node node) {
-    return mdInterpreter.getOpChildNode(node, Paragraph.class)
-      .map(child -> mdInterpreter.getChildNode(child, Code.class))
-      .map(child -> mdInterpreter.getChildNode(child, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim)
-      .orElse(null);
-  }
-
-  private String resolveMethod(final Node node) {
-    return mdInterpreter.getOpChildNode(node, Paragraph.class)
-      .map(child -> mdInterpreter.getChildNode(child, Text.class))
-      .map(Text::getChars)
-      .map(Object::toString)
-      .map(String::trim)
       .orElse(null);
   }
 
