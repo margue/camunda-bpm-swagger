@@ -111,29 +111,4 @@
 
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>generateJson</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
-            <artifactId>camunda-bpm-swagger-maven-plugin</artifactId>
-            <version>${project.version}</version>
-            <executions>
-              <execution>
-                <id>generate-swagger-json</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>generate-swagger-json</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 </project>
