@@ -9,10 +9,10 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
+  <groupId>org.camunda.bpm.extension.swagger</groupId>
 	<artifactId>swagger-ui</artifactId>
 	<name>Camunda Swagger UI</name>
 	<packaging>war</packaging>
-
 
   <properties>
     <swagger.version>1.5.16</swagger.version>
