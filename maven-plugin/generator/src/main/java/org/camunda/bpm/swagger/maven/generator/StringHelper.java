@@ -44,7 +44,7 @@ public class StringHelper {
 
   /**
    * Returns a first sentence of the text if found.
-   * 
+   *
    * @param description
    *          text.
    * @return text until first dot or the entire text if no dot found.

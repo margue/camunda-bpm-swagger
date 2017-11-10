@@ -14,6 +14,7 @@ import org.camunda.bpm.swagger.docs.model.RestOperations;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +37,7 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
       // this.operations = items.getRestOperations().stream().collect(Collectors.toMap(p -> Pair.of(p.getPath(), p.getMethod()), Function.identity()));
 
       this.operations = items.getRestOperations().stream()
-        .collect(Collectors.groupingBy(p -> Pair.of(p.getPath(), p.getMethod()),
+        .collect(Collectors.groupingBy(p -> Pair.of(normalizePath(p.getPath()), p.getMethod()),
           Collectors.reducing(null, this::reduceDuplicateRestOperations)));
     }
   }
@@ -77,5 +78,10 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
   private void expandAttr(RestOperation acc, RestOperation elem, Function<RestOperation, Map<String, ParameterDescription>> func) {
     final Map<String, ParameterDescription> accMap = func.apply(acc);
     func.apply(elem).forEach(accMap::putIfAbsent);
+  }
+
+
+  public static String normalizePath(final String path) {
+    return path.replaceAll("\\{[^}]+\\}", "\\{\\}");
   }
 }

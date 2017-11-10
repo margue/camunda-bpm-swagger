@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
 import org.camunda.bpm.swagger.docs.model.RestService;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
@@ -90,11 +91,12 @@ public class MethodStep {
     final ConsumesAndProducesStep consumesAndProduces = new ConsumesAndProducesStep(method);
     consumesAndProduces.annotate(info.getMethod());
 
-    Pair key = Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName());
+    Pair key = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path), jaxrsAnnotation.getType().getSimpleName());
     RestOperation doc = docs.get(key);
     if (doc == null && !this.path.endsWith("/")) {
       // sometimes this helps!
-      Pair key2 = Pair.of(pathPrefix.getLeft() + this.path + "/", jaxrsAnnotation.getType().getSimpleName());
+      // TODO -> move to normalize path
+      Pair key2 = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path + "/"), jaxrsAnnotation.getType().getSimpleName());
       doc = docs.get(key2);
       if (doc == null) {
         log.error("No doc found for {}", key);
