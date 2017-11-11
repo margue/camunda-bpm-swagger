@@ -2,7 +2,6 @@ package org.camunda.bpm.swagger.maven.generator.step;
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
@@ -11,10 +10,8 @@ import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
-import org.camunda.bpm.swagger.maven.model.CamundaRestService;
 import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
-
 import com.helger.jcodemodel.AbstractJType;
 import com.helger.jcodemodel.JDefinedClass;
 import com.helger.jcodemodel.JInvocation;
@@ -22,7 +19,6 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
@@ -30,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MethodStep {
 
   public enum ReturnTypeStyle {
-    PLAIN, DTO, DTO_LIST, DTO_MAP_STRING;
+    PLAIN, DTO, DTO_LIST, DTO_MAP_STRING
   }
 
   private final ModelRepository modelRepository;
@@ -43,7 +39,7 @@ public class MethodStep {
   private AbstractJType methodReturnType;
   private String path;
 
-  public MethodStep(ModelRepository modelRepository, RestService restService, JDefinedClass clazz) {
+  public MethodStep(final ModelRepository modelRepository, final RestService restService, final JDefinedClass clazz) {
     this.modelRepository = modelRepository;
     this.restService = restService;
     this.clazz = clazz;
@@ -91,16 +87,10 @@ public class MethodStep {
     final ConsumesAndProducesStep consumesAndProduces = new ConsumesAndProducesStep(method);
     consumesAndProduces.annotate(info.getMethod());
 
-    Pair key = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path), jaxrsAnnotation.getType().getSimpleName());
-    RestOperation doc = docs.get(key);
-    if (doc == null && !this.path.endsWith("/")) {
-      // sometimes this helps!
-      // TODO -> move to normalize path
-      Pair key2 = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path + "/"), jaxrsAnnotation.getType().getSimpleName());
-      doc = docs.get(key2);
-      if (doc == null) {
-        log.error("No doc found for {}", key);
-      }
+    final Pair key = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path), jaxrsAnnotation.getType().getSimpleName());
+    final RestOperation doc = docs.get(key);
+    if (doc == null) {
+      log.error("No doc found for {}", key);
     }
 
     // register docs for this DTO.

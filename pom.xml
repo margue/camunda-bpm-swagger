@@ -34,7 +34,6 @@
     <module>extension/swagger-json</module>
     <module>extension/swagger-ui</module>
     <module>example/spring-boot</module>
-	<module>example/jaxrs</module>
   </modules>
 
   <dependencyManagement>
