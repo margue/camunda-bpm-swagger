@@ -75,7 +75,7 @@ The profiles are needed only once to generate the documentation dictionary and t
 
 If you are curious how it works, check out the `maven-plugin/generator/README.md`.
 
-* [Issue Tracker](https://github.com/holisticon/camunda-bpm-swagger/issues)
+* [Issue Tracker](https://github.com/camunda/camunda-bpm-swagger/issues)
 * [Contributing](./CONTRIBUTING) 
 
 
