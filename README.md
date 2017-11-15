@@ -69,9 +69,9 @@ Especially, some data type information is not present and is considered as simpl
 
 Checkout the code and run 
 
-    mvn clean install -PrestDocs -PgenerateJson
+    mvn clean install -PrestDocs
     
-The profiles are needed only once to generate the documentation dictionary and the `swagger.json` artifact.
+The profile are needed only once to generate the documentation dictionary. Make sure you are using Maven 3.3.9 or later.
 
 If you are curious how it works, check out the `maven-plugin/generator/README.md`.
 
