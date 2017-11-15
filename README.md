@@ -52,7 +52,11 @@ in your browser.
 
 ## Release Notes
 
-### 1.0.0
+The versioning of this artifact is following the version of Camunda BPM (especially engine REST), since it delivers the
+Swagger specification of the versioned Camunda REST API. For this reason, we start with version 7.7.0. 
+
+
+### 7.7.0
 
 * Initial contribution
 
