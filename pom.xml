@@ -65,6 +65,9 @@
   <profiles>
     <profile>
       <id>restDocs</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <modules>
         <module>extension/rest-docs</module>
       </modules>
