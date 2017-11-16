@@ -10,14 +10,13 @@ import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.ModifierKind;
 
+import static org.camunda.bpm.swagger.maven.spoon.processor.ClassPredicates.*;
+
 /**
  * Processes all classes that end with "Dto" and annotates them with {@link ApiModel}.
  */
 @Slf4j
 public class ApiModelProcessor extends AbstractProcessor<CtClass<?>> {
-
-  Predicate<CtClass<?>> isNamedDto = c -> c.getSimpleName().endsWith("Dto");
-  Predicate<CtClass<?>> isNotAbstract = c -> !c.getModifiers().contains(ModifierKind.ABSTRACT);
 
   @Override
   public boolean isToBeProcessed(final CtClass<?> candidate) {

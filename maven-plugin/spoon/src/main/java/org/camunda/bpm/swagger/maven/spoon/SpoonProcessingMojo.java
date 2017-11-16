@@ -19,11 +19,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.camunda.bpm.swagger.docs.DtoDocsYaml;
+import org.camunda.bpm.swagger.docs.ServiceDocsYaml;
 import org.camunda.bpm.swagger.docs.model.DtoDocs;
+import org.camunda.bpm.swagger.docs.model.ServiceDocs;
 import org.camunda.bpm.swagger.maven.spoon.fn.DownloadCamundaSources;
-import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelProcessor;
-import org.camunda.bpm.swagger.maven.spoon.processor.ApiModelPropertyProcessor;
-import org.camunda.bpm.swagger.maven.spoon.processor.RestResourceProcessor;
+import org.camunda.bpm.swagger.maven.spoon.processor.*;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import lombok.Builder;
@@ -62,10 +62,13 @@ public class SpoonProcessingMojo extends AbstractMojo {
     @NonNull
     private final MojoExecutor.ExecutionEnvironment executionEnvironment;
 
-    private final File yamlFile;
+    private final File dtoYamlFile;
+    private final File serviceYamlFile;
 
     // late init
     private DtoDocs dtoDocumentation;
+    // late init
+    private ServiceDocs serviceDocumentation;
 
     @SneakyThrows
     public Context initDirectory() {
@@ -83,9 +86,15 @@ public class SpoonProcessingMojo extends AbstractMojo {
       spoon.getEnvironment().setAutoImports(autoImports);
       spoon.getEnvironment().setNoClasspath(noClasspath);
 
+      // DTO
       spoon.addProcessor(new ApiModelProcessor());
       spoon.addProcessor(new ApiModelPropertyProcessor(this));
-      spoon.addProcessor(new RestResourceProcessor());
+      // Sub Resources
+      spoon.addProcessor(new RestResourceProcessor(this));
+      spoon.addProcessor(new RestResourceMethodProcessor( this ));
+      // Service
+      spoon.addProcessor(new RestServiceProcessor(this));
+      spoon.addProcessor(new RestServiceMethodProcessor(this));
 
       final String[] classpathElements = executionEnvironment.getMavenProject()
           .getCompileClasspathElements()
@@ -106,9 +115,15 @@ public class SpoonProcessingMojo extends AbstractMojo {
     }
 
     public Context loadDtoDocumentation() {
-      this.dtoDocumentation = new DtoDocsYaml().apply(yamlFile);
+      this.dtoDocumentation = new DtoDocsYaml().apply(dtoYamlFile);
       return this;
     }
+
+    public Context loadServiceDocumentation() {
+      this.serviceDocumentation = new ServiceDocsYaml().apply(serviceYamlFile);
+      return this;
+    }
+
 
     public Context downloadSources() {
       new DownloadCamundaSources(this).run();
@@ -139,7 +154,10 @@ public class SpoonProcessingMojo extends AbstractMojo {
   protected File outputDirectory;
 
   @Parameter(defaultValue = "${project.build.directory}/generated-sources/camunda-rest-dto-docs.yaml", required = true, readonly = true)
-  protected File yamlFile;
+  protected File dtoYamlFile;
+
+  @Parameter(defaultValue = "${project.build.directory}/generated-sources/camunda-rest-service-docs.yaml", required = true, readonly = true)
+  protected File serviceYamlFile;
 
   @Component
   protected BuildPluginManager buildPluginManager;
@@ -155,11 +173,13 @@ public class SpoonProcessingMojo extends AbstractMojo {
     .noClasspath(false)
     .autoImports(false)
     .shouldCompile(false)
-    .yamlFile(yamlFile)
+    .dtoYamlFile(dtoYamlFile)
+    .serviceYamlFile(serviceYamlFile)
     .build()
     .initDirectory()
     .downloadSources()
     .loadDtoDocumentation()
+    .loadServiceDocumentation()
     .processSources()
     ;
   }

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Holds information about the return type of the method.
- * 
+ *
  * @author Simon Zambrovski, Holisticon AG.
  *
  */
@@ -40,7 +40,7 @@ public class ReturnTypeInfo {
 
   /**
    * Constructs the return type info for given method.
-   * 
+   *
    * @param method
    *          method to determine the return type for.
    */
@@ -77,9 +77,9 @@ public class ReturnTypeInfo {
           }
 
         } else if (typeArg instanceof ParameterizedType) {
-          // parameterized type Map<?,?> -> List<Map<X,Y>>
-          log.error(
-              "The return type was a class parameterized by a parametrized class. The generator doesn't support it yet. Falling back to the basic type for {}",
+          // parametrized type Map<?,?> -> List<Map<X,Y>>
+          log.debug(
+              "The return type was a class parametrized by a parametrized class. The generator doesn't support it yet. Falling back to the basic type for {}",
               method);
           parameterClasses = new AbstractJClass[0];
           break;
@@ -96,7 +96,7 @@ public class ReturnTypeInfo {
 
   /**
    * Assign rest operation documentation to found DTOs.
-   * 
+   *
    * @param restOperation
    *          rest operation conatning docs.
    */
@@ -109,7 +109,7 @@ public class ReturnTypeInfo {
   /**
    * Sometimes implementations methods uses the sub-type of the interface method return type as a return type. In this case, the return type should be taken
    * from the implementation method.
-   * 
+   *
    * @param implementationMethods
    *          array of all candidate methods.
    */

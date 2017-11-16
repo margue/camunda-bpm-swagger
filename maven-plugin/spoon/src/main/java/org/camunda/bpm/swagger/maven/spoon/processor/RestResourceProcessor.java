@@ -1,49 +1,56 @@
 package org.camunda.bpm.swagger.maven.spoon.processor;
 
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.camunda.bpm.swagger.docs.model.RestService;
+import org.camunda.bpm.swagger.maven.spoon.SpoonProcessingMojo;
 import spoon.processing.AbstractProcessor;
-import spoon.reflect.code.*;
-import spoon.reflect.cu.SourcePosition;
-import spoon.reflect.declaration.*;
-import spoon.reflect.factory.Factory;
-import spoon.reflect.reference.CtTypeReference;
-import spoon.reflect.visitor.CtVisitor;
-import spoon.reflect.visitor.Filter;
-import spoon.reflect.visitor.chain.CtConsumableFunction;
-import spoon.reflect.visitor.chain.CtFunction;
-import spoon.reflect.visitor.chain.CtQuery;
+import spoon.reflect.declaration.CtAnnotation;
+import spoon.reflect.declaration.CtInterface;
 
 import javax.ws.rs.Path;
 import java.lang.annotation.Annotation;
-import java.util.*;
-import java.util.function.Predicate;
 
+import static org.camunda.bpm.swagger.maven.spoon.processor.ClassPredicates.isNamedResource;
+import static org.camunda.bpm.swagger.maven.spoon.processor.ClassPredicates.isNamedRestService;
+
+/**
+ * Processes REST service implementations.
+ * Adds API annotations to the implementing class.
+ */
 @Slf4j
-public class RestResourceProcessor extends AbstractProcessor<CtMethod<?>> {
+public class RestResourceProcessor extends AbstractProcessor<CtInterface<?>> {
 
-  Predicate<CtMethod<?>> classIsNamedResource = m -> getClassname(m).endsWith("Resource");
-  Predicate<CtMethod<?>> classIsNamedService = m -> getClassname(m).endsWith("Service");
-  Predicate<CtMethod<?>> isPathAnnotated = m -> m.getAnnotation(Path.class) != null;
-  Predicate<CtMethod<?>> returnsResource = m -> m.getType().getQualifiedName().endsWith("Resource");
-
-  @Override
-  public boolean isToBeProcessed(final CtMethod<?> candidate) {
-    return classIsNamedResource.and(isPathAnnotated).test(candidate) || classIsNamedService.and(isPathAnnotated).and(returnsResource).test(candidate);
+  private final SpoonProcessingMojo.Context context;
+  public RestResourceProcessor(final SpoonProcessingMojo.Context context) {
+    this.context = context;
   }
 
   @Override
-  public void process(final CtMethod<?> ctMethod) {
+  public boolean isToBeProcessed(final CtInterface<?> candidate) {
+    return isNamedResource
+      .test(candidate);
+  }
 
-    log.debug("Processing {}#{}", getClassname(ctMethod), ctMethod.getSimpleName());
-    final CtTypeReference<Path> pathRef = getFactory().createCtTypeReference(Path.class);
-    final Optional<CtAnnotation<? extends Annotation>> ann = ctMethod.getAnnotations().stream().filter(a -> a.getAnnotationType().isSubtypeOf(pathRef)).findFirst();
+  @Override
+  public void process(final CtInterface<?> resourceInterface) {
+    final CtAnnotation<Annotation> annotation = getFactory().Code().createAnnotation(getFactory().Code().createCtTypeReference(Api.class));
+    final RestService restService = context.getServiceDocumentation().get(resourceInterface.getQualifiedName());
+    if (restService != null) {
+      String[] tags;
+      if (restService.getTags().contains(",")) {
+        tags = restService.getTags().split(",");
+      } else {
+        tags = new String[]{ restService.getTags() };
+      }
 
-    if (ann.isPresent()) {
-      ctMethod.removeAnnotation(ann.get());
+    annotation
+      // .addValue("tags", tags)
+      .addValue("hidden", true);
+    resourceInterface.addAnnotation(annotation);
+  } else {
+      log.error("No documentation for resource {} found.", resourceInterface.getQualifiedName());
     }
   }
 
-  private static String getClassname(final CtMethod<?> method) {
-    return Optional.of(method).map(m -> m.getDeclaringType()).map(CtType::getQualifiedName).orElse("");
-  }
 }

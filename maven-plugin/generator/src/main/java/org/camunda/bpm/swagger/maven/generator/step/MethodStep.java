@@ -2,16 +2,16 @@ package org.camunda.bpm.swagger.maven.generator.step;
 
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.lang3.tuple.Pair;
+import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.camunda.bpm.swagger.docs.model.RestService;
 import org.camunda.bpm.swagger.maven.generator.ParentInvocation;
 import org.camunda.bpm.swagger.maven.generator.ReturnTypeInfo;
 import org.camunda.bpm.swagger.maven.generator.StringHelper;
 import org.camunda.bpm.swagger.maven.generator.TypeHelper;
 import org.camunda.bpm.swagger.maven.model.DocStyle;
 import org.camunda.bpm.swagger.maven.model.ModelRepository;
-
 import com.helger.jcodemodel.AbstractJType;
 import com.helger.jcodemodel.JDefinedClass;
 import com.helger.jcodemodel.JInvocation;
@@ -19,25 +19,31 @@ import com.helger.jcodemodel.JMethod;
 import com.helger.jcodemodel.JMod;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
 @Data
 @Slf4j
 public class MethodStep {
 
   public enum ReturnTypeStyle {
-    PLAIN, DTO, DTO_LIST, DTO_MAP_STRING;
+    PLAIN, DTO, DTO_LIST, DTO_MAP_STRING
   }
 
   private final ModelRepository modelRepository;
+  private final RestService restService;
   private final JDefinedClass clazz;
+
   private JMethod method;
   private Class<?> returnType;
   private ReturnTypeStyle returnTypeStyle;
   private AbstractJType methodReturnType;
   private String path;
+
+  public MethodStep(final ModelRepository modelRepository, final RestService restService, final JDefinedClass clazz) {
+    this.modelRepository = modelRepository;
+    this.restService = restService;
+    this.clazz = clazz;
+  }
 
   public JMethod create(final ReturnTypeInfo info, final Pair<String, String> pathPrefix, final Map<Pair<String, String>, RestOperation> docs,
       final ParentInvocation... parentInvocations) {
@@ -81,7 +87,11 @@ public class MethodStep {
     final ConsumesAndProducesStep consumesAndProduces = new ConsumesAndProducesStep(method);
     consumesAndProduces.annotate(info.getMethod());
 
-    final RestOperation doc = docs.get(Pair.of(pathPrefix.getLeft() + this.path, jaxrsAnnotation.getType().getSimpleName()));
+    final Pair key = Pair.of(DocumentationYaml.normalizePath(pathPrefix.getLeft() + this.path), jaxrsAnnotation.getType().getSimpleName());
+    final RestOperation doc = docs.get(key);
+    if (doc == null) {
+      log.error("No doc found for {}", key);
+    }
 
     // register docs for this DTO.
     if (dto.isPresent()) {
@@ -96,7 +106,7 @@ public class MethodStep {
       method.body().add(invoke);
     } else {
 
-      // overriding, only if it is a simple return type (not parameterized, not DTO, not a resource)
+      // overriding, only if it is a simple return type (not parametrized, not DTO, not a resource)
       if (parentInvocations == null) {
         method.annotate(Override.class);
       }
@@ -107,6 +117,8 @@ public class MethodStep {
     // ApiOperation
     final ApiOperationStep apiOperation = new ApiOperationStep(method, doc);
     apiOperation.annotate(this, info.getMethod());
+    // add method
+    restService.getOperations().put(info.getMethod().getName(), doc);
 
     // ApiResponse
     final ApiResponsesStep responesStep = new ApiResponsesStep(method, doc);

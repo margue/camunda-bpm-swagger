@@ -6,13 +6,12 @@
   <parent>
     <artifactId>camunda-bpm-swagger-root</artifactId>
     <groupId>org.camunda.bpm.extension.swagger.project</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>7.7.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <groupId>org.camunda.bpm.extension.swagger</groupId>
   <artifactId>camunda-bpm-swagger-rest-docs</artifactId>
-  <version>${camunda.version}</version>
   <name>Camunda Swagger REST dictionary</name>
 
   <dependencies>
@@ -61,7 +60,7 @@
       <plugin>
         <groupId>org.camunda.bpm.extension.swagger.maven</groupId>
         <artifactId>camunda-bpm-swagger-plugin-rest-docs</artifactId>
-        <version>${parent.version}</version>
+        <version>${project.parent.version}</version>
         <executions>
           <execution>
             <phase>generate-resources</phase>

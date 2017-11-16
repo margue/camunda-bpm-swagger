@@ -9,6 +9,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.docs.model.DtoDocs;
+import org.camunda.bpm.swagger.docs.model.ServiceDocs;
 import org.camunda.bpm.swagger.maven.fn.ReflectionsFactory;
 import org.camunda.bpm.swagger.maven.fn.ScanRestServices;
 import org.camunda.bpm.swagger.maven.generator.SwaggerServiceModelGenerator;
@@ -48,7 +49,10 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
   protected String codeGeneratorFactoryClass;
 
   @Parameter(defaultValue = "${project.build.directory}/generated-sources/camunda-rest-dto-docs.yaml", required = true, readonly = true)
-  protected File yamlFile;
+  protected File dtoYamlFile;
+
+  @Parameter(defaultValue = "${project.build.directory}/generated-sources/camunda-rest-service-docs.yaml", required = true, readonly = true)
+  protected File serviceYamlFile;
 
   @Override
   @SneakyThrows
@@ -67,24 +71,33 @@ public class GenerateSwaggerServicesMojo extends AbstractMojo {
 
     final Set<CamundaRestService> camundaRestServices = scanRestServices.get();
 
-    getLog().info("==================");
-
     camundaRestServices.stream().map(service -> new SwaggerServiceModelGenerator(service)).forEach(CodeGenerator::generate);
 
     // write all models
-    modelRepository.getModels().forEach(r -> r.write(outputDirectory));
-
-    getLog().info("==================");
+    // skip
+    // modelRepository.getModels().forEach(r -> r.write(outputDirectory));
 
     if (modelRepository.getDtoParameterDescriptions().isEmpty()) {
-      throw new IllegalStateException("No docs has been provided.");
+      throw new IllegalStateException("No DTO docs has been provided.");
     }
 
-    if (yamlFile != null) {
+    if (modelRepository.getRestServiceDescriptions().isEmpty()) {
+      throw new IllegalStateException("No Service docs has been provided.");
+    }
+
+
+    if (dtoYamlFile != null) {
       final Yaml yaml = new Yaml();
-      final FileWriter writer = new FileWriter(yamlFile);
+      final FileWriter writer = new FileWriter(dtoYamlFile);
       yaml.dump(new DtoDocs(modelRepository.getDtoParameterDescriptions()), writer);
     }
+
+    if (serviceYamlFile != null) {
+      final Yaml yaml = new Yaml();
+      final FileWriter writer = new FileWriter(serviceYamlFile);
+      yaml.dump(new ServiceDocs(modelRepository.getRestServiceDescriptions()), writer);
+    }
+
   }
 
 }

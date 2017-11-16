@@ -1,9 +1,9 @@
-package org.camunda.bpm.swagger.maven.generator;
-
-import java.util.StringTokenizer;
+package org.camunda.bpm.swagger.maven.spoon.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.StringTokenizer;
 
 public class StringHelper {
 
@@ -55,7 +55,7 @@ public class StringHelper {
     }
 
     final int indexOf = description.indexOf(".");
-    return indexOf > 0 ? description.substring(0, indexOf) : description;
+    return (indexOf > 0 ? description.substring(0, indexOf) : description) + ".";
 
   }
 }

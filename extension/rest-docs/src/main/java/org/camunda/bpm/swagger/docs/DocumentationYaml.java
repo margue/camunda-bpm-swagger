@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
@@ -36,7 +35,7 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
       // this.operations = items.getRestOperations().stream().collect(Collectors.toMap(p -> Pair.of(p.getPath(), p.getMethod()), Function.identity()));
 
       this.operations = items.getRestOperations().stream()
-        .collect(Collectors.groupingBy(p -> Pair.of(p.getPath(), p.getMethod()),
+        .collect(Collectors.groupingBy(p -> Pair.of(normalizePath(p.getPath()), p.getMethod()),
           Collectors.reducing(null, this::reduceDuplicateRestOperations)));
     }
   }
@@ -64,7 +63,7 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
     print(this.operations);
   }
 
-  private RestOperation reduceDuplicateRestOperations(RestOperation acc, RestOperation elem) {
+  private RestOperation reduceDuplicateRestOperations(final RestOperation acc, final RestOperation elem) {
     if (acc == null)
       return elem;
     log.info("duplicate entry for " + acc.getPath() + "(" + acc.getMethod() + ") - trying to merge");
@@ -74,8 +73,15 @@ public class DocumentationYaml implements Supplier<Map<Pair<String, String>, Res
     return acc;
   }
 
-  private void expandAttr(RestOperation acc, RestOperation elem, Function<RestOperation, Map<String, ParameterDescription>> func) {
+  private void expandAttr(final RestOperation acc, final RestOperation elem, final Function<RestOperation, Map<String, ParameterDescription>> func) {
     final Map<String, ParameterDescription> accMap = func.apply(acc);
     func.apply(elem).forEach(accMap::putIfAbsent);
+  }
+
+
+  public static String normalizePath(final String path) {
+    return path
+      .replaceAll("\\{[^}]+\\}", "\\{\\}")
+      .replaceAll("/?$", "");
   }
 }

@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 
 import javax.annotation.Generated;
 
+import org.camunda.bpm.swagger.docs.model.RestService;
 import org.camunda.bpm.swagger.maven.GenerateSwaggerServicesMojo;
 
 import com.helger.jcodemodel.JCodeModel;
@@ -32,6 +33,9 @@ public class CamundaRestService extends AbstractModel {
   @Getter
   private final JDefinedClass definedClass;
 
+  @Getter
+  private final RestService restService;
+
 
 
   @SneakyThrows
@@ -50,6 +54,10 @@ public class CamundaRestService extends AbstractModel {
     this.codeModel._package(PACKAGE);
     this.definedClass = this.codeModel._class(getFullQualifiedName());
     this.definedClass.annotate(Generated.class).param("value", GenerateSwaggerServicesMojo.class.getCanonicalName());
+
+    // add doc reference
+    restService = new RestService();
+    getModelRepository().addService(this.serviceInterfaceClass.getName(), restService);
   }
 
   @Override

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.camunda.bpm.swagger.docs.DocumentationYaml;
 import org.camunda.bpm.swagger.docs.model.ParameterDescription;
 import org.camunda.bpm.swagger.docs.model.RestOperation;
+import org.camunda.bpm.swagger.docs.model.RestService;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,22 +20,46 @@ public class ModelRepository {
   private final Set<AbstractModel> models = new HashSet<>();
 
   @Getter
-  private final DocumentationYaml documentation;
-
-  @Getter
   private final Map<String, Map<String, ParameterDescription>> dtoParameterDescriptions = new HashMap<>();
 
-  public ModelRepository(final DocumentationYaml documentation) {
-    this.documentation = documentation;
+  @Getter
+  private final Map<String, RestService> restServiceDescriptions = new HashMap<>();
+
+  @Getter
+  private final DocumentationYaml documentation;
+
+  public ModelRepository(final DocumentationYaml documentationYml) {
+    this.documentation = documentationYml;
   }
 
   /**
    * Supplies doc for given FQN.
-   * 
-   * @param fqn
-   *          full qualified DTO name.
-   * @param restOperation
-   *          operation documentation.
+   *
+   * @param fqn full qualified name of the service interface.
+   * @param restService rest service documentation.
+   */
+  public void addService(final String fqn, final RestService restService) {
+    if (restService == null) {
+      return;
+    }
+    if (restServiceDescriptions.containsKey(fqn)) {
+      log.error("Duplicate REST service documentation for {}, merging values.", fqn);
+      final RestService savedRestService = restServiceDescriptions.get(fqn);
+      savedRestService.getOperations().putAll(restService.getOperations());
+      if (savedRestService.getTags() != null && restService.getTags() != null && !savedRestService.getTags().contains(restService.getTags())) {
+       savedRestService.setTags(savedRestService.getTags() + "," + restService.getTags());
+      }
+    } else {
+      restServiceDescriptions.put(fqn, restService);
+    }
+  }
+
+
+  /**
+   * Supplies doc for given FQN.
+   *
+   * @param fqn           full qualified DTO name.
+   * @param restOperation operation documentation.
    */
   public void addDoc(final String fqn, final RestOperation restOperation, final DocStyle style) {
     if (restOperation == null) {
@@ -49,14 +74,14 @@ public class ModelRepository {
 
     Map<String, ParameterDescription> fieldDescriptions = null;
     switch (style) {
-    case RETURN_TYPE:
-      fieldDescriptions = restOperation.getResult();
-      break;
-    case METHOD_PARAM:
-      fieldDescriptions = restOperation.getRequestBody();
-      break;
-    case TYPE_PARAM:
-      break;
+      case RETURN_TYPE:
+        fieldDescriptions = restOperation.getResult();
+        break;
+      case METHOD_PARAM:
+        fieldDescriptions = restOperation.getRequestBody();
+        break;
+      case TYPE_PARAM:
+        break;
     }
 
     if (fieldDescriptions != null) {
@@ -65,6 +90,13 @@ public class ModelRepository {
 
   }
 
+  /**
+   * Adds a model for later code generation.
+   * @param model model to generate
+   * @return added model reference.
+   * @deprecated since the generation is performed by Spoon.
+   */
+  @Deprecated
   public AbstractModel addModel(final AbstractModel model) {
     if (models.contains(model)) {
       log.error("Duplicate model added to repository {}", model.getFullQualifiedName());
@@ -72,4 +104,5 @@ public class ModelRepository {
     models.add(model);
     return model;
   }
+
 }

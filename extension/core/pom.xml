@@ -6,7 +6,7 @@
   <parent>
     <artifactId>camunda-bpm-swagger-root</artifactId>
     <groupId>org.camunda.bpm.extension.swagger.project</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>7.7.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -47,11 +47,6 @@
       <version>2.6.3</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.camunda.bpm</groupId>
-      <artifactId>camunda-engine</artifactId>
-      <version>${camunda.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
